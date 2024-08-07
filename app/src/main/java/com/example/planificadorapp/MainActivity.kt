@@ -133,6 +133,7 @@ fun CuentasList(cuentas: List<Cuenta>, modifier: Modifier = Modifier) {
                     Text("${cuenta.nombre}: \$${cuenta.saldo}")
                 }
             }
+
         }
     }
 }
