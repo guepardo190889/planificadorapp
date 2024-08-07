@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -22,6 +23,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -38,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.Cuenta
 import com.example.planificadorapp.repositorios.CuentaRepository
@@ -47,6 +50,9 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.NumberFormat
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,14 +132,42 @@ fun NavigationDrawer() {
 fun CuentasList(cuentas: List<Cuenta>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         cuentas.forEach { cuenta ->
-            Card(modifier = Modifier
+            CuentaItem(cuenta)
+            HorizontalDivider()
+            /*Card(modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)) {
                 Row(modifier = Modifier.padding(16.dp)) {
                     Text("${cuenta.nombre}: \$${cuenta.saldo}")
                 }
-            }
-
+            }*/
         }
     }
+}
+
+@Composable
+fun CuentaItem(cuenta: Cuenta) {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val fechaFormateada = cuenta.fechaActualizacion.format(formatter)
+    val formattedSaldo = formatCurrency(cuenta.saldo)
+
+    ListItem(
+        headlineContent = {
+            Text(text = cuenta.nombre)
+        },
+        supportingContent = { Text(formattedSaldo) },
+        leadingContent = {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_account_balance_24),
+                contentDescription = "Localized description",
+            )
+        },
+        trailingContent = { Text(fechaFormateada) },
+        modifier = Modifier.padding(vertical = 8.dp)
+    )
+}
+
+fun formatCurrency(amount: Double): String {
+    val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale("es", "MX"))
+    return format.format(amount)
 }
