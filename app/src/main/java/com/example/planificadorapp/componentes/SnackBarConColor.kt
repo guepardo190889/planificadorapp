@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun SnackBarConColor(snackbarHostState: SnackbarHostState, message:String, tipo: String) {
+fun SnackBarConColor(snackbarHostState: SnackbarHostState, tipo: String) {
     val backgroundColor = when (tipo) {
         "error" -> Color.Red
         "success" -> Color.Green
-        "warning" -> Color(0xFFFFA500) // Orange color
+        "warning" -> Color(0xFFFFA500)
         else -> Color.Gray
     }
 
@@ -20,7 +20,8 @@ fun SnackBarConColor(snackbarHostState: SnackbarHostState, message:String, tipo:
         snackbar = { snackbarData ->
             Snackbar(
                 snackbarData = snackbarData,
-                containerColor = backgroundColor
+                containerColor = backgroundColor,
+                contentColor = Color.Black
             )
         }
     )

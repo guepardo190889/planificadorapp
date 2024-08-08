@@ -11,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,6 +63,14 @@ fun Cuentas(modifier: Modifier = Modifier) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
             }
         },
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) {
+                SnackBarConColor(
+                    snackbarHostState = snackbarHostState,
+                    tipo = snackbarType
+                )
+            }
+        },
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
@@ -73,10 +82,7 @@ fun Cuentas(modifier: Modifier = Modifier) {
                     onSave = { nuevaCuenta ->
                         cuentaRepository.guardarCuenta(nuevaCuenta) { cuentaGuardada ->
                             if (cuentaGuardada != null) {
-                                nuevaCuenta.id = cuentaGuardada.id
-                                nuevaCuenta.fechaActualizacion = cuentaGuardada.fechaActualizacion
-
-                                cuentas = cuentas + nuevaCuenta
+                                cuentas = cuentas + cuentaGuardada
 
                                 snackbarMessage = "Cuenta guardada exitosamente"
                                 snackbarType = "success"
@@ -97,18 +103,9 @@ fun Cuentas(modifier: Modifier = Modifier) {
                         showDialog = false
                     }
                 )
-
-                SnackBarConColor(
-                    snackbarHostState = snackbarHostState,
-                    message = snackbarMessage,
-                    tipo = snackbarType
-                )
-
             }
         }
     }
-
-    //CuentasList(cuentas, modifier)
 }
 
 @Composable
