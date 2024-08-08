@@ -36,11 +36,11 @@ fun Principal() {
     val scope = rememberCoroutineScope()
 
     val elementosMenu = listOf(
-        Menu(Icons.Default.AccountCircle, "Cuentas"),
-        Menu(Icons.Default.AccountCircle, "Movimientos"),
-        Menu(Icons.Default.AccountCircle, "Portafolios"),
-        Menu(Icons.Default.AccountCircle, "Reportes"),
-        Menu(Icons.Default.AccountCircle, "Configuración")
+        Menu(R.drawable.baseline_account_balance_24, "Cuentas"),
+        Menu(R.drawable.baseline_account_balance_24, "Movimientos"),
+        Menu(R.drawable.baseline_account_balance_24, "Portafolios"),
+        Menu(R.drawable.baseline_account_balance_24, "Reportes"),
+        Menu(R.drawable.baseline_account_balance_24, "Configuración")
     )
 
     var menuSeleccionado by remember { mutableStateOf(elementosMenu[0]) }
@@ -52,7 +52,6 @@ fun Principal() {
                 elementosMenu = elementosMenu,
                 menuSeleccionado = menuSeleccionado,
                 onMenuSeleccionado = { item ->
-                    Log.i("Principal", "Menu seleccionado: ${item.titulo}")
                     menuSeleccionado = item
                     scope.launch { drawerState.close() }
                 }
@@ -62,7 +61,7 @@ fun Principal() {
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("Planificador") },
+                        title = { Text(menuSeleccionado.titulo) },
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(Icons.Default.Menu, contentDescription = "Menu")
