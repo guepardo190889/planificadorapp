@@ -31,6 +31,23 @@ class CuentaRepository {
         })
     }
 
+    fun buscarCuentaPorId(id: Long, onResult: (Cuenta?) -> Unit) {
+        val call = ApiClient.apiService.obtenerCuentaPorId(id)
+        call.enqueue(object : Callback<Cuenta> {
+            override fun onResponse(call: Call<Cuenta>, response: Response<Cuenta>) {
+                if (response.isSuccessful) {
+                    onResult(response.body())
+                } else {
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<Cuenta>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
+
     fun buscarCuentas(onResult: (List<Cuenta>?) -> Unit) {
         apiService.buscarCuentas().enqueue(object : Callback<List<Cuenta>> {
             override fun onResponse(call: Call<List<Cuenta>>, response: Response<List<Cuenta>>) {

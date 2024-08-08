@@ -1,6 +1,7 @@
-package com.example.planificadorapp.componentes
+package com.example.planificadorapp.componentes.cuentas
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,20 +23,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.planificadorapp.R
-import com.example.planificadorapp.componentes.cuentas.GuardarCuentaDialog
+import com.example.planificadorapp.componentes.SnackBarConColor
 import com.example.planificadorapp.modelos.Cuenta
 import com.example.planificadorapp.repositorios.CuentaRepository
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun Cuentas(modifier: Modifier = Modifier) {
+fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     val cuentaRepository = remember { CuentaRepository() }
     var cuentas by remember { mutableStateOf<List<Cuenta>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -74,7 +76,7 @@ fun Cuentas(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            CuentasList(cuentas, Modifier.padding(16.dp))
+            CuentasList(cuentas, navController, Modifier.padding(16.dp))
 
             if (showDialog) {
                 GuardarCuentaDialog(
@@ -109,17 +111,21 @@ fun Cuentas(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CuentasList(cuentas: List<Cuenta>, modifier: Modifier = Modifier) {
+fun CuentasList(
+    cuentas: List<Cuenta>,
+    navController: NavController,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier.padding(16.dp)) {
         cuentas.forEach { cuenta ->
-            CuentaItem(cuenta)
+            CuentaItem(cuenta, navController)
             HorizontalDivider()
         }
     }
 }
 
 @Composable
-fun CuentaItem(cuenta: Cuenta) {
+fun CuentaItem(cuenta: Cuenta, navController: NavController) {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val fechaFormateada = cuenta.fechaActualizacion?.format(formatter)
     val formattedSaldo = formatCurrency(cuenta.saldo)
@@ -136,7 +142,11 @@ fun CuentaItem(cuenta: Cuenta) {
             )
         },
         trailingContent = { Text(fechaFormateada ?: "") },
-        modifier = Modifier.padding(vertical = 8.dp)
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .clickable {
+                navController.navigate("detalle/${cuenta.id}")
+            }
     )
 }
 

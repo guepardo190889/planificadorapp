@@ -3,7 +3,6 @@ package com.example.planificadorapp
 import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,8 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.compose.rememberNavController
 import com.example.planificadorapp.componentes.ConfiguracionScreen
-import com.example.planificadorapp.componentes.Cuentas
+import com.example.planificadorapp.componentes.cuentas.Cuentas
 import com.example.planificadorapp.componentes.MovimientosScreen
 import com.example.planificadorapp.componentes.PortafoliosScreen
 import com.example.planificadorapp.componentes.ReportesScreen
@@ -32,6 +32,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Principal() {
+    val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
@@ -72,7 +73,7 @@ fun Principal() {
             ) { paddingValues ->
                 Log.i("Principal", "Menu seleccionado (when): ${menuSeleccionado.titulo}")
                 when (menuSeleccionado.titulo) {
-                    "Cuentas" -> Cuentas(modifier = Modifier.padding(paddingValues))
+                    "Cuentas" -> Cuentas(navController, modifier = Modifier.padding(paddingValues))
                     "Movimientos" -> MovimientosScreen(modifier = Modifier.padding(paddingValues))
                     "Portafolios" -> PortafoliosScreen(modifier = Modifier.padding(paddingValues))
                     "Reportes" -> ReportesScreen(modifier = Modifier.padding(paddingValues))
