@@ -1,4 +1,4 @@
-package com.example.planificadorapp.componentes
+package com.example.planificadorapp.composables
 
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost

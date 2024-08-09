@@ -1,4 +1,4 @@
-package com.example.planificadorapp.componentes.cuentas
+package com.example.planificadorapp.screens.cuentas
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -8,54 +8,53 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.planificadorapp.modelos.Cuenta
-import com.example.planificadorapp.modelos.Validacion
-import com.example.planificadorapp.repositorios.CuentaRepository
+import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.ValidacionModel
 import java.util.regex.Pattern
 
 @Composable
-fun GuardarCuentaDialog(onDismiss: () -> Unit, onSave: (Cuenta) -> Unit) {
+fun GuardarCuentaDialog(onDismiss: () -> Unit, onSave: (CuentaModel) -> Unit) {
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var saldo by remember { mutableStateOf("") }
 
-    var validacionNombre by remember { mutableStateOf(Validacion()) }
-    var validacionDescripcion by remember { mutableStateOf(Validacion()) }
-    var validacionSaldo by remember { mutableStateOf(Validacion()) }
+    var validacionNombre by remember { mutableStateOf(ValidacionModel()) }
+    var validacionDescripcion by remember { mutableStateOf(ValidacionModel()) }
+    var validacionSaldo by remember { mutableStateOf(ValidacionModel()) }
 
     val nombrePattern = Pattern.compile("^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s\\-&,]{1,32}\$")
     val descripcionPattern = Pattern.compile("^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\\s\\-&,]{1,256}\$")
 
-    fun validarNombre(): Validacion {
+    fun validarNombre(): ValidacionModel {
         return if (nombre.isBlank()) {
-            Validacion(false, "El nombre es requerido")
+            ValidacionModel(false, "El nombre es requerido")
         } else if (!nombrePattern.matcher(nombre).matches()) {
-            Validacion(false, "El nombre solo puede contener letras, espacios, acentos y números, hasta 32 caracteres")
+            ValidacionModel(false, "El nombre solo puede contener letras, espacios, acentos y números, hasta 32 caracteres")
         } else {
-            Validacion(true)
+            ValidacionModel(true)
         }
     }
 
-    fun validarDescripcion(): Validacion {
+    fun validarDescripcion(): ValidacionModel {
         return if (descripcion.isBlank()) {
-            Validacion(false, "La descripción es requerida")
+            ValidacionModel(false, "La descripción es requerida")
         } else if (!descripcionPattern.matcher(descripcion).matches()) {
-            Validacion(false, "La descripción solo puede contener letras, espacios y acentos, hasta 128 caracteres")
+            ValidacionModel(false, "La descripción solo puede contener letras, espacios y acentos, hasta 128 caracteres")
         } else {
-            Validacion(true)
+            ValidacionModel(true)
         }
     }
 
-    fun validarSaldo(): Validacion {
+    fun validarSaldo(): ValidacionModel {
         return try {
             val saldoValue = saldo.toDouble()
             if (saldoValue < 0 || saldoValue > 999_999_999.0) {
-                Validacion(false, "El saldo debe estar entre 0 y 999,999,999.00")
+                ValidacionModel(false, "El saldo debe estar entre 0 y 999,999,999.00")
             } else {
-                Validacion(true)
+                ValidacionModel(true)
             }
         } catch (e: NumberFormatException) {
-            return Validacion(false, "El saldo debe ser un número válido")
+            return ValidacionModel(false, "El saldo debe ser un número válido")
         }
     }
 
@@ -147,7 +146,7 @@ fun GuardarCuentaDialog(onDismiss: () -> Unit, onSave: (Cuenta) -> Unit) {
                     Button(
                         onClick = {
                             if (validarDialogo()) {
-                                val nuevaCuenta = Cuenta(
+                                val nuevaCuenta = CuentaModel(
                                     nombre = nombre,
                                     descripcion = descripcion,
                                     saldo = saldo.toDouble()

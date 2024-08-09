@@ -1,7 +1,7 @@
 package com.example.planificadorapp.repositorios
 
 import android.util.Log
-import com.example.planificadorapp.modelos.Cuenta
+import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -10,10 +10,10 @@ import retrofit2.Response
 class CuentaRepository {
     private val apiService = ApiClient.apiService
 
-    fun guardarCuenta(cuenta: Cuenta, onResult: (Cuenta?) -> Unit) {
+    fun guardarCuenta(cuenta: CuentaModel, onResult: (CuentaModel?) -> Unit) {
         val call = ApiClient.apiService.guardarCuenta(cuenta)
-        call.enqueue(object : Callback<Cuenta> {
-            override fun onResponse(call: Call<Cuenta>, response: Response<Cuenta>) {
+        call.enqueue(object : Callback<CuentaModel> {
+            override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 Log.i("CuentaRepository", "Respuesta del servidor: ${response.body()}")
                 if (response.isSuccessful) {
                     onResult(response.body())
@@ -24,17 +24,17 @@ class CuentaRepository {
                 }
             }
 
-            override fun onFailure(call: Call<Cuenta>, t: Throwable) {
+            override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
                 onResult(null)
                 println("Fallo en la conexión: ${t.message}")
             }
         })
     }
 
-    fun buscarCuentaPorId(id: Long, onResult: (Cuenta?) -> Unit) {
+    fun buscarCuentaPorId(id: Long, onResult: (CuentaModel?) -> Unit) {
         val call = ApiClient.apiService.obtenerCuentaPorId(id)
-        call.enqueue(object : Callback<Cuenta> {
-            override fun onResponse(call: Call<Cuenta>, response: Response<Cuenta>) {
+        call.enqueue(object : Callback<CuentaModel> {
+            override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 if (response.isSuccessful) {
                     onResult(response.body())
                 } else {
@@ -42,15 +42,15 @@ class CuentaRepository {
                 }
             }
 
-            override fun onFailure(call: Call<Cuenta>, t: Throwable) {
+            override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
                 onResult(null)
             }
         })
     }
 
-    fun buscarCuentas(onResult: (List<Cuenta>?) -> Unit) {
-        apiService.buscarCuentas().enqueue(object : Callback<List<Cuenta>> {
-            override fun onResponse(call: Call<List<Cuenta>>, response: Response<List<Cuenta>>) {
+    fun buscarCuentas(onResult: (List<CuentaModel>?) -> Unit) {
+        apiService.buscarCuentas().enqueue(object : Callback<List<CuentaModel>> {
+            override fun onResponse(call: Call<List<CuentaModel>>, response: Response<List<CuentaModel>>) {
                 if (response.isSuccessful) {
                     onResult(response.body())
                 } else {
@@ -58,7 +58,7 @@ class CuentaRepository {
                 }
             }
 
-            override fun onFailure(call: Call<List<Cuenta>>, t: Throwable) {
+            override fun onFailure(call: Call<List<CuentaModel>>, t: Throwable) {
                 onResult(null)
             }
         })

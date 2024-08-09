@@ -1,6 +1,6 @@
 package com.example.planificadorapp.modelos
 
-data class Validacion(
+data class ValidacionModel(
     val isValid:Boolean = true,
     val mensaje:String? = null
 )

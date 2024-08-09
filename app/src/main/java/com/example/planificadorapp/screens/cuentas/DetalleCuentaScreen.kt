@@ -1,4 +1,4 @@
-package com.example.planificadorapp.componentes.cuentas
+package com.example.planificadorapp.screens.cuentas
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -10,14 +10,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.planificadorapp.modelos.Cuenta
+import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.repositorios.CuentaRepository
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 
 @Composable
-fun DetalleCuentaComposable(cuentaId: Long) {
-    var cuenta by remember { mutableStateOf<Cuenta?>(null) }
+fun DetalleCuentaScreen(navController: NavController, cuentaId: Long) {
+    var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
     val cuentaRepository = remember { CuentaRepository() }
 
     LaunchedEffect(cuentaId) {

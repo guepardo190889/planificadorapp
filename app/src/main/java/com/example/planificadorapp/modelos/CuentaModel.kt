@@ -2,7 +2,7 @@ package com.example.planificadorapp.modelos
 
 import java.time.LocalDateTime
 
-data class Cuenta (
+data class CuentaModel (
     var id:Int? = null,
     val nombre:String,
     val descripcion:String,

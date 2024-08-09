@@ -1,4 +1,4 @@
-package com.example.planificadorapp.componentes.cuentas
+package com.example.planificadorapp.screens.cuentas
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -7,14 +7,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
@@ -27,19 +31,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
-import com.example.planificadorapp.componentes.SnackBarConColor
-import com.example.planificadorapp.modelos.Cuenta
+import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.repositorios.CuentaRepository
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     val cuentaRepository = remember { CuentaRepository() }
-    var cuentas by remember { mutableStateOf<List<Cuenta>>(emptyList()) }
+    var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
 
@@ -57,6 +61,16 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     }
 
     Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Cuentas") },
+                navigationIcon = {
+                    IconButton(onClick = { Log.i("Cuentas", "Menu Clicked") }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menu")
+                    }
+                }
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showDialog = true },
@@ -86,7 +100,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
                             if (cuentaGuardada != null) {
                                 cuentas = cuentas + cuentaGuardada
 
-                                snackbarMessage = "Cuenta guardada exitosamente"
+                                snackbarMessage = "Cuenta guardada exitosamenqte"
                                 snackbarType = "success"
 
                                 println("Cuenta guardada con ID: ${cuentaGuardada.id}")
@@ -112,7 +126,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
 
 @Composable
 fun CuentasList(
-    cuentas: List<Cuenta>,
+    cuentas: List<CuentaModel>,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
@@ -125,7 +139,7 @@ fun CuentasList(
 }
 
 @Composable
-fun CuentaItem(cuenta: Cuenta, navController: NavController) {
+fun CuentaItem(cuenta: CuentaModel, navController: NavController) {
     val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     val fechaFormateada = cuenta.fechaActualizacion?.format(formatter)
     val formattedSaldo = formatCurrency(cuenta.saldo)
