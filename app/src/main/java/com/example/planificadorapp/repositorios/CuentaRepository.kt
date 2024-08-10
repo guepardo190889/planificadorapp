@@ -50,7 +50,10 @@ class CuentaRepository {
 
     fun buscarCuentas(onResult: (List<CuentaModel>?) -> Unit) {
         apiService.buscarCuentas().enqueue(object : Callback<List<CuentaModel>> {
-            override fun onResponse(call: Call<List<CuentaModel>>, response: Response<List<CuentaModel>>) {
+            override fun onResponse(
+                call: Call<List<CuentaModel>>,
+                response: Response<List<CuentaModel>>
+            ) {
                 if (response.isSuccessful) {
                     onResult(response.body())
                 } else {

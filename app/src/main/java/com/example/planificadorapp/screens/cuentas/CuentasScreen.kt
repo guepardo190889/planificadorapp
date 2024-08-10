@@ -61,16 +61,6 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Cuentas") },
-                navigationIcon = {
-                    IconButton(onClick = { Log.i("Cuentas", "Menu Clicked") }) {
-                        Icon(Icons.Default.Menu, contentDescription = "Menu")
-                    }
-                }
-            )
-        },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showDialog = true },

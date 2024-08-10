@@ -10,11 +10,11 @@ import retrofit2.http.Path
 interface ApiService {
 
     @POST("/api/cuentas")
-    fun guardarCuenta(@Body cuenta:CuentaModel):Call<CuentaModel>
+    fun guardarCuenta(@Body cuenta: CuentaModel): Call<CuentaModel>
 
     @GET("api/cuentas/{id}")
     fun obtenerCuentaPorId(@Path("id") id: Long): Call<CuentaModel>
 
     @GET("/api/cuentas")
-    fun buscarCuentas():Call<List<CuentaModel>>
+    fun buscarCuentas(): Call<List<CuentaModel>>
 }

@@ -34,17 +34,22 @@ import androidx.navigation.compose.rememberNavController
 import com.example.planificadorapp.composables.BarraSuperior
 import com.example.planificadorapp.composables.drawer.AppDrawer
 import com.example.planificadorapp.composables.drawer.DrawerItem
+import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.MovimientosScreen
+import com.example.planificadorapp.screens.PortafoliosScreen
+import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun NavegacionController(modifier: Modifier = Modifier,
-                         navController: NavHostController = rememberNavController(),
-                         coroutineScope: CoroutineScope = rememberCoroutineScope(),
-                         drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)) {
+fun NavegacionController(
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+) {
 
     val currentNavBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = currentNavBackStackEntry?.destination?.route ?: DrawerItem.CUENTAS.ruta
@@ -74,28 +79,34 @@ fun NavegacionController(modifier: Modifier = Modifier,
                 }
             ) {
                 NavHost(
-                    navController = navController, startDestination = DrawerItem.CUENTAS.ruta, modifier = modifier.padding(it)
+                    navController = navController,
+                    startDestination = DrawerItem.CUENTAS.ruta,
+                    modifier = modifier.padding(it)
                 ) {
                     composable(DrawerItem.CUENTAS.ruta) {
                         Cuentas(navController)
                     }
+                    composable("detalle/{cuentaId}") {
+                        val cuentaId = it.arguments?.getString("cuentaId")
+
+                        if (cuentaId != null) {
+                            DetalleCuentaScreen(navController, cuentaId.toLong())
+                        }
+                    }
                     composable(DrawerItem.MOVIMIENTO.ruta) {
                         MovimientosScreen(navController)
+                    }
+                    composable(DrawerItem.PORTAFOLIOS.ruta) {
+                        PortafoliosScreen(navController)
+                    }
+                    composable(DrawerItem.REPORTES.ruta) {
+                        ReportesScreen(navController)
+                    }
+                    composable(DrawerItem.CONFIGURACION.ruta) {
+                        ConfiguracionScreen(navController)
                     }
                 }
             }
         }
     )
-//
-//    NavHost(navController = navController, startDestination = "cuentas", modifier = Modifier) {
-//        composable("cuentas") {
-//            Cuentas(navController)
-//        }
-//        composable("detalle/{cuentaId}") { backStackEntry ->
-//            val cuentaId = backStackEntry.arguments?.getString("cuentaId")
-//            cuentaId?.let {
-//                DetalleCuentaScreen(navController, it.toLong())
-//            }
-//        }
-//    }
 }

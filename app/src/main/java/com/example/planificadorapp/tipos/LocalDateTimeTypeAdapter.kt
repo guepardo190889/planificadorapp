@@ -18,6 +18,7 @@ class LocalDateTimeTypeAdapter : TypeAdapter<LocalDateTime>() {
             out.value(value.format(formatter))
         }
     }
+
     @Throws(IOException::class)
     override fun read(`in`: JsonReader): LocalDateTime {
         val value = `in`.nextString()

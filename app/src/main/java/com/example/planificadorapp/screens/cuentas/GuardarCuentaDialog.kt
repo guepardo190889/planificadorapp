@@ -29,7 +29,10 @@ fun GuardarCuentaDialog(onDismiss: () -> Unit, onSave: (CuentaModel) -> Unit) {
         return if (nombre.isBlank()) {
             ValidacionModel(false, "El nombre es requerido")
         } else if (!nombrePattern.matcher(nombre).matches()) {
-            ValidacionModel(false, "El nombre solo puede contener letras, espacios, acentos y números, hasta 32 caracteres")
+            ValidacionModel(
+                false,
+                "El nombre solo puede contener letras, espacios, acentos y números, hasta 32 caracteres"
+            )
         } else {
             ValidacionModel(true)
         }
@@ -39,7 +42,10 @@ fun GuardarCuentaDialog(onDismiss: () -> Unit, onSave: (CuentaModel) -> Unit) {
         return if (descripcion.isBlank()) {
             ValidacionModel(false, "La descripción es requerida")
         } else if (!descripcionPattern.matcher(descripcion).matches()) {
-            ValidacionModel(false, "La descripción solo puede contener letras, espacios y acentos, hasta 128 caracteres")
+            ValidacionModel(
+                false,
+                "La descripción solo puede contener letras, espacios y acentos, hasta 128 caracteres"
+            )
         } else {
             ValidacionModel(true)
         }

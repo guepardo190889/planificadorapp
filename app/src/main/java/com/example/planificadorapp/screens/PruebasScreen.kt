@@ -16,21 +16,21 @@ fun MovimientosScreen(navController: NavController, modifier: Modifier = Modifie
 }
 
 @Composable
-fun PortafoliosScreen(navController: NavController,modifier: Modifier = Modifier) {
+fun PortafoliosScreen(navController: NavController, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         Text("Pantalla de Portafolios")
     }
 }
 
 @Composable
-fun ReportesScreen(navController: NavController,modifier: Modifier = Modifier) {
+fun ReportesScreen(navController: NavController, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         Text("Pantalla de Reportes")
     }
 }
 
 @Composable
-fun ConfiguracionScreen(navController: NavController,modifier: Modifier = Modifier) {
+fun ConfiguracionScreen(navController: NavController, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         Text("Pantalla de Configuración")
     }
