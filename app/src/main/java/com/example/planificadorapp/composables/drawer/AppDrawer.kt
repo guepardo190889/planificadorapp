@@ -41,7 +41,7 @@ fun AppDrawer(
 
         menus.forEach { item ->
             NavigationDrawerItem(
-                icon = { Icon(item.icono, contentDescription = null) },
+                icon = { Icon(item.icono, contentDescription = item.descripcion) },
                 label = { Text(item.titulo) },
                 selected = route == item.ruta,
                 onClick = { onClickMenuItem(item) }
