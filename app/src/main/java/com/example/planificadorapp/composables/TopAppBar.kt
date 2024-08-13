@@ -1,6 +1,7 @@
 package com.example.planificadorapp.composables
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -13,13 +14,18 @@ import androidx.compose.runtime.Composable
 @Composable
 fun BarraSuperior(
     titulo: String,
-    onBarraSuperiorClick: () -> Unit
+    isPantallaPrincipal: Boolean = true,
+    onBarraSuperiorIconClick: () -> Unit
 ) {
     TopAppBar(
         title = { Text(titulo) },
         navigationIcon = {
-            IconButton(onClick = { onBarraSuperiorClick() }) {
-                Icon(Icons.Default.Menu, contentDescription = "Menu")
+            IconButton(onClick = { onBarraSuperiorIconClick() }) {
+                if (isPantallaPrincipal) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menu")
+                } else {
+                    Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Atrás")
+                }
             }
         }
     )
