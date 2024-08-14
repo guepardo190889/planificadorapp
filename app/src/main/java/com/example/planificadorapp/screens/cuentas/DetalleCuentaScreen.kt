@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.repositorios.CuentaRepository
-import java.text.NumberFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -60,7 +59,10 @@ fun DetalleCuentaScreen(navController: NavController, cuentaId: Long) {
                     Text(
                         text = "Última actualización: ${
                             it.fechaActualizacion?.format(
-                                DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", Locale("es", "MX"))
+                                DateTimeFormatter.ofPattern(
+                                    "dd 'de' MMMM 'de' yyyy",
+                                    Locale("es", "MX")
+                                )
                             )
                         }",
                         style = MaterialTheme.typography.bodySmall,
