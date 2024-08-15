@@ -31,6 +31,27 @@ class CuentaRepository {
         })
     }
 
+    fun actualizarCuenta(cuenta: CuentaModel, callback: (CuentaModel?) -> Unit) {
+        val idCuenta: Long? = cuenta.id
+
+        idCuenta?.let {
+            val call = apiService.actualizarCuenta(idCuenta, cuenta)
+            call.enqueue(object : Callback<CuentaModel> {
+                override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
+                    if (response.isSuccessful) {
+                        callback(response.body())
+                    } else {
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
+                    callback(null)
+                }
+            })
+        }
+    }
+
     fun buscarCuentaPorId(id: Long, onResult: (CuentaModel?) -> Unit) {
         val call = ApiClient.apiService.obtenerCuentaPorId(id)
         call.enqueue(object : Callback<CuentaModel> {

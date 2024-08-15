@@ -44,8 +44,8 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     var isLoading by remember { mutableStateOf(true) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     var snackbarMessage by remember { mutableStateOf("") }
     var snackbarType by remember { mutableStateOf("") }
 
