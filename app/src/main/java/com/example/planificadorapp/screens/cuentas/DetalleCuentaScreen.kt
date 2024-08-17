@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.repositorios.CuentaRepository
+import com.example.planificadorapp.repositorios.CuentasRepository
 import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -39,7 +39,7 @@ fun DetalleCuentaScreen(
 ) {
     var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-    val cuentaRepository = remember { CuentaRepository() }
+    val cuentaRepository = remember { CuentasRepository() }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }

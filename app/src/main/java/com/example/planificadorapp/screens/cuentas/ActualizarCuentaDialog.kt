@@ -29,7 +29,11 @@ import com.example.planificadorapp.modelos.ValidacionModel
 import java.util.regex.Pattern
 
 @Composable
-fun ActualizarCuentaDialog(cuenta: CuentaModel, onDismiss: () -> Unit, onUpdate: (CuentaModel) -> Unit) {
+fun ActualizarCuentaDialog(
+    cuenta: CuentaModel,
+    onDismiss: () -> Unit,
+    onUpdate: (CuentaModel) -> Unit
+) {
     var nombre by remember { mutableStateOf(cuenta.nombre) }
     var descripcion by remember { mutableStateOf(cuenta.descripcion) }
     var saldo by remember { mutableStateOf(cuenta.saldo.toString()) }

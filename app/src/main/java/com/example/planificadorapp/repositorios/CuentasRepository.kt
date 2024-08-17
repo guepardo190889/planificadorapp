@@ -7,11 +7,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CuentaRepository {
-    private val apiService = ApiClient.apiService
+/**
+ * Repositorio para interactuar con el servicio de cuentas
+ */
+class CuentasRepository {
+    private val apiService = ApiClient.cuentaService
 
+    /**
+     * Guarda una cuenta en el servidor y devuelve la cuenta guardada
+     */
     fun guardarCuenta(cuenta: CuentaModel, onResult: (CuentaModel?) -> Unit) {
-        val call = ApiClient.apiService.guardarCuenta(cuenta)
+        val call = ApiClient.cuentaService.guardarCuenta(cuenta)
         call.enqueue(object : Callback<CuentaModel> {
             override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 Log.i("CuentaRepository", "Respuesta del servidor: ${response.body()}")
@@ -31,6 +37,9 @@ class CuentaRepository {
         })
     }
 
+    /**
+     * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
+     */
     fun actualizarCuenta(cuenta: CuentaModel, callback: (CuentaModel?) -> Unit) {
         val idCuenta: Long? = cuenta.id
 
@@ -52,8 +61,11 @@ class CuentaRepository {
         }
     }
 
+    /**
+     * Busca una cuenta por su ID en el servidor y devuelve la cuenta encontrada
+     */
     fun buscarCuentaPorId(id: Long, onResult: (CuentaModel?) -> Unit) {
-        val call = ApiClient.apiService.obtenerCuentaPorId(id)
+        val call = ApiClient.cuentaService.obtenerCuentaPorId(id)
         call.enqueue(object : Callback<CuentaModel> {
             override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 if (response.isSuccessful) {
@@ -69,6 +81,9 @@ class CuentaRepository {
         })
     }
 
+    /**
+     * Busca todas las cuentas en el servidor y devuelve una lista de cuentas encontradas
+     */
     fun buscarCuentas(onResult: (List<CuentaModel>?) -> Unit) {
         apiService.buscarCuentas().enqueue(object : Callback<List<CuentaModel>> {
             override fun onResponse(

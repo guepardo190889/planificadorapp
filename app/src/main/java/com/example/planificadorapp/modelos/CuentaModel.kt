@@ -2,6 +2,9 @@ package com.example.planificadorapp.modelos
 
 import java.time.LocalDateTime
 
+/**
+ * Modelo de datos para representar una cuenta
+ */
 data class CuentaModel(
     var id: Long? = null,
     val nombre: String,

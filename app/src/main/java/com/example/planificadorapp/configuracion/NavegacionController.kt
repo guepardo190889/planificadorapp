@@ -25,10 +25,10 @@ import com.example.planificadorapp.composables.drawer.AppDrawer
 import com.example.planificadorapp.composables.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.MovimientosScreen
-import com.example.planificadorapp.screens.PortafoliosScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
+import com.example.planificadorapp.screens.portafolios.Portafolios
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -107,7 +107,7 @@ fun NavegacionController(
                         MovimientosScreen(navController)
                     }
                     composable(Ruta.PORTAFOLIOS.ruta) {
-                        PortafoliosScreen(navController)
+                        Portafolios(navController)
                     }
                     composable(Ruta.REPORTES.ruta) {
                         ReportesScreen(navController)

@@ -8,7 +8,10 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
-interface ApiService {
+/**
+ * Interfaz que define los métodos para interactuar con el servicio de cuentas
+ */
+interface CuentasService {
 
     @POST("/api/cuentas")
     fun guardarCuenta(@Body cuenta: CuentaModel): Call<CuentaModel>
@@ -20,5 +23,5 @@ interface ApiService {
     fun buscarCuentas(): Call<List<CuentaModel>>
 
     @PUT("/api/cuentas/{id}")
-    fun actualizarCuenta(@Path("id")id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
+    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
 }

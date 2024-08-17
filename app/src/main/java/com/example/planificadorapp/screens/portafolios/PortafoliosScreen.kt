@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.cuentas
+package com.example.planificadorapp.screens.portafolios
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -24,25 +24,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.repositorios.CuentasRepository
-import kotlinx.coroutines.launch
+import com.example.planificadorapp.modelos.PortafolioModel
+import com.example.planificadorapp.repositorios.PortafoliosRepository
 import java.text.NumberFormat
-import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Composable que representa la pantalla de portafolios
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
-    val cuentaRepository = remember { CuentasRepository() }
-    var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
+    val portafolioRepository = remember { PortafoliosRepository() }
+    var portafolios by remember { mutableStateOf<List<PortafolioModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-    var showDialog by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -50,9 +51,9 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     var snackbarType by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        cuentaRepository.buscarCuentas { result ->
-            Log.i("Cuentas", "Cuentas encontradas: $result")
-            cuentas = result ?: emptyList()
+        portafolioRepository.buscarPortafolios { result ->
+            Log.i("Portafolios", "Portafolios encontrados: $result")
+            portafolios = result ?: emptyList()
             isLoading = false
         }
     }
@@ -60,10 +61,11 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
-                modifier = Modifier.padding(16.dp)
+                onClick = { Log.i("Mensaje", "Aquí se debe comenzar el wizard para crear un nuevo portafolio") },
+                modifier = Modifier.padding(16.dp),
+                containerColor = Color(0xFF88C6F5)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
+                Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
             }
         },
         snackbarHost = {
@@ -77,76 +79,45 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
-            CuentasList(cuentas, navController, Modifier.padding(16.dp))
+            PortafoliosList(portafolios, navController, Modifier.padding(16.dp))
 
-            if (showDialog) {
-                GuardarCuentaDialog(
-                    onDismiss = { showDialog = false },
-                    onSave = { nuevaCuenta ->
-                        cuentaRepository.guardarCuenta(nuevaCuenta) { cuentaGuardada ->
-                            if (cuentaGuardada != null) {
-                                cuentas = cuentas + cuentaGuardada
 
-                                snackbarMessage = "Cuenta guardada exitosamenqte"
-                                snackbarType = "success"
-
-                                println("Cuenta guardada con ID: ${cuentaGuardada.id}")
-                            } else {
-                                snackbarMessage = "Error al guardar la cuenta"
-                                snackbarType = "error"
-
-                                println("Error al guardar la cuenta o fallo en la conexión")
-                            }
-
-                            coroutineScope.launch {
-                                snackbarHostState.showSnackbar(snackbarMessage)
-                            }
-                        }
-
-                        showDialog = false
-                    }
-                )
-            }
         }
     }
 }
 
 @Composable
-fun CuentasList(
-    cuentas: List<CuentaModel>,
+fun PortafoliosList(
+    portafolios: List<PortafolioModel>,
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        cuentas.forEach { cuenta ->
-            CuentaItem(cuenta, navController)
-            HorizontalDivider()
+        portafolios.forEach { portafolio ->
+            PortafolioItem(portafolio, navController)
+            HorizontalDivider(color = Color(0xFFC2C2C2))
         }
     }
 }
 
 @Composable
-fun CuentaItem(cuenta: CuentaModel, navController: NavController) {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val fechaFormateada = cuenta.fechaActualizacion?.format(formatter)
-    val formattedSaldo = formatCurrency(cuenta.saldo)
-
+fun PortafolioItem(portafolio: PortafolioModel, navController: NavController) {
     ListItem(
         headlineContent = {
-            Text(text = cuenta.nombre)
+            Text(text = portafolio.nombre, color = Color(0xFF000000))
         },
-        supportingContent = { Text(formattedSaldo) },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_account_balance_24),
                 contentDescription = "Localized description",
+                tint = Color(0xFF88C6F5)
             )
         },
-        trailingContent = { Text(fechaFormateada ?: "") },
+        trailingContent = { Text("$100,000.00", color = Color(0xFFC2C2C2)) },
         modifier = Modifier
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("detalle/${cuenta.id}")
+                Log.i("Mensaje", "Aquí se debe ir al detalle de un portafolio")
             }
     )
 }
@@ -155,4 +126,3 @@ fun formatCurrency(amount: Double): String {
     val format: NumberFormat = NumberFormat.getCurrencyInstance(Locale("es", "MX"))
     return format.format(amount)
 }
-
