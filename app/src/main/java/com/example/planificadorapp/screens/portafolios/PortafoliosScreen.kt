@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
 import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.configuracion.Ruta
 import com.example.planificadorapp.modelos.PortafolioModel
 import com.example.planificadorapp.repositorios.PortafoliosRepository
 import java.text.NumberFormat
@@ -61,7 +62,9 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { Log.i("Mensaje", "Aquí se debe comenzar el wizard para crear un nuevo portafolio") },
+                onClick = {
+                    navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_UNO.ruta)
+                },
                 modifier = Modifier.padding(16.dp),
                 containerColor = Color(0xFF88C6F5)
             ) {
@@ -80,8 +83,6 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             PortafoliosList(portafolios, navController, Modifier.padding(16.dp))
-
-
         }
     }
 }
