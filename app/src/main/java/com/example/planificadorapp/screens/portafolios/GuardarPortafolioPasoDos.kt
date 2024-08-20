@@ -1,17 +1,20 @@
 package com.example.planificadorapp.screens.portafolios
 
 import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,8 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.planificadorapp.configuracion.Ruta
 import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 
@@ -39,6 +44,7 @@ fun GuardarPortafolioPasoDos(navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var activosSeleccionados by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
+    var mostrarDialogoActivos by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         Log.i("GuardarPortafolioPasoDos", "Cargando activos...")
@@ -51,17 +57,19 @@ fun GuardarPortafolioPasoDos(navController: NavController) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
+                modifier = Modifier.fillMaxWidth(),
                 content = {
-                    Column {
-                        IconButton(onClick = { navController.popBackStack() }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        IconButton(onClick = {
-                            navController.navigate("/portafolios/guardar/pasotres")
-                        }) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = { navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_TRES.ruta) }
+                        ) {
                             Icon(
-                                Icons.AutoMirrored.Filled.ArrowForward,
+                                Icons.AutoMirrored.Default.ArrowForward,
                                 contentDescription = "Siguiente"
                             )
                         }
@@ -77,13 +85,31 @@ fun GuardarPortafolioPasoDos(navController: NavController) {
         ) {
             Text(text = "Activos", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             ActivosSeleccionadosList(
-                activosSeleccionados = activosSeleccionados
+                activosSeleccionados = activosSeleccionados,
+                onEliminarActivoSeleccionado = {
+                    activosSeleccionados = activosSeleccionados - it
+                }
             )
-            Button(onClick = { /* Agregar un nuevo activo */ },
-                modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Button(
+                onClick = {
+                    mostrarDialogoActivos = true
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
                 Text("Agregar")
             }
+        }
+
+        if (mostrarDialogoActivos) {
+            ActivosListaDialogo(activos = activos,
+                onActivoSeleccionado = { activoSeleccionado ->
+                    activosSeleccionados = activosSeleccionados + activoSeleccionado
+                    mostrarDialogoActivos = false
+                },
+                onDismissRequest = { mostrarDialogoActivos = false }
+            )
         }
     }
 }
@@ -94,11 +120,12 @@ fun GuardarPortafolioPasoDos(navController: NavController) {
 @Composable
 fun ActivosSeleccionadosList(
     activosSeleccionados: List<ActivoModel>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEliminarActivoSeleccionado: (ActivoModel) -> Unit
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         activosSeleccionados.forEach { activo ->
-            ActivoSeleccionadoItem(activo)
+            ActivoSeleccionadoItem(activo, onEliminarActivoSeleccionado)
             HorizontalDivider()
         }
     }
@@ -108,32 +135,48 @@ fun ActivosSeleccionadosList(
  * Composable que muestra un ítem de activo seleccionado
  */
 @Composable
-fun ActivoSeleccionadoItem(activoSeleccionado: ActivoModel) {
+fun ActivoSeleccionadoItem(
+    activoSeleccionado: ActivoModel,
+    onEliminarActivoSeleccionado: (ActivoModel) -> Unit
+) {
+    var sliderPosition by remember { mutableStateOf(activoSeleccionado.porcentaje) }
+
     ListItem(
-        headlineContent = { Text(text = activoSeleccionado.nombre) },
+        headlineContent = {
+            Text(text = activoSeleccionado.nombre, style = MaterialTheme.typography.bodyLarge)
+        },
         supportingContent = {
-            Column {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Slider(
-                    value = activoSeleccionado.porcentaje,
-                    onValueChange = { newValue ->
-                        //TODO: Actualizar el valor del activo seleccionado
+                    modifier = Modifier.weight(1f),
+                    value = sliderPosition,
+                    onValueChange = {
+                        sliderPosition = it
+                        activoSeleccionado.porcentaje = it
                     },
-                    valueRange = 0f..100f,
-                    modifier = Modifier.fillMaxWidth()
+                    valueRange = 0f..100f
                 )
+                Spacer(modifier = Modifier.width(8.dp))
                 OutlinedTextField(
-                    value = activoSeleccionado.porcentaje.toString(),
-                    onValueChange = { newValue ->
-                        //TODO: Actualizar el valor del activo seleccionado
+                    modifier = Modifier.width(80.dp),
+                    value = sliderPosition.toInt().toString(),
+                    onValueChange = {
+                        val intValue = it.toIntOrNull()?.coerceIn(0, 100) ?: sliderPosition.toInt()
+                        sliderPosition = intValue.toFloat()
+                        activoSeleccionado.porcentaje = sliderPosition
                     },
                     label = { Text("%") },
-                    modifier = Modifier.fillMaxWidth()
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
             }
         },
         trailingContent = {
             IconButton(onClick = {
-                //TODO: Eliminar el activo seleccionado
+                onEliminarActivoSeleccionado(activoSeleccionado)
             }) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar Activo")
             }

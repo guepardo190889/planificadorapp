@@ -2,13 +2,16 @@ package com.example.planificadorapp.screens.portafolios
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.configuracion.Ruta
@@ -38,18 +42,17 @@ fun GuardarPortafolioPasoUno(navController: NavController) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
+                modifier = Modifier.fillMaxWidth(),
                 content = {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        IconButton(onClick = {
-                            navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_DOS.ruta)
-                        }) {
+                    Row(modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        FloatingActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = { navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_DOS.ruta) }
+                        ) {
                             Icon(
-                                Icons.AutoMirrored.Filled.ArrowForward,
+                                Icons.AutoMirrored.Default.ArrowForward,
                                 contentDescription = "Siguiente"
                             )
                         }
@@ -65,19 +68,38 @@ fun GuardarPortafolioPasoUno(navController: NavController) {
         ) {
             Text(text = "Generales", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+
             OutlinedTextField(
                 value = nombre,
-                onValueChange = { if (it.length <= 32) nombre = it },
+                onValueChange = { if (it.length <= 20) nombre = it },
                 label = { Text("Nombre") },
                 singleLine = true,
-                modifier = Modifier.fillMaxWidth()
+                textStyle = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text(
+                        text = "${nombre.length}/20",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
+                    )
+                }
             )
-            Spacer(modifier = Modifier.height(16.dp))
+
             OutlinedTextField(
                 value = descripcion,
                 onValueChange = { if (it.length <= 256) descripcion = it },
                 label = { Text("Descripción") },
-                modifier = Modifier.fillMaxWidth()
+                textStyle = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.fillMaxWidth(),
+                supportingText = {
+                    Text(
+                        text = "${descripcion.length}/256",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
+                    )
+                }
             )
         }
     }
