@@ -103,7 +103,12 @@ fun GuardarPortafolioPasoDos(navController: NavController) {
         }
 
         if (mostrarDialogoActivos) {
-            ActivosListaDialogo(activos = activos,
+            val activosDisponibles = activos.filterNot {
+                activo ->
+                activosSeleccionados.any { it.id == activo.id }
+            }
+
+            ActivosListaDialogo(activos = activosDisponibles,
                 onActivoSeleccionado = { activoSeleccionado ->
                     activosSeleccionados = activosSeleccionados + activoSeleccionado
                     mostrarDialogoActivos = false

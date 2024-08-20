@@ -117,6 +117,12 @@ fun NavegacionController(
                     composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_DOS.ruta){
                         GuardarPortafolioPasoDos(navController)
                     }
+                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_TRES.ruta){
+                        GuardarPortafolioPasoTres(navController)
+                    }
+                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_RESUMEN.ruta){
+                        //GuardarPortafolioPasoResumen(navController)
+                    }
 
                     composable(Ruta.REPORTES.ruta) {
                         ReportesScreen(navController)
