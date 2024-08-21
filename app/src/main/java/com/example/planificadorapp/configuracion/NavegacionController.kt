@@ -28,9 +28,8 @@ import com.example.planificadorapp.screens.MovimientosScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
-import com.example.planificadorapp.screens.portafolios.GuardarPortafolioPasoDos
-import com.example.planificadorapp.screens.portafolios.GuardarPortafolioPasoUno
 import com.example.planificadorapp.screens.portafolios.Portafolios
+import com.example.planificadorapp.screens.portafolios.guardado.GuardarPortafolio
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -111,19 +110,9 @@ fun NavegacionController(
                     composable(Ruta.PORTAFOLIOS.ruta) {
                         Portafolios(navController)
                     }
-                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_UNO.ruta){
-                        GuardarPortafolioPasoUno(navController)
+                    composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
+                        GuardarPortafolio(modifier, navController)
                     }
-                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_DOS.ruta){
-                        GuardarPortafolioPasoDos(navController)
-                    }
-                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_TRES.ruta){
-                        GuardarPortafolioPasoTres(navController)
-                    }
-                    composable(Ruta.PORTAFOLIOS_GUARDAR_PASO_RESUMEN.ruta){
-                        //GuardarPortafolioPasoResumen(navController)
-                    }
-
                     composable(Ruta.REPORTES.ruta) {
                         ReportesScreen(navController)
                     }

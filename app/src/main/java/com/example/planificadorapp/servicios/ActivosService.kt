@@ -7,7 +7,7 @@ import retrofit2.http.GET
 /**
  * Interfaz que define los métodos para interactuar con el servicio de activos
  */
-interface ActivosService{
+interface ActivosService {
 
     /**
      * Busca los portafolios en el servidor y devuelve una lista de ActivoModel

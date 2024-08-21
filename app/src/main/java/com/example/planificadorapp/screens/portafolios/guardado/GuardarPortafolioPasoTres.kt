@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.portafolios
+package com.example.planificadorapp.screens.portafolios.guardado
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
@@ -21,13 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.configuracion.Ruta
 import com.example.planificadorapp.modelos.ActivoModel
 
 @Composable
 fun GuardarPortafolioPasoTres(
     activosSeleccionados: List<ActivoModel>,
-    navController: NavController
+    onAtrasClick: () -> Unit,
+    onSiguienteClick: () -> Unit
 ) {
     Scaffold(
         bottomBar = {
@@ -41,7 +42,21 @@ fun GuardarPortafolioPasoTres(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
-                            onClick = { navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_RESUMEN.ruta) }
+                            onClick = {
+                                onAtrasClick()
+                            }
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Default.ArrowForward,
+                                contentDescription = "Siguiente"
+                            )
+                        }
+
+                        FloatingActionButton(
+                            modifier = Modifier.padding(16.dp),
+                            onClick = {
+                                onSiguienteClick()
+                            }
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Default.ArrowForward,
@@ -62,7 +77,7 @@ fun GuardarPortafolioPasoTres(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             activosSeleccionados.forEach { activo ->
-                ActivoCard(activo = activo, navController = navController)
+                ActivoCard(activo)
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             }
         }
@@ -70,23 +85,23 @@ fun GuardarPortafolioPasoTres(
 }
 
 @Composable
-fun ActivoCard(activo: ActivoModel, navController: NavController) {
+fun ActivoCard(activo: ActivoModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
+        Column(modifier = Modifier.padding(16.dp).fillMaxWidth()) {
             Text(
                 text = activo.nombre,
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            IconButton(
+            Button(
                 onClick = {
-                    // Navegar a la pantalla para agregar cuentas relacionadas al activo
+                    //mostrar diálogo para listar cuentas disponibles
                 },
-                modifier = Modifier.align(Alignment.End)
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Agregar")
             }

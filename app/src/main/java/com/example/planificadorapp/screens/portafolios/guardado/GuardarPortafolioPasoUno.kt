@@ -1,20 +1,16 @@
-package com.example.planificadorapp.screens.portafolios
+package com.example.planificadorapp.screens.portafolios.guardado
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -28,28 +24,36 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import com.example.planificadorapp.configuracion.Ruta
 
 /**
- * Composable que representa la pantalla del primer paso en el guardado de un portafolio. El primer paso consiste en ingresar los datos generales del portafolio.
+ * Composable que representa la pantalla del primer paso en el guardado de un portafolio.
+ * El primer paso consiste en ingresar los datos generales del portafolio.
  */
 @Composable
-fun GuardarPortafolioPasoUno(navController: NavController) {
-    var nombre by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
+fun GuardarPortafolioPasoUno(
+    modifier: Modifier = Modifier,
+    nombre: String,
+    descripcion: String,
+    onSiguienteClick: (String, String) -> Unit
+) {
+    var nombrePasoUno by remember { mutableStateOf(nombre) }
+    var descripcionPasoUno by remember { mutableStateOf(descripcion) }
 
     Scaffold(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 content = {
-                    Row(modifier = Modifier.fillMaxWidth(),
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically) {
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
-                            onClick = { navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_DOS.ruta) }
+                            onClick = {
+                                onSiguienteClick(nombrePasoUno, descripcionPasoUno)
+                            }
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Default.ArrowForward,
@@ -70,15 +74,19 @@ fun GuardarPortafolioPasoUno(navController: NavController) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             OutlinedTextField(
-                value = nombre,
-                onValueChange = { if (it.length <= 20) nombre = it },
+                value = nombrePasoUno,
+                onValueChange = {
+                    if (it.length <= 20) {
+                        nombrePasoUno = it
+                    }
+                },
                 label = { Text("Nombre") },
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     Text(
-                        text = "${nombre.length}/20",
+                        text = "${nombrePasoUno.length}/20",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
@@ -87,14 +95,18 @@ fun GuardarPortafolioPasoUno(navController: NavController) {
             )
 
             OutlinedTextField(
-                value = descripcion,
-                onValueChange = { if (it.length <= 256) descripcion = it },
+                value = descripcionPasoUno,
+                onValueChange = {
+                    if (it.length <= 256) {
+                        descripcionPasoUno = it
+                    }
+                },
                 label = { Text("Descripción") },
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     Text(
-                        text = "${descripcion.length}/256",
+                        text = "${descripcionPasoUno.length}/256",
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End

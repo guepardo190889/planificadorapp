@@ -63,7 +63,7 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Ruta.PORTAFOLIOS_GUARDAR_PASO_UNO.ruta)
+                    navController.navigate(Ruta.PORTAFOLIOS_GUARDAR.ruta)
                 },
                 modifier = Modifier.padding(16.dp),
                 containerColor = Color(0xFF88C6F5)
