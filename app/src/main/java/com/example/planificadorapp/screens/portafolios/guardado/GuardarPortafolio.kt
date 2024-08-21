@@ -10,7 +10,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.repositorios.ActivosRepository
+import com.example.planificadorapp.repositorios.CuentasRepository
 
 /**
  * Composable que representa la pantalla de guardado de un portafolio
@@ -18,6 +20,8 @@ import com.example.planificadorapp.repositorios.ActivosRepository
 @Composable
 fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
+    val cuentasRepository = remember {CuentasRepository()}
+
     var pasoActual: PasoWizard by remember { mutableStateOf(PasoWizard.PASO_UNO) }
 
     //Paso Uno
@@ -28,6 +32,9 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var activosSeleccionados by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var totalPorcentaje by remember { mutableStateOf(0) }
+
+    //Paso Tres
+    var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     Log.i("GuardarPortafolio", "Paso actual: $pasoActual")
 
@@ -70,6 +77,13 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
         }
 
         PasoWizard.PASO_TRES -> {
+            LaunchedEffect(Unit) {
+                Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
+                cuentasRepository.buscarCuentas { result ->
+                    cuentas = result ?: emptyList()
+                }
+            }
+
             GuardarPortafolioPasoTres(
                 activosSeleccionados,
                 onAtrasClick = {
