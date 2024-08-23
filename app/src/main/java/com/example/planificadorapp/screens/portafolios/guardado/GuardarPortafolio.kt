@@ -100,6 +100,19 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
             )
         }
 
-        PasoWizard.PASO_RESUMEN -> TODO()
+        PasoWizard.PASO_RESUMEN -> {
+            GuardarPortafolioResumen(
+                modifier,
+                nombre,
+                descripcion,
+                composiciones,
+                onAtrasClick = {
+                    pasoActual = PasoWizard.PASO_TRES
+                },
+                onGuardarClick = {
+                    Log.i("GuardarPortafolio", "Guardando portafolio...")
+                }
+            )
+        }
     }
 }

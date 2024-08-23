@@ -39,6 +39,24 @@ fun GuardarPortafolioPasoUno(
     var nombrePasoUno by remember { mutableStateOf(nombre) }
     var descripcionPasoUno by remember { mutableStateOf(descripcion) }
 
+    var isNombreValido by remember { mutableStateOf(true) }
+
+    /**
+     * Función que valida si un nombre es válido
+     */
+    fun validarNombre(nombre: String): Boolean {
+        return !nombre.isNullOrBlank()
+    }
+
+    /**
+     * Función que valida la pantalla actual
+     */
+    fun validarPantalla(): Boolean {
+        isNombreValido = validarNombre(nombrePasoUno);
+
+        return isNombreValido
+    }
+
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -52,7 +70,9 @@ fun GuardarPortafolioPasoUno(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onSiguienteClick(nombrePasoUno, descripcionPasoUno)
+                                if (validarPantalla()) {
+                                    onSiguienteClick(nombrePasoUno, descripcionPasoUno)
+                                }
                             }
                         ) {
                             Icon(
@@ -76,15 +96,23 @@ fun GuardarPortafolioPasoUno(
             OutlinedTextField(
                 value = nombrePasoUno,
                 onValueChange = {
+                    isNombreValido = validarNombre(it)
+
                     if (it.length <= 20) {
                         nombrePasoUno = it
                     }
                 },
                 label = { Text("Nombre") },
+                isError = !isNombreValido,
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
+                    if (!isNombreValido) {
+                        Text(
+                            text = "El nombre es requerido",
+                        )
+                    }
                     Text(
                         text = "${nombrePasoUno.length}/20",
                         style = MaterialTheme.typography.bodySmall,
