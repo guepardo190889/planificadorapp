@@ -13,12 +13,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.CuentaModel
 
 @Composable
-fun ActivosListaDialogo(
-    activos: List<ActivoModel>,
-    onActivoSeleccionado: (ActivoModel) -> Unit,
+fun SeleccionarCuentaDialogo(
+    cuentas: List<CuentaModel>,
+    onCuentaSeleccionada: (CuentaModel) -> Unit,
     onDismissRequest: () -> Unit
 ) {
     AlertDialog(
@@ -30,13 +30,13 @@ fun ActivosListaDialogo(
         },
         text = {
             Column {
-                Text(text = "Selecciona un Activo", style = MaterialTheme.typography.headlineSmall)
+                Text(text = "Selecciona una Cuenta", style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                activos.forEach { activo ->
+                cuentas.forEach { cuenta ->
                     ListItem(
-                        headlineContent = { Text(text = activo.nombre) },
+                        headlineContent = { Text(text = cuenta.nombre) },
                         modifier = Modifier.clickable {
-                            onActivoSeleccionado(activo)
+                            onCuentaSeleccionada(cuenta)
                         }
                     )
                     HorizontalDivider()

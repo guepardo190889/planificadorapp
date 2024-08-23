@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.GuardarComposicionModel
 
 /**
  * Composable que representa la pantalla del segundo paso en el guardado de un portafolio.
@@ -44,14 +45,14 @@ import com.example.planificadorapp.modelos.ActivoModel
 fun GuardarPortafolioPasoDos(
     modifier: Modifier = Modifier,
     activos: List<ActivoModel>,
-    activosSeleccionados: List<ActivoModel>,
+    composiciones: List<GuardarComposicionModel>,
     totalPorcentaje: Int,
-    onAtrasClick: (List<ActivoModel>, Int) -> Unit,
-    onSiguienteClick: (List<ActivoModel>, Int) -> Unit
+    onAtrasClick: (List<GuardarComposicionModel>, Int) -> Unit,
+    onSiguienteClick: (List<GuardarComposicionModel>, Int) -> Unit
 ) {
-    var activosSeleccionadosPasoDos by remember {
+    var composicionesPasoDos by remember {
         mutableStateOf(
-            activosSeleccionados
+            composiciones
         )
     }
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
@@ -70,7 +71,7 @@ fun GuardarPortafolioPasoDos(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onAtrasClick(activosSeleccionadosPasoDos, totalPorcentajePasoDos)
+                                onAtrasClick(composicionesPasoDos, totalPorcentajePasoDos)
                             }
                         ) {
                             Icon(
@@ -82,7 +83,10 @@ fun GuardarPortafolioPasoDos(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onSiguienteClick(activosSeleccionadosPasoDos, totalPorcentajePasoDos)
+                                onSiguienteClick(
+                                    composicionesPasoDos,
+                                    totalPorcentajePasoDos
+                                )
                             }
                         ) {
                             Icon(
@@ -100,17 +104,17 @@ fun GuardarPortafolioPasoDos(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text(text = "Activos", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Composición", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            ActivosSeleccionadosList(
-                activosSeleccionados = activosSeleccionadosPasoDos,
-                onEliminarActivoSeleccionado = {
-                    activosSeleccionadosPasoDos = activosSeleccionadosPasoDos - it
-                    totalPorcentajePasoDos = sumarPorcentajes(activosSeleccionadosPasoDos)
+            ComposicionesList(
+                composiciones = composicionesPasoDos,
+                onEliminarComposicion = {
+                    composicionesPasoDos = composicionesPasoDos - it
+                    totalPorcentajePasoDos = sumarPorcentajes(composicionesPasoDos)
                 },
                 onPorcentajeCambiado = {
-                    totalPorcentajePasoDos = sumarPorcentajes(activosSeleccionadosPasoDos)
+                    totalPorcentajePasoDos = sumarPorcentajes(composicionesPasoDos)
                 }
             )
             Spacer(modifier = Modifier.height(8.dp))
@@ -137,12 +141,16 @@ fun GuardarPortafolioPasoDos(
 
         if (mostrarDialogoActivos) {
             val activosDisponibles = activos.filterNot { activo ->
-                activosSeleccionados.any { it.id == activo.id }
+                composicionesPasoDos.any { it.idActivo == activo.id }
             }
 
-            ActivosListaDialogo(activos = activosDisponibles,
+            SeleccionarActivoDialogo(
+                activosDisponibles,
                 onActivoSeleccionado = { activoSeleccionado ->
-                    activosSeleccionadosPasoDos = activosSeleccionadosPasoDos + activoSeleccionado
+                    composicionesPasoDos = composicionesPasoDos + GuardarComposicionModel(
+                        activoSeleccionado.id,
+                        activoSeleccionado.nombre
+                    )
                     mostrarDialogoActivos = false
                 },
                 onDismissRequest = { mostrarDialogoActivos = false }
@@ -155,18 +163,18 @@ fun GuardarPortafolioPasoDos(
  * Composable que muestra una lista de activos seleccionados
  */
 @Composable
-fun ActivosSeleccionadosList(
-    activosSeleccionados: List<ActivoModel>,
+fun ComposicionesList(
+    composiciones: List<GuardarComposicionModel>,
     modifier: Modifier = Modifier,
-    onEliminarActivoSeleccionado: (ActivoModel) -> Unit,
+    onEliminarComposicion: (GuardarComposicionModel) -> Unit,
     onPorcentajeCambiado: () -> Unit
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        activosSeleccionados.forEach { activo ->
-            ActivoSeleccionadoItem(
-                activo,
-                onEliminarActivoSeleccionado,
-                onPorcentajeCambiado = onPorcentajeCambiado
+        composiciones.forEach { composicion ->
+            ComposicionItem(
+                composicion,
+                onEliminarComposicion,
+                onPorcentajeCambiado
             )
             HorizontalDivider()
         }
@@ -174,19 +182,19 @@ fun ActivosSeleccionadosList(
 }
 
 /**
- * Composable que muestra un ítem de activo seleccionado
+ * Composable que muestra la lista de composiciones
  */
 @Composable
-fun ActivoSeleccionadoItem(
-    activoSeleccionado: ActivoModel,
-    onEliminarActivoSeleccionado: (ActivoModel) -> Unit,
+fun ComposicionItem(
+    composicion: GuardarComposicionModel,
+    onEliminarComposicion: (GuardarComposicionModel) -> Unit,
     onPorcentajeCambiado: () -> Unit
 ) {
-    var sliderPosition by remember { mutableStateOf(activoSeleccionado.porcentaje) }
+    var posicionSlider by remember { mutableStateOf(composicion.porcentaje) }
 
     ListItem(
         headlineContent = {
-            Text(text = activoSeleccionado.nombre, style = MaterialTheme.typography.bodyLarge)
+            Text(text = composicion.nombreActivo, style = MaterialTheme.typography.bodyLarge)
         },
         supportingContent = {
             Row(
@@ -195,10 +203,10 @@ fun ActivoSeleccionadoItem(
             ) {
                 Slider(
                     modifier = Modifier.fillMaxWidth(0.7f),
-                    value = sliderPosition,
+                    value = posicionSlider,
                     onValueChange = {
-                        sliderPosition = it
-                        activoSeleccionado.porcentaje = it
+                        posicionSlider = it
+                        composicion.porcentaje = it
                         onPorcentajeCambiado()
                     },
                     valueRange = 0f..100f
@@ -208,14 +216,13 @@ fun ActivoSeleccionadoItem(
                     modifier = Modifier
                         .width(46.dp)
                         .height(46.dp),
-                    value = sliderPosition.toInt().toString(),
+                    value = posicionSlider.toInt().toString(),
                     onValueChange = {
-                        val intValue = it.toIntOrNull()?.coerceIn(0, 100) ?: sliderPosition.toInt()
-                        sliderPosition = intValue.toFloat()
-                        activoSeleccionado.porcentaje = sliderPosition
+                        val intValue = it.toIntOrNull()?.coerceIn(0, 100) ?: posicionSlider.toInt()
+                        posicionSlider = intValue.toFloat()
+                        composicion.porcentaje = posicionSlider
                         onPorcentajeCambiado()
                     },
-                    //label = { Text("%") },
                     singleLine = true,
                     textStyle = MaterialTheme.typography.bodySmall,
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
@@ -225,7 +232,7 @@ fun ActivoSeleccionadoItem(
         },
         trailingContent = {
             IconButton(onClick = {
-                onEliminarActivoSeleccionado(activoSeleccionado)
+                onEliminarComposicion(composicion)
             }) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar Activo")
             }
@@ -234,6 +241,6 @@ fun ActivoSeleccionadoItem(
     HorizontalDivider()
 }
 
-fun sumarPorcentajes(activos: List<ActivoModel>): Int {
+fun sumarPorcentajes(activos: List<GuardarComposicionModel>): Int {
     return activos.sumOf { it.porcentaje.toDouble() }.toInt()
 }

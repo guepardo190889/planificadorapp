@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.GuardarComposicionModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 
@@ -20,7 +21,7 @@ import com.example.planificadorapp.repositorios.CuentasRepository
 @Composable
 fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
-    val cuentasRepository = remember {CuentasRepository()}
+    val cuentasRepository = remember { CuentasRepository() }
 
     var pasoActual: PasoWizard by remember { mutableStateOf(PasoWizard.PASO_UNO) }
 
@@ -30,7 +31,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
 
     //Paso Dos
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
-    var activosSeleccionados by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
+    var composiciones by remember { mutableStateOf<List<GuardarComposicionModel>>(emptyList()) }
     var totalPorcentaje by remember { mutableStateOf(0) }
 
     //Paso Tres
@@ -61,15 +62,15 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
             GuardarPortafolioPasoDos(
                 modifier,
                 activos,
-                activosSeleccionados,
+                composiciones,
                 totalPorcentaje,
                 onAtrasClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
-                    activosSeleccionados = activosSeleccionadosPortafolio
+                    composiciones = activosSeleccionadosPortafolio
                     totalPorcentaje = totalPorcentajePortafolio
                     pasoActual = PasoWizard.PASO_UNO
                 },
                 onSiguienteClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
-                    activosSeleccionados = activosSeleccionadosPortafolio
+                    composiciones = activosSeleccionadosPortafolio
                     totalPorcentaje = totalPorcentajePortafolio
                     pasoActual = PasoWizard.PASO_TRES
                 }
@@ -85,15 +86,20 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
             }
 
             GuardarPortafolioPasoTres(
-                activosSeleccionados,
-                onAtrasClick = {
+                modifier,
+                composiciones,
+                cuentas,
+                onAtrasClick = { composicionesPasoTres ->
+                    composiciones = composicionesPasoTres
                     pasoActual = PasoWizard.PASO_DOS
                 },
-                onSiguienteClick = {
+                onSiguienteClick = { composicionesPasoTres ->
+                    composiciones = composicionesPasoTres
                     pasoActual = PasoWizard.PASO_RESUMEN
                 }
             )
         }
+
         PasoWizard.PASO_RESUMEN -> TODO()
     }
 }

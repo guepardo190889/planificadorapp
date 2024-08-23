@@ -6,7 +6,7 @@ import java.time.LocalDateTime
  * Modelo de datos para representar una cuenta
  */
 data class CuentaModel(
-    var id: Long? = null,
+    var id: Long = 0,
     val nombre: String,
     val descripcion: String,
     val saldo: Double,
