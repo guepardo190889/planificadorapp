@@ -1,5 +1,6 @@
 package com.example.planificadorapp.screens.portafolios.guardado
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,12 +9,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
 import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.modelos.GuardarComposicionModel
 
@@ -40,7 +45,14 @@ fun GuardarPortafolioPasoTres(
         mutableStateOf(composiciones)
     }
 
-    var idCuentasSeleccionadas: List<Long> by remember { mutableStateOf(emptyList()) }
+    var mostrarDialogoComposicionesSinCUentas by remember { mutableStateOf(false) }
+
+    /**
+     *
+     */
+    fun alMenosUnaComposicionNoTieneCuentasAsociadas(): Boolean {
+        return composicionesPasoTres.any { it.cuentas.isEmpty() }
+    }
 
     Scaffold(
         bottomBar = {
@@ -69,9 +81,13 @@ fun GuardarPortafolioPasoTres(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onSiguienteClick(
-                                    composicionesPasoTres
-                                )
+                                if (alMenosUnaComposicionNoTieneCuentasAsociadas()) {
+                                    mostrarDialogoComposicionesSinCUentas = true
+                                } else {
+                                    onSiguienteClick(
+                                        composicionesPasoTres
+                                    )
+                                }
                             }
                         ) {
                             Icon(
@@ -105,10 +121,35 @@ fun GuardarPortafolioPasoTres(
                                 it
                             }
                         }
-                    })
+                    },
+                    onEliminarCuenta = { cuentaSeleccionada ->
+                        Log.i(
+                            "GuardarPortafolioPasoTres",
+                            "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
+                        )
+                        composicionesPasoTres = composicionesPasoTres.map {
+                            if (it.idActivo == composicion.idActivo) {
+                                it.copy(cuentas = it.cuentas - cuentaSeleccionada.id)
+                            } else {
+                                it
+                            }
+                        }
+                    }
+                )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             }
         }
+    }
+
+    if (mostrarDialogoComposicionesSinCUentas) {
+        ConfirmacionSimpleDialog(
+            texto = "Hay activos sin cuentas asociadas. ¿Deseas continuar?",
+            onDismissRequest = {
+                mostrarDialogoComposicionesSinCUentas = false
+            },
+            onConfirmar = {
+                onSiguienteClick(composicionesPasoTres)
+            })
     }
 }
 
@@ -117,7 +158,8 @@ fun ActivoCard(
     composicion: GuardarComposicionModel,
     cuentas: List<CuentaModel>,
     composicionesPasoTres: List<GuardarComposicionModel>,
-    onAgregarCuenta: (CuentaModel) -> Unit
+    onAgregarCuenta: (CuentaModel) -> Unit,
+    onEliminarCuenta: (CuentaModel) -> Unit
 ) {
     var mostrarDialogoCuentas by remember { mutableStateOf(false) }
     val cuentasAsociadas = cuentas.filter { composicion.cuentas.contains(it.id) }
@@ -134,16 +176,28 @@ fun ActivoCard(
         ) {
             Text(
                 text = composicion.nombreActivo,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
             cuentasAsociadas.forEach { cuenta ->
-                Text(
-                    text = cuenta.nombre,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(vertical = 4.dp)
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            text = cuenta.nombre,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    },
+                    trailingContent = {
+                        IconButton(onClick = {
+                            onEliminarCuenta(cuenta)
+                        }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Eliminar Cuenta")
+                        }
+                    }
                 )
+
             }
 
             Button(
@@ -173,5 +227,4 @@ fun ActivoCard(
             }
         )
     }
-
 }

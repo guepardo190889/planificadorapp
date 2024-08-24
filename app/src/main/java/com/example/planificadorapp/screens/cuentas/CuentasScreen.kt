@@ -42,7 +42,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     val cuentaRepository = remember { CuentasRepository() }
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
-    var showDialog by remember { mutableStateOf(false) }
+    var mostrarGuardarCuentaDialog by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -50,7 +50,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     var snackbarType by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        cuentaRepository.buscarCuentas { result ->
+        cuentaRepository.buscarCuentas(false) { result ->
             Log.i("Cuentas", "Cuentas encontradas: $result")
             cuentas = result ?: emptyList()
             isLoading = false
@@ -60,7 +60,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { showDialog = true },
+                onClick = { mostrarGuardarCuentaDialog = true },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
@@ -79,9 +79,9 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
         Column(modifier = Modifier.padding(paddingValues)) {
             CuentasList(cuentas, navController, Modifier.padding(16.dp))
 
-            if (showDialog) {
+            if (mostrarGuardarCuentaDialog) {
                 GuardarCuentaDialog(
-                    onDismiss = { showDialog = false },
+                    onDismiss = { mostrarGuardarCuentaDialog = false },
                     onSave = { nuevaCuenta ->
                         cuentaRepository.guardarCuenta(nuevaCuenta) { cuentaGuardada ->
                             if (cuentaGuardada != null) {
@@ -103,7 +103,7 @@ fun Cuentas(navController: NavController, modifier: Modifier = Modifier) {
                             }
                         }
 
-                        showDialog = false
+                        mostrarGuardarCuentaDialog = false
                     }
                 )
             }

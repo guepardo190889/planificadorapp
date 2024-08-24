@@ -14,13 +14,16 @@ import androidx.compose.ui.unit.dp
  * Composable que muestra una etiqueta y a su lado un texto
  */
 @Composable
-fun TextoConEtiqueta(etiqueta:String, texto:String){
-    Row(modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Bottom) {
+fun TextoConEtiqueta(etiqueta: String, texto: String) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.Bottom
+    ) {
         Text(
             modifier = Modifier.width(84.dp),
             text = etiqueta,
-            style = MaterialTheme.typography.labelMedium)
+            style = MaterialTheme.typography.labelMedium
+        )
         Text(
             text = texto,
             maxLines = 3,

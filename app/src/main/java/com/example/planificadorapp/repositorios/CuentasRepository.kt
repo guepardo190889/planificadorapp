@@ -84,22 +84,23 @@ class CuentasRepository {
     /**
      * Busca todas las cuentas en el servidor y devuelve una lista de cuentas encontradas
      */
-    fun buscarCuentas(onResult: (List<CuentaModel>?) -> Unit) {
-        apiService.buscarCuentas().enqueue(object : Callback<List<CuentaModel>> {
-            override fun onResponse(
-                call: Call<List<CuentaModel>>,
-                response: Response<List<CuentaModel>>
-            ) {
-                if (response.isSuccessful) {
-                    onResult(response.body())
-                } else {
+    fun buscarCuentas(excluirCuentasAsociadas: Boolean, onResult: (List<CuentaModel>?) -> Unit) {
+        apiService.buscarCuentas(excluirCuentasAsociadas)
+            .enqueue(object : Callback<List<CuentaModel>> {
+                override fun onResponse(
+                    call: Call<List<CuentaModel>>,
+                    response: Response<List<CuentaModel>>
+                ) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<List<CuentaModel>>, t: Throwable) {
                     onResult(null)
                 }
-            }
-
-            override fun onFailure(call: Call<List<CuentaModel>>, t: Throwable) {
-                onResult(null)
-            }
-        })
+            })
     }
 }

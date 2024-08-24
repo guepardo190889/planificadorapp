@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
@@ -30,11 +28,12 @@ import com.example.planificadorapp.modelos.GuardarComposicionModel
 @Composable
 fun GuardarPortafolioResumen(
     modifier: Modifier,
-    nombre:String,
-    descripcion:String,
+    nombre: String,
+    descripcion: String,
     composiciones: List<GuardarComposicionModel>,
     onAtrasClick: () -> Unit,
-    onGuardarClick: () -> Unit){
+    onGuardarClick: () -> Unit
+) {
 
     Scaffold(
         bottomBar = {

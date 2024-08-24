@@ -1,5 +1,6 @@
 package com.example.planificadorapp.screens.portafolios.guardado
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,18 +25,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.modelos.GuardarComposicionModel
+import kotlinx.coroutines.launch
 
 /**
  * Composable que representa la pantalla del segundo paso en el guardado de un portafolio.
@@ -58,7 +64,71 @@ fun GuardarPortafolioPasoDos(
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
     var totalPorcentajePasoDos by remember { mutableStateOf(totalPorcentaje) }
 
+    val coroutineScope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    var isComposicionesValidas by remember { mutableStateOf(true) }
+
+    /**
+     * Función que valida si las composiciones son válidas
+     */
+    fun validarComposiciones(): Boolean {
+        var valido = composicionesPasoDos.isNotEmpty()
+
+        if (!valido) {
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar("La composición debe tener al menos un activo")
+            }
+        } else {
+            var sumaPorcentajes = 0
+
+            for (composicion in composicionesPasoDos) {
+                if (composicion.porcentaje < 1) {
+                    valido = false
+
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Todos los porcentajes deben ser mayores a 0")
+                    }
+
+                    break;
+                } else {
+                    sumaPorcentajes += composicion.porcentaje.toInt()
+                }
+            }
+
+            Log.i("GuardarPortafolioPasoDos", "Suma de porcentajes: $sumaPorcentajes")
+
+            if (valido) {
+                if (sumaPorcentajes != 100) {
+                    valido = false
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("La suma de los porcentajes debe ser igual a 100")
+                    }
+                }
+            }
+        }
+
+        return valido
+    }
+
+    /**
+     * Función que valida la pantalla actual
+     */
+    fun validarPantalla(): Boolean {
+        isComposicionesValidas = validarComposiciones()
+
+        return isComposicionesValidas
+    }
+
     Scaffold(
+        snackbarHost = {
+            SnackbarHost(snackbarHostState) {
+                SnackBarConColor(
+                    snackbarHostState = snackbarHostState,
+                    tipo = "error"
+                )
+            }
+        },
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
@@ -83,10 +153,12 @@ fun GuardarPortafolioPasoDos(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onSiguienteClick(
-                                    composicionesPasoDos,
-                                    totalPorcentajePasoDos
-                                )
+                                if (validarPantalla()) {
+                                    onSiguienteClick(
+                                        composicionesPasoDos,
+                                        totalPorcentajePasoDos
+                                    )
+                                }
                             }
                         ) {
                             Icon(
@@ -104,7 +176,7 @@ fun GuardarPortafolioPasoDos(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text(text = "Composición", style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Composición de activos", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             ComposicionesList(
@@ -214,7 +286,7 @@ fun ComposicionItem(
                 Spacer(modifier = Modifier.width(8.dp))
                 OutlinedTextField(
                     modifier = Modifier
-                        .width(46.dp)
+                        .width(56.dp)
                         .height(46.dp),
                     value = posicionSlider.toInt().toString(),
                     onValueChange = {

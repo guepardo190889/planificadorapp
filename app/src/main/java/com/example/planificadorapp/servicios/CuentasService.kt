@@ -7,6 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 /**
  * Interfaz que define los métodos para interactuar con el servicio de cuentas
@@ -20,7 +21,7 @@ interface CuentasService {
     fun obtenerCuentaPorId(@Path("id") id: Long): Call<CuentaModel>
 
     @GET("/api/cuentas")
-    fun buscarCuentas(): Call<List<CuentaModel>>
+    fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean): Call<List<CuentaModel>>
 
     @PUT("/api/cuentas/{id}")
     fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
