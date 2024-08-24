@@ -15,7 +15,7 @@ interface PortafoliosService {
     /**
      * Guarda un portafolio en el servidor y devuelve el portafolio guardado
      */
-    @POST
+    @POST("api/portafolios")
     fun guardarPortafolio(@Body portafolio: PortafolioGuardarRequestModel): Call<PortafolioModel>
 
     /**

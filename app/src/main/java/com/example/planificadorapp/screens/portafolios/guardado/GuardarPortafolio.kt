@@ -142,7 +142,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                             pasoActual = PasoWizard.PASO_TRES
                         },
                         onGuardarClick = { portafolioPorGuardar ->
-                            Log.i("GuardarPortafolio", "Guardando portafolio...")
+                            Log.i("GuardarPortafolio", "Guardando portafolio... $portafolioPorGuardar")
 
                             portafoliosRepository.guardarPortafolio(portafolioPorGuardar) { portafolioGuardado ->
                                 Log.i(
