@@ -23,7 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.TextoConEtiqueta
+import com.example.planificadorapp.modelos.ComposicionGuardarRequestModel
 import com.example.planificadorapp.modelos.GuardarComposicionModel
+import com.example.planificadorapp.modelos.PortafolioGuardarRequestModel
 
 @Composable
 fun GuardarPortafolioResumen(
@@ -32,8 +34,34 @@ fun GuardarPortafolioResumen(
     descripcion: String,
     composiciones: List<GuardarComposicionModel>,
     onAtrasClick: () -> Unit,
-    onGuardarClick: () -> Unit
+    onGuardarClick: (PortafolioGuardarRequestModel) -> Unit
 ) {
+    /**
+     * Función que crea un modelo de datos para guardar un portafolio
+     */
+    fun crearModeloGuardado(): PortafolioGuardarRequestModel {
+        val composicionesPorGuardar = mutableListOf<ComposicionGuardarRequestModel>()
+
+        for (composicion in composiciones) {
+            val cuentasPorGuardar = mutableListOf<Long>()
+
+            for (cuenta in composicion.cuentas) {
+                cuentasPorGuardar.add(cuenta.id)
+            }
+
+            composicionesPorGuardar.add(
+                ComposicionGuardarRequestModel(
+                    composicion.activo.id,
+                    composicion.porcentaje.toInt(),
+                    cuentasPorGuardar
+                )
+            )
+        }
+
+        val portafolio = PortafolioGuardarRequestModel(nombre, descripcion, composicionesPorGuardar)
+
+        return portafolio
+    }
 
     Scaffold(
         bottomBar = {
@@ -60,7 +88,8 @@ fun GuardarPortafolioResumen(
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                onGuardarClick()
+                                val modeloGuardado = crearModeloGuardado()
+                                onGuardarClick(modeloGuardado)
                             }
                         ) {
                             Icon(
@@ -86,6 +115,10 @@ fun GuardarPortafolioResumen(
             TextoConEtiqueta(etiqueta = "Descripción: ", texto = descripcion)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
+            Text(
+                text = "Activos",
+                style = MaterialTheme.typography.titleMedium
+            )
             composiciones.forEach { composicion ->
                 ResumenComposicionCard(composicion)
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -102,18 +135,46 @@ fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
             .padding(vertical = 8.dp)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
         ) {
-            Text(
-                text = composicion.nombreActivo,
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = composicion.activo.nombre,
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Left
+                )
+                Text(
+                    text = "${composicion.porcentaje.toInt()}%",
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.End
+                )
+            }
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
             Text(
-                text = "${composicion.porcentaje.toInt()}%",
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.End
+                text = "Cuentas:",
+                style = MaterialTheme.typography.titleSmall
             )
+
+            if (composicion.cuentas.isNotEmpty()) {
+                composicion.cuentas.forEach { cuenta ->
+                    Text(
+                        text = cuenta.nombre,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 4.dp)
+                    )
+                }
+            } else {
+                Text(
+                    text = "No hay cuentas asociadas",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            }
         }
     }
 }

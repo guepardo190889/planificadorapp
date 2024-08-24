@@ -213,15 +213,14 @@ fun GuardarPortafolioPasoDos(
 
         if (mostrarDialogoActivos) {
             val activosDisponibles = activos.filterNot { activo ->
-                composicionesPasoDos.any { it.idActivo == activo.id }
+                composicionesPasoDos.any { it.activo == activo }
             }
 
             SeleccionarActivoDialogo(
                 activosDisponibles,
                 onActivoSeleccionado = { activoSeleccionado ->
                     composicionesPasoDos = composicionesPasoDos + GuardarComposicionModel(
-                        activoSeleccionado.id,
-                        activoSeleccionado.nombre
+                        activoSeleccionado
                     )
                     mostrarDialogoActivos = false
                 },
@@ -266,7 +265,7 @@ fun ComposicionItem(
 
     ListItem(
         headlineContent = {
-            Text(text = composicion.nombreActivo, style = MaterialTheme.typography.bodyLarge)
+            Text(text = composicion.activo.nombre, style = MaterialTheme.typography.bodyLarge)
         },
         supportingContent = {
             Row(

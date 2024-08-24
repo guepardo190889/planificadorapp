@@ -115,8 +115,8 @@ fun GuardarPortafolioPasoTres(
                     composicionesPasoTres,
                     onAgregarCuenta = { cuentaSeleccionada ->
                         composicionesPasoTres = composicionesPasoTres.map {
-                            if (it.idActivo == composicion.idActivo) {
-                                it.copy(cuentas = it.cuentas + cuentaSeleccionada.id)
+                            if (it == composicion) {
+                                it.copy(cuentas = it.cuentas + cuentaSeleccionada)
                             } else {
                                 it
                             }
@@ -128,8 +128,8 @@ fun GuardarPortafolioPasoTres(
                             "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
                         )
                         composicionesPasoTres = composicionesPasoTres.map {
-                            if (it.idActivo == composicion.idActivo) {
-                                it.copy(cuentas = it.cuentas - cuentaSeleccionada.id)
+                            if (it == composicion) {
+                                it.copy(cuentas = it.cuentas - cuentaSeleccionada)
                             } else {
                                 it
                             }
@@ -162,7 +162,7 @@ fun ActivoCard(
     onEliminarCuenta: (CuentaModel) -> Unit
 ) {
     var mostrarDialogoCuentas by remember { mutableStateOf(false) }
-    val cuentasAsociadas = cuentas.filter { composicion.cuentas.contains(it.id) }
+    val cuentasAsociadas = cuentas.filter { composicion.cuentas.contains(it) }
 
     Card(
         modifier = Modifier
@@ -175,7 +175,7 @@ fun ActivoCard(
                 .fillMaxWidth()
         ) {
             Text(
-                text = composicion.nombreActivo,
+                text = composicion.activo.nombre,
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -212,7 +212,7 @@ fun ActivoCard(
     }
 
     val cuentasDisponibles = cuentas.filterNot { cuenta ->
-        composicionesPasoTres.any { it.cuentas.contains(cuenta.id) }
+        composicionesPasoTres.any { it.cuentas.contains(cuenta) }
     }
 
     if (mostrarDialogoCuentas) {

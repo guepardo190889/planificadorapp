@@ -52,7 +52,7 @@ fun GuardarPortafolioPasoUno(
      * Función que valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
-        isNombreValido = validarNombre(nombrePasoUno);
+        isNombreValido = validarNombre(nombrePasoUno)
 
         return isNombreValido
     }

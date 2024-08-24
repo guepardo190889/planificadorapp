@@ -31,8 +31,8 @@ class CuentasRepository {
             }
 
             override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
+                Log.e("CuentasRepository", "Error al guardar la cuenta", t)
                 onResult(null)
-                println("Fallo en la conexión: ${t.message}")
             }
         })
     }
@@ -55,6 +55,7 @@ class CuentasRepository {
                 }
 
                 override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
+                    Log.e("CuentasRepository", "Error al actualizar la cuenta", t)
                     callback(null)
                 }
             })
@@ -76,6 +77,7 @@ class CuentasRepository {
             }
 
             override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
+                Log.e("CuentasRepository", "Error al buscar la cuenta por id", t)
                 onResult(null)
             }
         })
@@ -99,6 +101,7 @@ class CuentasRepository {
                 }
 
                 override fun onFailure(call: Call<List<CuentaModel>>, t: Throwable) {
+                    Log.e("CuentasRepository", "Error al buscar las cuentas", t)
                     onResult(null)
                 }
             })
