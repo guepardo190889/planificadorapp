@@ -42,14 +42,14 @@ fun GuardarPortafolioPasoUno(
     var isNombreValido by remember { mutableStateOf(true) }
 
     /**
-     * Función que valida si un nombre es válido
+     * Valida si un nombre es válido
      */
     fun validarNombre(nombre: String): Boolean {
         return !nombre.isNullOrBlank()
     }
 
     /**
-     * Función que valida la pantalla actual
+     * Valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre(nombrePasoUno)

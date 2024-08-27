@@ -86,7 +86,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                 PasoWizard.PASO_DOS -> {
                     LaunchedEffect(Unit) {
                         Log.i("GuardarPortafolioPasoDos", "Cargando activos...")
-                        activosRepository.buscarActivos { result ->
+                        activosRepository.buscarActivos(false) { result ->
                             activos = result ?: emptyList()
                         }
                     }
@@ -142,7 +142,10 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                             pasoActual = PasoWizard.PASO_TRES
                         },
                         onGuardarClick = { portafolioPorGuardar ->
-                            Log.i("GuardarPortafolio", "Guardando portafolio... $portafolioPorGuardar")
+                            Log.i(
+                                "GuardarPortafolio",
+                                "Guardando portafolio... $portafolioPorGuardar"
+                            )
 
                             portafoliosRepository.guardarPortafolio(portafolioPorGuardar) { portafolioGuardado ->
                                 Log.i(

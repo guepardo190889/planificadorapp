@@ -26,6 +26,8 @@ import com.example.planificadorapp.composables.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.MovimientosScreen
 import com.example.planificadorapp.screens.ReportesScreen
+import com.example.planificadorapp.screens.activos.ActivosGuardarScreen
+import com.example.planificadorapp.screens.activos.ActivosScreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios
@@ -112,6 +114,19 @@ fun NavegacionController(
                     }
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)
+                    }
+                    composable(Ruta.ACTIVOS.ruta){
+                        ActivosScreen(modifier, navController)
+                    }
+                    composable(Ruta.ACTIVOS_GUARDAR.ruta){
+                        ActivosGuardarScreen(modifier, navController)
+                    }
+                    composable(Ruta.ACTIVOS_DETALLE.ruta){
+                        val activoId = it.arguments?.getString("activoId")
+
+                        if (activoId != null) {
+                            DetalleCuentaScreen(navController, activoId.toLong())
+                        }
                     }
                     composable(Ruta.REPORTES.ruta) {
                         ReportesScreen(navController)

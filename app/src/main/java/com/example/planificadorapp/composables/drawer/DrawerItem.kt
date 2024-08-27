@@ -14,6 +14,7 @@ enum class DrawerItem(
     CUENTAS(Icons.Default.Info, "Cuentas", "Cuentas", Ruta.CUENTAS.ruta),
     MOVIMIENTO(Icons.Default.Info, "Movimientos", "Movimientos", Ruta.MOVIMIENTOS.ruta),
     PORTAFOLIOS(Icons.Default.Info, "Portafolios", "Portafolios", Ruta.PORTAFOLIOS.ruta),
+    ACTIVOS(Icons.Default.Info, "Activos", "Activos", Ruta.ACTIVOS.ruta),
     REPORTES(Icons.Default.Info, "Reportes", "Reportes", Ruta.REPORTES.ruta),
     CONFIGURACION(Icons.Default.Info, "Configuración", "Configuración", Ruta.CONFIGURACIONES.ruta),
 }
