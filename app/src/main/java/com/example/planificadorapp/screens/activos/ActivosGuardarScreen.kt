@@ -79,7 +79,7 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
     /**
      * Valida la pantalla actual
      */
-    fun validarPantalla():Boolean{
+    fun validarPantalla(): Boolean {
         isNombreValido = validarNombre(nombre)
         isActivoSeleccionadoValido = activoSeleccionado != null
 
@@ -137,7 +137,7 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             onClick = {
-                                if(validarPantalla()){
+                                if (validarPantalla()) {
                                     guardarActivo()
                                 }
                             }

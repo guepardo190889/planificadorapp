@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -27,12 +29,10 @@ import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 
 @Composable
-fun ActivosScreen(modifier: Modifier, navController: NavController){
+fun ActivosScreen(modifier: Modifier, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
 
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
-
-    var mostrarGuardarActivoDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         activosRepository.buscarActivos(false) { resultado ->
@@ -53,9 +53,7 @@ fun ActivosScreen(modifier: Modifier, navController: NavController){
         },
     ) { paddingValues ->
         Column(modifier.padding(paddingValues)) {
-            Column(modifier = Modifier.padding(paddingValues)) {
-                ActivosList(activos, navController, Modifier.padding(16.dp))
-            }
+            ActivosList(activos, navController, Modifier.padding(16.dp))
         }
     }
 }
@@ -68,9 +66,9 @@ fun ActivosList(
     activos: List<ActivoModel>,
     navController: NavController,
     modifier: Modifier = Modifier
-){
-    Column(modifier = modifier.padding(16.dp)) {
-        activos.forEach { activo ->
+) {
+    LazyColumn(modifier.padding(16.dp)) {
+        items(activos) { activo ->
             ActivoItem(modifier, activo, navController)
             HorizontalDivider()
         }
@@ -89,7 +87,8 @@ fun ActivoItem(modifier: Modifier, activo: ActivoModel, navController: NavContro
                 navController.navigate("detalle/${activo.id}")
             },
         headlineContent = {
-            Text(activo.nombre)},
+            Text(activo.nombre)
+        },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_account_balance_24),

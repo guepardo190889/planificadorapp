@@ -38,22 +38,23 @@ class ActivosRepository {
     /**
      * Busca los activos en el servidor y devuelve una lista de ActivoModel.
      */
-    fun buscarActivos(incluirSoloActivosPadre:Boolean, callback: (List<ActivoModel>?) -> Unit) {
-        apiService.buscarActivos(incluirSoloActivosPadre).enqueue(object : Callback<List<ActivoModel>> {
-            override fun onResponse(
-                call: Call<List<ActivoModel>>,
-                response: Response<List<ActivoModel>>
-            ) {
-                if (response.isSuccessful) {
-                    callback(response.body())
-                } else {
+    fun buscarActivos(incluirSoloActivosPadre: Boolean, callback: (List<ActivoModel>?) -> Unit) {
+        apiService.buscarActivos(incluirSoloActivosPadre)
+            .enqueue(object : Callback<List<ActivoModel>> {
+                override fun onResponse(
+                    call: Call<List<ActivoModel>>,
+                    response: Response<List<ActivoModel>>
+                ) {
+                    if (response.isSuccessful) {
+                        callback(response.body())
+                    } else {
+                        callback(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<List<ActivoModel>>, t: Throwable) {
                     callback(null)
                 }
-            }
-
-            override fun onFailure(call: Call<List<ActivoModel>>, t: Throwable) {
-                callback(null)
-            }
-        })
+            })
     }
 }

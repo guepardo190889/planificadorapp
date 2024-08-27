@@ -115,13 +115,13 @@ fun NavegacionController(
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)
                     }
-                    composable(Ruta.ACTIVOS.ruta){
+                    composable(Ruta.ACTIVOS.ruta) {
                         ActivosScreen(modifier, navController)
                     }
-                    composable(Ruta.ACTIVOS_GUARDAR.ruta){
+                    composable(Ruta.ACTIVOS_GUARDAR.ruta) {
                         ActivosGuardarScreen(modifier, navController)
                     }
-                    composable(Ruta.ACTIVOS_DETALLE.ruta){
+                    composable(Ruta.ACTIVOS_DETALLE.ruta) {
                         val activoId = it.arguments?.getString("activoId")
 
                         if (activoId != null) {
