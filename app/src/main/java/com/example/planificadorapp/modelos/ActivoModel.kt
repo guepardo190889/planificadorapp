@@ -6,5 +6,6 @@ package com.example.planificadorapp.modelos
 data class ActivoModel(
     var id: Long = 0,
     val nombre: String,
-    val descripcion: String
+    val descripcion: String,
+    val padre: ActivoPadreResponseModel? = null
 )

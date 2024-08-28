@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -240,8 +242,8 @@ fun ComposicionesList(
     onEliminarComposicion: (GuardarComposicionModel) -> Unit,
     onPorcentajeCambiado: () -> Unit
 ) {
-    Column(modifier = modifier.padding(16.dp)) {
-        composiciones.forEach { composicion ->
+    LazyColumn(modifier = modifier.padding(16.dp)) {
+        items(composiciones) { composicion ->
             ComposicionItem(
                 composicion,
                 onEliminarComposicion,

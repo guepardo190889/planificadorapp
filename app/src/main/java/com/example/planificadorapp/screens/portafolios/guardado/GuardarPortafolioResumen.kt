@@ -111,8 +111,8 @@ fun GuardarPortafolioResumen(
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
             Text(text = "Generales", style = MaterialTheme.typography.titleMedium)
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            TextoConEtiqueta(etiqueta = "Nombre:", texto = nombre)
-            TextoConEtiqueta(etiqueta = "Descripción: ", texto = descripcion)
+            TextoConEtiqueta(etiqueta = "Nombre: ", texto = nombre, "large", "medium")
+            TextoConEtiqueta(etiqueta = "Descripción: ", texto = descripcion, "large", "medium")
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
             Text(

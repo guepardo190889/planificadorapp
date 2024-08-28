@@ -98,7 +98,7 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
             )
         ) { activoGuardado ->
             if (activoGuardado != null) {
-                snackbarMessage = "Activo guardado exitosamenqte"
+                snackbarMessage = "Activo guardado exitosamente"
                 snackbarType = "success"
             } else {
                 snackbarMessage = "Error al guardar el activo"

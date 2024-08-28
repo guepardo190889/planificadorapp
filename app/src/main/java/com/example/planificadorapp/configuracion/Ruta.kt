@@ -12,7 +12,8 @@ enum class Ruta(
     PORTAFOLIOS_GUARDAR("portafolios/guardar", "Guardar Portafolio", false),
     ACTIVOS("activos", "Activos", true),
     ACTIVOS_GUARDAR("activos/guardar", "Guardar Activo", false),
-    ACTIVOS_DETALLE("detalle/{activoId}", "Detalle de Activo", false),
+    ACTIVOS_DETALLE("activos/detalle/{activoId}", "Detalle de Activo", false),
+    ACTIVOS_EDITAR("activos/editar/{activoId}", "Editar Activo", false),
     REPORTES("reportes", "Reportes", true),
     CONFIGURACIONES("configuraciones", "Configuraciones", true);
 

@@ -28,6 +28,9 @@ import com.example.planificadorapp.R
 import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 
+/**
+ * Composable que representa la pantalla de activos
+ */
 @Composable
 fun ActivosScreen(modifier: Modifier, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
@@ -84,7 +87,7 @@ fun ActivoItem(modifier: Modifier, activo: ActivoModel, navController: NavContro
         modifier = modifier
             .padding(vertical = 8.dp)
             .clickable {
-                navController.navigate("detalle/${activo.id}")
+                navController.navigate("activos/detalle/${activo.id}")
             },
         headlineContent = {
             Text(activo.nombre)

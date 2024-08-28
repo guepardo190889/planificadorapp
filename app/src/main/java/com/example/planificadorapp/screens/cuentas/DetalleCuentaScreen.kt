@@ -31,6 +31,9 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Composable que representa la pantalla de detalle de una cuenta
+ */
 @Composable
 fun DetalleCuentaScreen(
     navController: NavController,

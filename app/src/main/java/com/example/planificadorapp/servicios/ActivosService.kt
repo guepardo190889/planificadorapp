@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -13,8 +14,17 @@ import retrofit2.http.Query
  */
 interface ActivosService {
 
+    /**
+     * Guarda un activo en el servidor y devuelve el activo guardado
+     */
     @POST("/api/activos")
     fun guardarActivo(@Body activo: ActivoGuardarRequestModel): Call<ActivoModel>
+
+    /**
+     * Busca un activo por su ID en el servidor y devuelve el activo encontrado
+     */
+    @GET("/api/activos/{id}")
+    fun buscarActivoPorId(@Path("id") id: Long): Call<ActivoModel>
 
     /**
      * Busca los portafolios en el servidor y devuelve una lista de ActivoModel

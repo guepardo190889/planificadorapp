@@ -3,7 +3,10 @@ package com.example.planificadorapp.screens.portafolios.guardado
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
@@ -32,14 +35,16 @@ fun SeleccionarActivoDialogo(
             Column {
                 Text(text = "Selecciona un Activo", style = MaterialTheme.typography.headlineSmall)
                 Spacer(modifier = Modifier.height(8.dp))
-                activos.forEach { activo ->
-                    ListItem(
-                        headlineContent = { Text(text = activo.nombre) },
-                        modifier = Modifier.clickable {
-                            onActivoSeleccionado(activo)
-                        }
-                    )
-                    HorizontalDivider()
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(activos) { activo ->
+                        ListItem(
+                            headlineContent = { Text(text = activo.nombre) },
+                            modifier = Modifier.clickable {
+                                onActivoSeleccionado(activo)
+                            }
+                        )
+                        HorizontalDivider()
+                    }
                 }
             }
         }

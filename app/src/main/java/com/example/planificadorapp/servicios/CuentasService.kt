@@ -14,15 +14,28 @@ import retrofit2.http.Query
  */
 interface CuentasService {
 
+    /**
+     * Guarda una cuenta en el servidor y devuelve la cuenta guardada
+     */
     @POST("/api/cuentas")
     fun guardarCuenta(@Body cuenta: CuentaModel): Call<CuentaModel>
 
+    /**
+     * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
+     */
+    @PUT("/api/cuentas/{id}")
+    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
+
+    /**
+     * Obtiene una cuenta por su ID en el servidor y devuelve la cuenta encontrada
+     */
     @GET("api/cuentas/{id}")
     fun obtenerCuentaPorId(@Path("id") id: Long): Call<CuentaModel>
 
+    /**
+     * Busca cuentas en el servidor y devuelve una lista de CuentaModel
+     */
     @GET("/api/cuentas")
     fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean): Call<List<CuentaModel>>
 
-    @PUT("/api/cuentas/{id}")
-    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
 }

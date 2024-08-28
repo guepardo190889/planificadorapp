@@ -17,7 +17,7 @@ class CuentasRepository {
      * Guarda una cuenta en el servidor y devuelve la cuenta guardada
      */
     fun guardarCuenta(cuenta: CuentaModel, onResult: (CuentaModel?) -> Unit) {
-        val call = ApiClient.cuentaService.guardarCuenta(cuenta)
+        val call = apiService.guardarCuenta(cuenta)
         call.enqueue(object : Callback<CuentaModel> {
             override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 Log.i("CuentaRepository", "Respuesta del servidor: ${response.body()}")
@@ -41,9 +41,9 @@ class CuentasRepository {
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
      */
     fun actualizarCuenta(cuenta: CuentaModel, callback: (CuentaModel?) -> Unit) {
-        val idCuenta: Long? = cuenta.id
+        val idCuenta: Long = cuenta.id
 
-        idCuenta?.let {
+        idCuenta.let {
             val call = apiService.actualizarCuenta(idCuenta, cuenta)
             call.enqueue(object : Callback<CuentaModel> {
                 override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
@@ -66,7 +66,7 @@ class CuentasRepository {
      * Busca una cuenta por su ID en el servidor y devuelve la cuenta encontrada
      */
     fun buscarCuentaPorId(id: Long, onResult: (CuentaModel?) -> Unit) {
-        val call = ApiClient.cuentaService.obtenerCuentaPorId(id)
+        val call = apiService.obtenerCuentaPorId(id)
         call.enqueue(object : Callback<CuentaModel> {
             override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
                 if (response.isSuccessful) {

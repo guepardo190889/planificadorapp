@@ -36,6 +36,26 @@ class ActivosRepository {
     }
 
     /**
+     * Busca un activo por su ID en el servidor y devuelve el activo encontrado
+     */
+    fun buscarActivoPorId(id: Long, onResult: (ActivoModel?) -> Unit) {
+        val call = apiService.buscarActivoPorId(id)
+        call.enqueue(object : Callback<ActivoModel> {
+            override fun onResponse(call: Call<ActivoModel>, response: Response<ActivoModel>) {
+                if (response.isSuccessful) {
+                    onResult(response.body())
+                } else {
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<ActivoModel>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
+
+    /**
      * Busca los activos en el servidor y devuelve una lista de ActivoModel.
      */
     fun buscarActivos(incluirSoloActivosPadre: Boolean, callback: (List<ActivoModel>?) -> Unit) {
