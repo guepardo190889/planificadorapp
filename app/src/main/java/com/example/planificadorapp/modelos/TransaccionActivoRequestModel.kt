@@ -1,9 +1,9 @@
 package com.example.planificadorapp.modelos
 
 /**
- * Modelo de datos para guardar un activo
+ * Modelo de datos para guardar o actualizar un activo
  */
-data class ActivoGuardarRequestModel(
+data class TransaccionActivoRequestModel(
     var nombre: String,
     var descripcion: String,
     var idPadre: Long

@@ -34,7 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.ActivoGuardarRequestModel
+import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.modelos.ActivoModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 import kotlinx.coroutines.launch
@@ -44,10 +44,12 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
+fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
 
-    var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
+    var activosPadre by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
+    var activo by remember { mutableStateOf<ActivoModel?>(null) }
+    var descripcionBoton by remember { mutableStateOf("Guardar") }
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -64,8 +66,24 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
 
     LaunchedEffect(Unit) {
         activosRepository.buscarActivos(true) { resultado ->
-            activos = resultado ?: emptyList()
-            Log.i("ActivosScreen", "Cargados ${activos.size} activos")
+            activosPadre = resultado ?: emptyList()
+            Log.i("ActivosScreen", "Activos padre cargados: $resultado")
+
+            if (activoId != 0L) {
+                activosRepository.buscarActivoPorId(activoId) { resultado ->
+                    if (resultado != null) {
+                        Log.i("ActivosScreen", "Activo encontrado: $resultado")
+                        activo = resultado
+                        nombre = resultado.nombre
+                        descripcion = resultado.descripcion
+                        activoSeleccionado = activosPadre.find { it.id == resultado.padre?.id }
+
+                        Log.i("ActivosScreen", "Activo padre encontrado: $activoSeleccionado")
+
+                        descripcionBoton = "Actualizar"
+                    }
+                }
+            }
         }
     }
 
@@ -89,9 +107,9 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
     /**
      * Guarda el activo en la base de datos
      */
-    fun guardarActivo(): Unit {
+    fun guardarActivo() {
         activosRepository.guardarActivo(
-            ActivoGuardarRequestModel(
+            TransaccionActivoRequestModel(
                 nombre,
                 descripcion,
                 activoSeleccionado!!.id
@@ -109,6 +127,32 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
                 snackbarHostState.showSnackbar(snackbarMessage)
 
                 if (activoGuardado != null) {
+                    navController.navigate("activos")
+                }
+            }
+        }
+    }
+
+    /**
+     * Actualiza el activo en la base de datos
+     */
+    fun actualizarActivo() {
+        activosRepository.actualizarActivo(
+            activoId,
+            TransaccionActivoRequestModel(nombre, descripcion, activoSeleccionado!!.id)
+        ) {
+            if (it != null) {
+                snackbarMessage = "Activo actualizado exitosamente"
+                snackbarType = "success"
+            } else {
+                snackbarMessage = "Error al actualizar el activo"
+                snackbarType = "error"
+            }
+
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(snackbarMessage)
+
+                if (it != null) {
                     navController.navigate("activos")
                 }
             }
@@ -138,13 +182,17 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
                             modifier = Modifier.padding(16.dp),
                             onClick = {
                                 if (validarPantalla()) {
-                                    guardarActivo()
+                                    if (activoId == 0L) {
+                                        guardarActivo()
+                                    } else {
+                                        actualizarActivo()
+                                    }
                                 }
                             }
                         ) {
                             Icon(
                                 Icons.Default.Done,
-                                contentDescription = "Guardar"
+                                contentDescription = descripcionBoton
                             )
                         }
                     }
@@ -191,7 +239,7 @@ fun ActivosGuardarScreen(modifier: Modifier, navController: NavController) {
                     onDismissRequest = { activoPrincipalListaDesplegada = false },
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    activos.forEach { activo ->
+                    activosPadre.forEach { activo ->
                         DropdownMenuItem(
                             text = { Text(activo.nombre) },
                             onClick = {
