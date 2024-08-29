@@ -27,8 +27,8 @@ import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.MovimientosScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.activos.ActivosDetalleScreen
-import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.activos.ActivosScreen
+import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios

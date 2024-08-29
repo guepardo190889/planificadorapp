@@ -34,8 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 import kotlinx.coroutines.launch
 
@@ -55,6 +55,7 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
     var descripcion by remember { mutableStateOf("") }
     var activoSeleccionado by remember { mutableStateOf<ActivoModel?>(null) }
     var activoPrincipalListaDesplegada by remember { mutableStateOf(false) }
+    var activoPrincipalListaHabilitada by remember { mutableStateOf(true) }
 
     var isNombreValido by remember { mutableStateOf(true) }
     var isActivoSeleccionadoValido by remember { mutableStateOf(true) }
@@ -65,24 +66,27 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
     var snackbarType by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        activosRepository.buscarActivos(true) { resultado ->
-            activosPadre = resultado ?: emptyList()
-            Log.i("ActivosScreen", "Activos padre cargados: $resultado")
+        activosRepository.buscarActivos(true) { resultadoActivosPadres ->
+            activosPadre = resultadoActivosPadres ?: emptyList()
+            Log.i("ActivosScreen", "Activos padre cargados: $resultadoActivosPadres")
 
             if (activoId != 0L) {
-                activosRepository.buscarActivoPorId(activoId) { resultado ->
-                    if (resultado != null) {
-                        Log.i("ActivosScreen", "Activo encontrado: $resultado")
-                        activo = resultado
-                        nombre = resultado.nombre
-                        descripcion = resultado.descripcion
-                        activoSeleccionado = activosPadre.find { it.id == resultado.padre?.id }
+                activosRepository.buscarActivoPorId(activoId) { resultadoActivoExistente ->
+                    if (resultadoActivoExistente != null) {
+                        Log.i("ActivosScreen", "Activo encontrado: $resultadoActivoExistente")
+                        activo = resultadoActivoExistente
+                        nombre = resultadoActivoExistente.nombre
+                        descripcion = resultadoActivoExistente.descripcion
+                        activoSeleccionado =
+                            activosPadre.find { it.id == resultadoActivoExistente.padre?.id }
 
                         Log.i("ActivosScreen", "Activo padre encontrado: $activoSeleccionado")
 
                         descripcionBoton = "Actualizar"
                     }
                 }
+
+                activoPrincipalListaHabilitada = false
             }
         }
     }
@@ -208,15 +212,18 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
             ExposedDropdownMenuBox(
                 expanded = activoPrincipalListaDesplegada,
                 onExpandedChange = {
-                    activoPrincipalListaDesplegada = !activoPrincipalListaDesplegada
+                    if (activoPrincipalListaHabilitada) { //No se permite modificar el activo principal de un activo existente
+                        activoPrincipalListaDesplegada = !activoPrincipalListaDesplegada
+                    }
                 }) {
                 OutlinedTextField(
+                    value = activoSeleccionado?.nombre ?: "",
+                    onValueChange = { },
                     modifier = Modifier
                         .menuAnchor()
                         .fillMaxWidth(),
+                    enabled = activoPrincipalListaHabilitada,
                     readOnly = true,
-                    value = activoSeleccionado?.nombre ?: "",
-                    onValueChange = { },
                     label = { Text("Selecciona un Activo Principal") },
                     trailingIcon = {
                         Icon(

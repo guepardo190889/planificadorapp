@@ -1,8 +1,8 @@
 package com.example.planificadorapp.repositorios
 
 import android.util.Log
-import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,7 +38,11 @@ class ActivosRepository {
     /**
      * Actualiza un activo en el servidor y devuelve el activo actualizado
      */
-    fun actualizarActivo(id:Long, activo: TransaccionActivoRequestModel, onResult: (ActivoModel?) -> Unit) {
+    fun actualizarActivo(
+        id: Long,
+        activo: TransaccionActivoRequestModel,
+        onResult: (ActivoModel?) -> Unit
+    ) {
         val call = apiService.actualizarActivo(id, activo)
         call.enqueue(object : Callback<ActivoModel> {
             override fun onResponse(call: Call<ActivoModel>, response: Response<ActivoModel>) {

@@ -1,7 +1,7 @@
 package com.example.planificadorapp.servicios
 
-import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,7 +25,10 @@ interface ActivosService {
      * Actualiza un activo en el servidor y devuelve el activo actualizado
      */
     @PUT("api/activos/{id}")
-    fun actualizarActivo(@Path("id") id: Long, @Body activo: TransaccionActivoRequestModel): Call<ActivoModel>
+    fun actualizarActivo(
+        @Path("id") id: Long,
+        @Body activo: TransaccionActivoRequestModel
+    ): Call<ActivoModel>
 
     /**
      * Busca un activo por su ID en el servidor y devuelve el activo encontrado
