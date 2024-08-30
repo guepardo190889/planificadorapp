@@ -6,15 +6,22 @@ enum class Ruta(
     val isPrincipal: Boolean = false
 ) {
     CUENTAS("cuentas", "Cuentas", true),
-    DETALLE_CUENTA("detalle/{cuentaId}", "Detalle de Cuenta", false),
+    CUENTAS_GUARDAR("cuentas/guardar", "Guardar Cuenta"),
+    CUENTAS_DETALLE("cuentas/detalle/{cuentaId}", "Detalle de Cuenta", false),
+    CUENTAS_EDITAR("cuentas/editar/{cuentaId}", "Editar Cuenta", false),
+
     MOVIMIENTOS("movimientos", "Movimientos", true),
+
     PORTAFOLIOS("portafolios", "Portafolios", true),
     PORTAFOLIOS_GUARDAR("portafolios/guardar", "Guardar Portafolio", false),
+
     ACTIVOS("activos", "Activos", true),
     ACTIVOS_GUARDAR("activos/guardar", "Guardar Activo", false),
     ACTIVOS_DETALLE("activos/detalle/{activoId}", "Detalle de Activo", false),
     ACTIVOS_EDITAR("activos/editar/{activoId}", "Editar Activo", false),
+
     REPORTES("reportes", "Reportes", true),
+
     CONFIGURACIONES("configuraciones", "Configuraciones", true);
 
     companion object {

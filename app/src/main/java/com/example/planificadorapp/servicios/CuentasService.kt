@@ -1,6 +1,7 @@
 package com.example.planificadorapp.servicios
 
 import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.TransaccionCuentaRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,13 +19,13 @@ interface CuentasService {
      * Guarda una cuenta en el servidor y devuelve la cuenta guardada
      */
     @POST("/api/cuentas")
-    fun guardarCuenta(@Body cuenta: CuentaModel): Call<CuentaModel>
+    fun guardarCuenta(@Body cuenta: TransaccionCuentaRequestModel): Call<CuentaModel>
 
     /**
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
      */
     @PUT("/api/cuentas/{id}")
-    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: CuentaModel): Call<CuentaModel>
+    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: TransaccionCuentaRequestModel): Call<CuentaModel>
 
     /**
      * Obtiene una cuenta por su ID en el servidor y devuelve la cuenta encontrada

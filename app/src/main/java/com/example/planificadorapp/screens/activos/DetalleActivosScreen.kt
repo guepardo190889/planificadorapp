@@ -29,14 +29,14 @@ import com.example.planificadorapp.repositorios.ActivosRepository
  * Composable que representa la pantalla de detalle de un activo
  */
 @Composable
-fun ActivosDetalleScreen(modifier: Modifier, activoId: Long, navController: NavController) {
+fun DetalleActivosScreen(modifier: Modifier, activoId: Long, navController: NavController) {
     val activosRepository = remember { ActivosRepository() }
 
     var activo by remember { mutableStateOf<ActivoModel?>(null) }
 
     LaunchedEffect(activoId) {
-        activosRepository.buscarActivoPorId(activoId) { resultado ->
-            activo = resultado
+        activosRepository.buscarActivoPorId(activoId) { activoEncontrado ->
+            activo = activoEncontrado
         }
     }
 
@@ -48,7 +48,7 @@ fun ActivosDetalleScreen(modifier: Modifier, activoId: Long, navController: NavC
                     modifier = Modifier,
                     onClick = { navController.navigate("activos/editar/${activo?.id}") }
                 ) {
-                    Icon(Icons.Default.Edit, contentDescription = "Editar Activo")
+                    Icon(Icons.Default.Edit, contentDescription = "Actualizar Activo")
                 }
             }
         }
@@ -62,16 +62,7 @@ fun ActivosDetalleScreen(modifier: Modifier, activoId: Long, navController: NavC
                         .padding(16.dp)
                 ) {
                     Column(modifier.padding(16.dp)) {
-                        if (it.padre != null) {
-                            Text(
-                                text = "Activo principal: ",
-                                style = MaterialTheme.typography.labelLarge
-                            )
-                            Text(
-                                text = it.padre.nombre,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
+                        TextoConEtiqueta("Activo principal: ", it.nombre, "large", "medium")
                         TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
                         TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
                     }

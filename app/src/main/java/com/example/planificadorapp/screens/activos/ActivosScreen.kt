@@ -3,6 +3,7 @@ package com.example.planificadorapp.screens.activos
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -38,14 +39,14 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        activosRepository.buscarActivos(false) { resultado ->
-            activos = resultado ?: emptyList()
+        activosRepository.buscarActivos(false) { activosEncontrados ->
+            activos = activosEncontrados ?: emptyList()
             Log.i("ActivosScreen", "Cargados ${activos.size} activos")
         }
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("activos/guardar") },

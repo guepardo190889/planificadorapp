@@ -2,6 +2,7 @@ package com.example.planificadorapp.repositorios
 
 import android.util.Log
 import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.TransaccionCuentaRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -16,7 +17,7 @@ class CuentasRepository {
     /**
      * Guarda una cuenta en el servidor y devuelve la cuenta guardada
      */
-    fun guardarCuenta(cuenta: CuentaModel, onResult: (CuentaModel?) -> Unit) {
+    fun guardarCuenta(cuenta: TransaccionCuentaRequestModel, onResult: (CuentaModel?) -> Unit) {
         val call = apiService.guardarCuenta(cuenta)
         call.enqueue(object : Callback<CuentaModel> {
             override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
@@ -40,26 +41,25 @@ class CuentasRepository {
     /**
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
      */
-    fun actualizarCuenta(cuenta: CuentaModel, callback: (CuentaModel?) -> Unit) {
-        val idCuenta: Long = cuenta.id
+    fun actualizarCuenta(
+        id:Long,
+        cuenta: TransaccionCuentaRequestModel, callback: (CuentaModel?) -> Unit) {
 
-        idCuenta.let {
-            val call = apiService.actualizarCuenta(idCuenta, cuenta)
-            call.enqueue(object : Callback<CuentaModel> {
-                override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
-                    if (response.isSuccessful) {
-                        callback(response.body())
-                    } else {
-                        callback(null)
-                    }
-                }
-
-                override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
-                    Log.e("CuentasRepository", "Error al actualizar la cuenta", t)
+        val call = apiService.actualizarCuenta(id, cuenta)
+        call.enqueue(object : Callback<CuentaModel> {
+            override fun onResponse(call: Call<CuentaModel>, response: Response<CuentaModel>) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                } else {
                     callback(null)
                 }
-            })
-        }
+            }
+
+            override fun onFailure(call: Call<CuentaModel>, t: Throwable) {
+                Log.e("CuentasRepository", "Error al actualizar la cuenta", t)
+                callback(null)
+            }
+        })
     }
 
     /**

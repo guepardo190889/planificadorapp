@@ -40,7 +40,7 @@ import com.example.planificadorapp.repositorios.ActivosRepository
 import kotlinx.coroutines.launch
 
 /**
- * Composable que representa la pantalla de guardado de un activo
+ * Composable que representa la pantalla de guardado/actualización de un activo
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

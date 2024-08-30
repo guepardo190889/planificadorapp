@@ -10,6 +10,7 @@ data class CuentaModel(
     val nombre: String,
     val descripcion: String,
     val saldo: Double,
-    var fechaActualizacion: LocalDateTime? = null
+    var fechaActualizacion: LocalDateTime? = null,
+    val padre: CuentaPadreResponseModel? = null
 )
 

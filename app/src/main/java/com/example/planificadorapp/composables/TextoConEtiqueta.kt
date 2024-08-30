@@ -33,15 +33,20 @@ fun TextoConEtiqueta(etiqueta: String, texto: String, styleLabel: String, styleB
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Bottom
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            modifier = Modifier.width(84.dp),
+            modifier = Modifier
+                .width(92.dp)
+                .align(Alignment.Top),
             text = etiqueta,
             style = textStyleLabel
         )
         Text(
+            modifier = Modifier
+                .align(Alignment.Bottom),
             text = texto,
             maxLines = 3,
             style = textStyleBody

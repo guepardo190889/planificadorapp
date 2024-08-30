@@ -26,11 +26,12 @@ import com.example.planificadorapp.composables.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.MovimientosScreen
 import com.example.planificadorapp.screens.ReportesScreen
-import com.example.planificadorapp.screens.activos.ActivosDetalleScreen
+import com.example.planificadorapp.screens.activos.DetalleActivosScreen
 import com.example.planificadorapp.screens.activos.ActivosScreen
 import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
-import com.example.planificadorapp.screens.cuentas.DetalleCuentaScreen
+import com.example.planificadorapp.screens.cuentas.DetalleCuentasScreen
+import com.example.planificadorapp.screens.cuentas.TransaccionCuentasScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios
 import com.example.planificadorapp.screens.portafolios.guardado.GuardarPortafolio
 import kotlinx.coroutines.CoroutineScope
@@ -98,24 +99,37 @@ fun NavegacionController(
                     modifier = modifier.padding(it)
                 ) {
                     composable(Ruta.CUENTAS.ruta) {
-                        Cuentas(navController)
+                        Cuentas(modifier, navController)
                     }
-                    composable(Ruta.DETALLE_CUENTA.ruta) {
+                    composable(Ruta.CUENTAS_GUARDAR.ruta) {
+                        TransaccionCuentasScreen(modifier, 0L, navController)
+                    }
+                    composable(Ruta.CUENTAS_DETALLE.ruta) {
                         val cuentaId = it.arguments?.getString("cuentaId")
 
                         if (cuentaId != null) {
-                            DetalleCuentaScreen(navController, cuentaId.toLong())
+                            DetalleCuentasScreen(modifier, cuentaId.toLong(), navController)
                         }
                     }
+                    composable(Ruta.CUENTAS_EDITAR.ruta) {
+                        val cuentaId = it.arguments?.getString("cuentaId")
+
+                        if (cuentaId != null) {
+                            TransaccionCuentasScreen(modifier, cuentaId.toLong(), navController)
+                        }
+                    }
+
                     composable(Ruta.MOVIMIENTOS.ruta) {
                         MovimientosScreen(navController)
                     }
+
                     composable(Ruta.PORTAFOLIOS.ruta) {
                         Portafolios(navController)
                     }
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)
                     }
+
                     composable(Ruta.ACTIVOS.ruta) {
                         ActivosScreen(modifier, navController)
                     }
@@ -126,7 +140,7 @@ fun NavegacionController(
                         val activoId = it.arguments?.getString("activoId")
 
                         if (activoId != null) {
-                            ActivosDetalleScreen(modifier, activoId.toLong(), navController)
+                            DetalleActivosScreen(modifier, activoId.toLong(), navController)
                         }
                     }
                     composable(Ruta.ACTIVOS_EDITAR.ruta) {
@@ -136,9 +150,11 @@ fun NavegacionController(
                             TransaccionActivosSecreen(modifier, activoId.toLong(), navController)
                         }
                     }
+
                     composable(Ruta.REPORTES.ruta) {
                         ReportesScreen(navController)
                     }
+
                     composable(Ruta.CONFIGURACIONES.ruta) {
                         ConfiguracionScreen(navController)
                     }
