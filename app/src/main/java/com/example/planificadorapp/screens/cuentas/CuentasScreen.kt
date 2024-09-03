@@ -41,7 +41,7 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     LaunchedEffect(Unit) {
-        cuentaRepository.buscarCuentas(false) { cuentasEncontradas ->
+        cuentaRepository.buscarCuentas(false, false) { cuentasEncontradas ->
             cuentas = cuentasEncontradas ?: emptyList()
 
             Log.i("Cuentas", "Cuentas encontradas: $cuentasEncontradas")

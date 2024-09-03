@@ -37,6 +37,6 @@ interface CuentasService {
      * Busca cuentas en el servidor y devuelve una lista de CuentaModel
      */
     @GET("/api/cuentas")
-    fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean): Call<List<CuentaModel>>
+    fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean, @Query("incluirSoloCuentasPadre") incluirSoloCuentasPadre: Boolean): Call<List<CuentaModel>>
 
 }

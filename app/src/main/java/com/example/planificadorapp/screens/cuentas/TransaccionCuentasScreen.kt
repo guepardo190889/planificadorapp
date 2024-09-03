@@ -104,7 +104,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
 
     LaunchedEffect(Unit) {
         //SOLICITAR POR PARÁMETRO SOLO LOS ACTIVOS PADRE
-        cuentasRepository.buscarCuentas(true) { resultadoCuentasPadres ->
+        cuentasRepository.buscarCuentas(false, true) { resultadoCuentasPadres ->
             cuentasPadre = resultadoCuentasPadres ?: emptyList()
             Log.i("CuentasScreen", "Cuentas padre cargados: $resultadoCuentasPadres")
 

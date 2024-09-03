@@ -86,8 +86,8 @@ class CuentasRepository {
     /**
      * Busca todas las cuentas en el servidor y devuelve una lista de cuentas encontradas
      */
-    fun buscarCuentas(excluirCuentasAsociadas: Boolean, onResult: (List<CuentaModel>?) -> Unit) {
-        apiService.buscarCuentas(excluirCuentasAsociadas)
+    fun buscarCuentas(excluirCuentasAsociadas: Boolean, incluirSoloCuentasPadre: Boolean, onResult: (List<CuentaModel>?) -> Unit) {
+        apiService.buscarCuentas(excluirCuentasAsociadas, incluirSoloCuentasPadre)
             .enqueue(object : Callback<List<CuentaModel>> {
                 override fun onResponse(
                     call: Call<List<CuentaModel>>,

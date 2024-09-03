@@ -112,7 +112,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                 PasoWizard.PASO_TRES -> {
                     LaunchedEffect(Unit) {
                         Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
-                        cuentasRepository.buscarCuentas(true) { result ->
+                        cuentasRepository.buscarCuentas(true, false) { result ->
                             cuentas = result ?: emptyList()
                         }
                     }

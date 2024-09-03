@@ -6,5 +6,5 @@ package com.example.planificadorapp.modelos
 data class ComposicionGuardarRequestModel(
     var idActivo: Long,
     var porcentaje: Int,
-    var cuentas: List<Long>
+    var idCuentas: List<Long>
 )
