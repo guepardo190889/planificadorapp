@@ -42,8 +42,9 @@ class CuentasRepository {
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
      */
     fun actualizarCuenta(
-        id:Long,
-        cuenta: TransaccionCuentaRequestModel, callback: (CuentaModel?) -> Unit) {
+        id: Long,
+        cuenta: TransaccionCuentaRequestModel, callback: (CuentaModel?) -> Unit
+    ) {
 
         val call = apiService.actualizarCuenta(id, cuenta)
         call.enqueue(object : Callback<CuentaModel> {
@@ -86,7 +87,11 @@ class CuentasRepository {
     /**
      * Busca todas las cuentas en el servidor y devuelve una lista de cuentas encontradas
      */
-    fun buscarCuentas(excluirCuentasAsociadas: Boolean, incluirSoloCuentasPadre: Boolean, onResult: (List<CuentaModel>?) -> Unit) {
+    fun buscarCuentas(
+        excluirCuentasAsociadas: Boolean,
+        incluirSoloCuentasPadre: Boolean,
+        onResult: (List<CuentaModel>?) -> Unit
+    ) {
         apiService.buscarCuentas(excluirCuentasAsociadas, incluirSoloCuentasPadre)
             .enqueue(object : Callback<List<CuentaModel>> {
                 override fun onResponse(

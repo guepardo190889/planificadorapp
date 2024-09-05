@@ -7,6 +7,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.time.LocalDateTime
 
+/**
+ * Objeto que representa el cliente de la API
+ */
 object ApiClient {
     private const val BASE_URL = "http://10.0.2.2:8080"
 
@@ -22,4 +25,5 @@ object ApiClient {
     val cuentaService: CuentasService = retrofit.create(CuentasService::class.java)
     val portafoliosService: PortafoliosService = retrofit.create(PortafoliosService::class.java)
     val activosService: ActivosService = retrofit.create(ActivosService::class.java)
+    val movimientosService: MovimientosService = retrofit.create(MovimientosService::class.java)
 }

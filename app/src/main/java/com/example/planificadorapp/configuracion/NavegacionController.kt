@@ -24,7 +24,6 @@ import com.example.planificadorapp.composables.BarraSuperior
 import com.example.planificadorapp.composables.drawer.AppDrawer
 import com.example.planificadorapp.composables.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
-import com.example.planificadorapp.screens.MovimientosScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.activos.DetalleActivosScreen
 import com.example.planificadorapp.screens.activos.ActivosScreen
@@ -32,6 +31,7 @@ import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentasScreen
 import com.example.planificadorapp.screens.cuentas.TransaccionCuentasScreen
+import com.example.planificadorapp.screens.movimientos.MovimientosScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios
 import com.example.planificadorapp.screens.portafolios.guardado.GuardarPortafolio
 import kotlinx.coroutines.CoroutineScope
@@ -120,7 +120,7 @@ fun NavegacionController(
                     }
 
                     composable(Ruta.MOVIMIENTOS.ruta) {
-                        MovimientosScreen(navController)
+                        MovimientosScreen(modifier, navController)
                     }
 
                     composable(Ruta.PORTAFOLIOS.ruta) {
