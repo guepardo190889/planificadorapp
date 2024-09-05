@@ -19,10 +19,9 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -58,12 +57,7 @@ import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
 import com.example.planificadorapp.utilerias.enumeradores.FiltroMovimiento
-import java.text.SimpleDateFormat
-import java.time.Instant
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.Date
-import java.util.Locale
 
 /**
  * Composable que representa la pantalla de movimientos
@@ -233,15 +227,6 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     Column(modifier = modifier.padding(8.dp)) {
                         RadioButtonGroup(filtroSeleccionado) { nuevoFiltro ->
                             filtroSeleccionado = nuevoFiltro
-
-                            if (FiltroMovimiento.POR_FECHA != filtroSeleccionado) {
-                                // Limpiar los filtros de fecha si se cambia el filtro
-                                fechaInicio = null
-                                fechaFin = null
-
-                                isMostrarFiltros = false
-                                buscarMovimientos()
-                            }
                         }
 
                         if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
@@ -285,6 +270,28 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                                         Log.i("MovimientosScreen", "onDismiss")
                                     }
                                 )
+                            }
+                        }
+
+                        Row(
+                            modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Button(
+                                onClick = {
+                                    // Limpiar los filtros de fecha si se cambia el filtro
+                                    if (FiltroMovimiento.POR_FECHA != filtroSeleccionado) {
+                                        fechaInicio = null
+                                        fechaFin = null
+                                    }
+
+                                    isMostrarFiltros = false
+
+                                    buscarMovimientos()
+                                }) {
+                                Text(text = "Aplicar")
                             }
                         }
                     }
@@ -344,7 +351,8 @@ fun DatePickerInput(
     onDismiss: () -> Unit
 ) {
     var isMostrarDatePicker by remember { mutableStateOf(false) }
-    val fechaTexto: String = if (fecha != null) FormatoFecha.formatoCortoISO8601(fecha) else "yyyy-MM-dd"
+    val fechaTexto: String =
+        if (fecha != null) FormatoFecha.formatoCortoISO8601(fecha) else "yyyy-MM-dd"
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = if (fecha != null) FormatoFecha.convertirLocalDateAMilisegundos(
@@ -385,7 +393,11 @@ fun DatePickerInput(
                     TextButton(onClick = {
                         val selectedMillis = datePickerState.selectedDateMillis
                         if (selectedMillis != null) {
-                            onFechaSeleccionada(FormatoFecha.convertirMilisegundosALocalDate(selectedMillis))
+                            onFechaSeleccionada(
+                                FormatoFecha.convertirMilisegundosALocalDate(
+                                    selectedMillis
+                                )
+                            )
                         }
                         isMostrarDatePicker = false // Cierra el diálogo
                     }) {
@@ -404,11 +416,14 @@ fun DatePickerInput(
                 DatePicker(
                     state = datePickerState,
                     title = {
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp)
+                        ) {
                             Text(
-                                text = "Selecciona una fecha")
+                                text = "Selecciona una fecha"
+                            )
                         }
                     },
                     showModeToggle = false
