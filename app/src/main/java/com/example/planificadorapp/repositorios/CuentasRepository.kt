@@ -111,4 +111,31 @@ class CuentasRepository {
                 }
             })
     }
+
+    /**
+     * Busca las subcuentas de una cuenta en el servidor y devuelve una lista de subcuentas encontradas
+     */
+    fun buscarSubcuentas(
+        idCuentaPadre: Long,
+        onResult: (List<CuentaModel>?) -> Unit
+    ) {
+        apiService.buscarSubcuentas(idCuentaPadre)
+            .enqueue(object : Callback<List<CuentaModel>> {
+                override fun onResponse(
+                    call: Call<List<CuentaModel>>,
+                    response: Response<List<CuentaModel>>
+                ) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<List<CuentaModel>>, t: Throwable) {
+                    Log.e("CuentasRepository", "Error al buscar las subcuentas", t)
+                    onResult(null)
+                }
+            })
+    }
 }

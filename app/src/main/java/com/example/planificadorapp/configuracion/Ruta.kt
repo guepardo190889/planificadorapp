@@ -11,6 +11,7 @@ enum class Ruta(
     CUENTAS_EDITAR("cuentas/editar/{cuentaId}", "Editar Cuenta", false),
 
     MOVIMIENTOS("movimientos", "Movimientos", true),
+    MOVIMIENTOS_GUARDAR("movimientos/guardar", "Guardar Movimiento", false),
 
     PORTAFOLIOS("portafolios", "Portafolios", true),
     PORTAFOLIOS_GUARDAR("portafolios/guardar", "Guardar Portafolio", false),

@@ -1,10 +1,12 @@
 package com.example.planificadorapp.servicios
 
 import com.example.planificadorapp.tipos.LocalDateTimeTypeAdapter
+import com.example.planificadorapp.tipos.LocalDateTypeAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
@@ -15,6 +17,7 @@ object ApiClient {
 
     private val gson: Gson = GsonBuilder()
         .registerTypeAdapter(LocalDateTime::class.java, LocalDateTimeTypeAdapter())
+        .registerTypeAdapter(LocalDate::class.java, LocalDateTypeAdapter())
         .create()
 
     val retrofit: Retrofit = Retrofit.Builder()

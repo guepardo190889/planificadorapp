@@ -36,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.modelos.TransaccionCuentaRequestModel
 import com.example.planificadorapp.modelos.ValidacionModel
@@ -59,7 +60,6 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
     var descripcion by remember { mutableStateOf("") }
     var saldo by remember { mutableStateOf("") }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
-    var cuentaPrincipalListaDesplegada by remember { mutableStateOf(false) }
     var cuentaPrincipalListaHabilitada by remember { mutableStateOf(true) }
 
     var isNombreValido by remember { mutableStateOf(true) }
@@ -103,7 +103,6 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
     }
 
     LaunchedEffect(Unit) {
-        //SOLICITAR POR PARÁMETRO SOLO LOS ACTIVOS PADRE
         cuentasRepository.buscarCuentas(false, true) { resultadoCuentasPadres ->
             cuentasPadre = resultadoCuentasPadres ?: emptyList()
             Log.i("CuentasScreen", "Cuentas padre cargados: $resultadoCuentasPadres")
@@ -231,46 +230,16 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            ExposedDropdownMenuBox(
-                expanded = cuentaPrincipalListaDesplegada,
-                onExpandedChange = {
-                    if (cuentaPrincipalListaHabilitada) { //No se permite modificar el activo principal de un activo existente
-                        cuentaPrincipalListaDesplegada = !cuentaPrincipalListaDesplegada
-                    }
-                }) {
-                OutlinedTextField(
-                    value = cuentaSeleccionada?.nombre ?: "",
-                    onValueChange = { },
-                    modifier = modifier
-                        .menuAnchor()
-                        .fillMaxWidth(),
-                    enabled = cuentaPrincipalListaHabilitada,
-                    readOnly = true,
-                    label = { Text("Selecciona una cuenta Principal") },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = if (cuentaPrincipalListaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                            contentDescription = null
-                        )
-                    }
-                )
-
-                ExposedDropdownMenu(
-                    expanded = cuentaPrincipalListaDesplegada,
-                    onDismissRequest = { cuentaPrincipalListaDesplegada = false },
-                    modifier = modifier.fillMaxWidth()
-                ) {
-                    cuentasPadre.forEach { cuenta ->
-                        DropdownMenuItem(
-                            text = { Text(cuenta.nombre) },
-                            onClick = {
-                                cuentaSeleccionada = cuenta
-                                cuentaPrincipalListaDesplegada = false
-                            }
-                        )
-                    }
+            CuentasDropDown(
+                modifier = modifier,
+                etiqueta = "Selecciona una Cuenta",
+                cuentaPrincipalListaHabilitada,
+                cuentaSeleccionada,
+                cuentasPadre,
+                onCuentaSeleccionada = {
+                    cuentaSeleccionada = it
                 }
-            }
+            )
 
             OutlinedTextField(
                 value = nombre,
@@ -331,10 +300,11 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                     // Filtra la entrada para permitir solo números y un punto
                     val regex = Regex("^\\d{0,9}(\\.\\d{0,2})?\$")
                     if (regex.matches(rawInput)) {
-                        saldo = "$$rawInput"
+                        saldo = "$rawInput"
                     }
                 },
                 label = { Text("Saldo") },
+                leadingIcon = { Text("$") },
                 isError = !isSaldoValido.isValid,
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = modifier.fillMaxWidth(),
@@ -354,4 +324,6 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
         }
     }
 }
+
+
 

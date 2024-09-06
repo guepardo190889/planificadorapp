@@ -39,4 +39,10 @@ interface CuentasService {
     @GET("/api/cuentas")
     fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean, @Query("incluirSoloCuentasPadre") incluirSoloCuentasPadre: Boolean): Call<List<CuentaModel>>
 
+    /**
+     * Busca subcuentas de una cuenta en el servidor y devuelve una lista de CuentaModel
+     */
+    @GET("/api/cuentas/{id}/subcuentas")
+    fun buscarSubcuentas(@Path("id") id: Long): Call<List<CuentaModel>>
+
 }

@@ -1,6 +1,8 @@
 package com.example.planificadorapp.repositorios
 
+import android.util.Log
 import com.example.planificadorapp.modelos.MovimientoModel
+import com.example.planificadorapp.modelos.TransaccionMovimientoRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -12,6 +14,33 @@ import java.time.LocalDate
  */
 class MovimientosRepository {
     private val apiService = ApiClient.movimientosService
+
+    /**
+     * Guarda un movimiento en el servidor y devuelve el movimiento guardado
+     */
+    fun guardarMovimiento(
+        movimiento: TransaccionMovimientoRequestModel,
+        onResult: (MovimientoModel?) -> Unit
+    ) {
+        Log.i("MovimientosRepository", "Guardando movimiento: $movimiento")
+        val call = apiService.guardarMovimiento(movimiento)
+        call.enqueue(object : Callback<MovimientoModel> {
+            override fun onResponse(
+                call: Call<MovimientoModel>,
+                response: Response<MovimientoModel>
+            ) {
+                if (response.isSuccessful) {
+                    onResult(response.body()!!)
+                } else {
+                    onResult(null)
+                }
+            }
+
+            override fun onFailure(call: Call<MovimientoModel>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
 
     /**
      * Busca los movimientos en el servidor y devuelve una lista de MovimientoModel
@@ -48,25 +77,5 @@ class MovimientosRepository {
                 callback(null)
             }
         })
-    }
-
-    fun buscarMovimientosPorCuenta(cuentaSeleccionada: Long): List<MovimientoModel> {
-        return emptyList()
-    }
-
-    fun buscarMovimientosMesAnterior(cuentaSeleccionada: String): List<MovimientoModel> {
-        return emptyList()
-    }
-
-    fun buscarMovimientosDosMesesAtras(cuentaSeleccionada: String): List<MovimientoModel> {
-        return emptyList()
-    }
-
-    fun buscarMovimientosAlDia(cuentaSeleccionada: String): List<MovimientoModel> {
-        return emptyList()
-    }
-
-    fun buscarMovimientosPorFechas(cuentaSeleccionada: String, fechaInicio: LocalDate, fechaFin: LocalDate): List<MovimientoModel> {
-        return emptyList()
     }
 }

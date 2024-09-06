@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos.enumeradores
+package com.example.planificadorapp.utilerias.enumeradores
 
 /**
  * Enumerador de tipos de movimientos

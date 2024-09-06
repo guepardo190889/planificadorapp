@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.modelos.MovimientoModel
-import com.example.planificadorapp.modelos.enumeradores.TipoMovimiento
+import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
@@ -327,7 +327,7 @@ fun RadioButtonGroup(
 ) {
     Column {
         FiltroMovimiento.entries.forEach { filtro ->
-            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = filtro == filtroSeleccionado,
                     onClick = { onFiltroSeleccionado(filtro) }
@@ -471,7 +471,7 @@ fun MovimientoItem(
         },
         supportingContent = {
             Text(
-                text = FormatoFecha.formatoCortoConHora(movimiento.fecha)
+                text = FormatoFecha.formatoCorto(movimiento.fecha)
             )
         },
         trailingContent = {
