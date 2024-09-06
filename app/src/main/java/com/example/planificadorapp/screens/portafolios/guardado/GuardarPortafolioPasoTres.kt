@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -108,35 +110,37 @@ fun GuardarPortafolioPasoTres(
             Text(text = "Cuentas", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            composicionesPasoTres.forEach { composicion ->
-                ActivoCard(
-                    composicion,
-                    cuentas,
-                    composicionesPasoTres,
-                    onAgregarCuenta = { cuentaSeleccionada ->
-                        composicionesPasoTres = composicionesPasoTres.map {
-                            if (it == composicion) {
-                                it.copy(cuentas = it.cuentas + cuentaSeleccionada)
-                            } else {
-                                it
+            LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+                items(composicionesPasoTres) { composicion ->
+                    ActivoCard(
+                        composicion,
+                        cuentas,
+                        composicionesPasoTres,
+                        onAgregarCuenta = { cuentaSeleccionada ->
+                            composicionesPasoTres = composicionesPasoTres.map {
+                                if (it == composicion) {
+                                    it.copy(cuentas = it.cuentas + cuentaSeleccionada)
+                                } else {
+                                    it
+                                }
+                            }
+                        },
+                        onEliminarCuenta = { cuentaSeleccionada ->
+                            Log.i(
+                                "GuardarPortafolioPasoTres",
+                                "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
+                            )
+                            composicionesPasoTres = composicionesPasoTres.map {
+                                if (it == composicion) {
+                                    it.copy(cuentas = it.cuentas - cuentaSeleccionada)
+                                } else {
+                                    it
+                                }
                             }
                         }
-                    },
-                    onEliminarCuenta = { cuentaSeleccionada ->
-                        Log.i(
-                            "GuardarPortafolioPasoTres",
-                            "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
-                        )
-                        composicionesPasoTres = composicionesPasoTres.map {
-                            if (it == composicion) {
-                                it.copy(cuentas = it.cuentas - cuentaSeleccionada)
-                            } else {
-                                it
-                            }
-                        }
-                    }
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                }
             }
         }
     }
