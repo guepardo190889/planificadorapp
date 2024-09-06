@@ -49,6 +49,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.modelos.MovimientoModel
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
@@ -69,7 +70,6 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     val movimientosRepository = remember { MovimientosRepository() }
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var movimientos by remember { mutableStateOf<List<MovimientoModel>>(emptyList()) }
-    var isDropdownCuentaDesplegada by remember { mutableStateOf(false) }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
     var filtroSeleccionado by remember { mutableStateOf<FiltroMovimiento>(FiltroMovimiento.AL_DIA) }
     var isMostrarFiltros by remember { mutableStateOf(false) }
@@ -169,45 +169,17 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                ExposedDropdownMenuBox(
-                    expanded = isDropdownCuentaDesplegada,
-                    onExpandedChange = {
-                        isDropdownCuentaDesplegada = it
+                CuentasDropDown(
+                    modifier = modifier,
+                    etiqueta = "Selecciona una cuenta",
+                    isHabilitado = true,
+                    cuentaSeleccionada = cuentaSeleccionada,
+                    cuentas = cuentas,
+                    onCuentaSeleccionada = {
+                        cuentaSeleccionada = it
+                        buscarMovimientos()
                     }
-                ) {
-                    OutlinedTextField(
-                        modifier = modifier
-                            .menuAnchor()
-                            .fillMaxWidth(),
-                        value = cuentaSeleccionada?.nombre ?: "",
-                        onValueChange = {},
-                        label = { Text("Selecciona una Cuenta") },
-                        readOnly = true,
-                        trailingIcon = {
-                            Icon(
-                                imageVector = if (isDropdownCuentaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                                contentDescription = null
-                            )
-                        },
-                    )
-
-                    ExposedDropdownMenu(
-                        modifier = Modifier.fillMaxWidth(),
-                        expanded = isDropdownCuentaDesplegada,
-                        onDismissRequest = { isDropdownCuentaDesplegada = false }
-                    ) {
-                        cuentas.forEach { cuenta ->
-                            DropdownMenuItem(
-                                text = { Text(text = cuenta.nombre) },
-                                onClick = {
-                                    cuentaSeleccionada = cuenta
-                                    isDropdownCuentaDesplegada = false
-
-                                    buscarMovimientos()
-                                })
-                        }
-                    }
-                }
+                )
 
                 Row(
                     modifier = Modifier

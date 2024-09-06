@@ -1,12 +1,17 @@
 package com.example.planificadorapp.composables.cuentas
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,6 +20,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.CuentaModel
 
 /**
@@ -62,15 +69,46 @@ fun CuentasDropDown(
             onDismissRequest = { isDesplegadoDropdown = false },
             modifier = modifier.fillMaxWidth()
         ) {
-            cuentas.forEach { cuenta ->
-                DropdownMenuItem(
-                    text = { Text(cuenta.nombre) },
-                    onClick = {
-                        cuentaSeleccionadaDropdown = cuenta
-                        isDesplegadoDropdown = false
-                        onCuentaSeleccionada(cuenta)
-                    }
-                )
+            cuentas.forEachIndexed { indice, cuenta ->
+                if (cuenta.isPadre) {
+                    // Cuenta padre
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                cuenta.nombre,
+                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                            )
+                        },
+                        onClick = {
+                            cuentaSeleccionadaDropdown = cuenta
+                            isDesplegadoDropdown = false
+                            onCuentaSeleccionada(cuenta)
+                        }
+                    )
+                } else {
+                    // Cuenta hija
+                    DropdownMenuItem(
+                        text = {
+                            Row {
+                                Spacer(modifier = Modifier.width(16.dp)) // Añade indentación para las cuentas hijas
+                                Text(cuenta.nombre)
+                            }
+                        },
+                        onClick = {
+                            cuentaSeleccionadaDropdown = cuenta
+                            isDesplegadoDropdown = false
+                            onCuentaSeleccionada(cuenta)
+                        }
+                    )
+                }
+
+                // Verifica si la siguiente cuenta es una cuenta padre o si es la última cuenta de la lista
+                val isUltimoElemento = indice == cuentas.size - 1
+                val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].isPadre
+
+                if (isUltimoElemento || isProximoPadre) {
+                    HorizontalDivider()
+                }
             }
         }
     }

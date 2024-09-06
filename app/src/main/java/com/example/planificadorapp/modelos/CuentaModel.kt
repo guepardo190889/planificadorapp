@@ -12,5 +12,8 @@ data class CuentaModel(
     val saldo: Double,
     var fechaActualizacion: LocalDateTime? = null,
     val padre: CuentaPadreResponseModel? = null
-)
+){
+    val isPadre: Boolean
+        get() = padre == null
+}
 
