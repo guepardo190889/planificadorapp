@@ -99,7 +99,7 @@ fun PortafolioItem(portafolio: PortafolioModel, navController: NavController) {
         modifier = Modifier
             .padding(vertical = 8.dp)
             .clickable {
-                Log.i("Mensaje", "Aquí se debe ir al detalle de un portafolio")
+                navController.navigate("portafolios/detalle/${portafolio.id}")
             }
     )
 }
