@@ -1,4 +1,4 @@
-package com.example.planificadorapp.composables.drawer
+package com.example.planificadorapp.navegacion.drawer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

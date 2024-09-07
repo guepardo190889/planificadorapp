@@ -27,7 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
-import com.example.planificadorapp.configuracion.Ruta
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.modelos.PortafolioModel
 import com.example.planificadorapp.repositorios.PortafoliosRepository
 

@@ -1,4 +1,4 @@
-package com.example.planificadorapp.configuracion
+package com.example.planificadorapp.navegacion
 
 enum class Ruta(
     val ruta: String,
@@ -12,6 +12,7 @@ enum class Ruta(
 
     MOVIMIENTOS("movimientos", "Movimientos", true),
     MOVIMIENTOS_GUARDAR("movimientos/guardar", "Guardar Movimiento", false),
+    MOVIMIENTOS_DETALLE("movimientos/detalle/{idMovimiento}", "Detalle de Movimiento", false),
 
     PORTAFOLIOS("portafolios", "Portafolios", true),
     PORTAFOLIOS_GUARDAR("portafolios/guardar", "Guardar Portafolio", false),

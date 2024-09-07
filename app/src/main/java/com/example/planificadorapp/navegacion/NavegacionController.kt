@@ -1,4 +1,4 @@
-package com.example.planificadorapp.configuracion
+package com.example.planificadorapp.navegacion
 
 import android.util.Log
 import androidx.compose.foundation.layout.padding
@@ -21,8 +21,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planificadorapp.composables.BarraSuperior
-import com.example.planificadorapp.composables.drawer.AppDrawer
-import com.example.planificadorapp.composables.drawer.DrawerItem
+import com.example.planificadorapp.navegacion.drawer.AppDrawer
+import com.example.planificadorapp.navegacion.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.activos.DetalleActivosScreen
@@ -31,6 +31,7 @@ import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentasScreen
 import com.example.planificadorapp.screens.cuentas.TransaccionCuentasScreen
+import com.example.planificadorapp.screens.movimientos.DetalleMovimientosScreen
 import com.example.planificadorapp.screens.movimientos.MovimientosScreen
 import com.example.planificadorapp.screens.movimientos.TransaccionMovimientosScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios
@@ -125,6 +126,13 @@ fun NavegacionController(
                     }
                     composable(Ruta.MOVIMIENTOS_GUARDAR.ruta) {
                         TransaccionMovimientosScreen(modifier, navController, 0L)
+                    }
+                    composable(Ruta.MOVIMIENTOS_DETALLE.ruta){
+                        var idMovimiento = it.arguments?.getString("idMovimiento");
+
+                        if(idMovimiento != null){
+                            DetalleMovimientosScreen(modifier, navController, idMovimiento.toLong())
+                        }
                     }
 
                     composable(Ruta.PORTAFOLIOS.ruta) {

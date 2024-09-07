@@ -1,9 +1,9 @@
-package com.example.planificadorapp.composables.drawer
+package com.example.planificadorapp.navegacion.drawer
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.example.planificadorapp.configuracion.Ruta
+import com.example.planificadorapp.navegacion.Ruta
 
 enum class DrawerItem(
     val icono: ImageVector,
