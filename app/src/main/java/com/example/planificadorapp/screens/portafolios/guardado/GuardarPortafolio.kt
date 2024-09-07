@@ -17,9 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.ActivoModel
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.GuardarComposicionModel
+import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.PortafoliosRepository

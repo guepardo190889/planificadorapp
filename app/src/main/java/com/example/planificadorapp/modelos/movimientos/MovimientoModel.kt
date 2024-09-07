@@ -1,13 +1,12 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.movimientos
 
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import java.time.LocalDate
-import java.time.LocalDateTime
 
 /**
  * Modelo de datos para representar un movimiento
  */
-data class MovimientoModel (
+data class MovimientoModel(
     var id: Long = 0,
     val descripcion: String,
     val monto: Double,

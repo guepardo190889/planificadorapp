@@ -20,7 +20,7 @@ object FormatoMonto {
     /**
      * Convierte un monto formateado a Double
      */
-    fun convertirADouble(monto:String): Double {
+    fun convertirADouble(monto: String): Double {
         return monto.replace("$", "").replace(",", "").replace(" ", "").toDouble()
     }
 }

@@ -1,13 +1,13 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.composiciones
+
+import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
 /**
  * Modelo de datos para guardar la representación de una composición de portafolio
  */
 data class GuardarComposicionModel(
     var activo: ActivoModel,
-//    var idActivo: Long = 0,
-//    var nombreActivo: String,
     var porcentaje: Float = 0f,
-    //   var cuentas: List<Long> = emptyList()
     var cuentas: List<CuentaModel> = emptyList()
 )

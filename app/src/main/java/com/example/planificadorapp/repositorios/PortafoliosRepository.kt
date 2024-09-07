@@ -1,8 +1,9 @@
 package com.example.planificadorapp.repositorios
 
 import android.util.Log
-import com.example.planificadorapp.modelos.PortafolioGuardarRequestModel
-import com.example.planificadorapp.modelos.PortafolioModel
+import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
+import com.example.planificadorapp.modelos.portafolios.PortafolioModel
+import com.example.planificadorapp.modelos.portafolios.graficos.DistribucionPortafolioGraficoModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -61,6 +62,35 @@ class PortafoliosRepository {
                 onResult(null)
             }
         })
+    }
+
+    /**
+     * Busca en el servidor los datos necesarios para generar un gráfico de distribución y devuelve un DistribucionPortafolioGraficoModel
+     */
+    fun buscarDatosGraficoDistribucion(
+        idPortafolio: Long,
+        onResult: (DistribucionPortafolioGraficoModel?) -> Unit
+    ) {
+        apiService.buscarDatosGraficoDistribucion(idPortafolio)
+            .enqueue(object : Callback<DistribucionPortafolioGraficoModel> {
+                override fun onResponse(
+                    call: Call<DistribucionPortafolioGraficoModel>,
+                    response: Response<DistribucionPortafolioGraficoModel>
+                ) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(
+                    call: Call<DistribucionPortafolioGraficoModel>,
+                    t: Throwable
+                ) {
+                    onResult(null)
+                }
+            })
     }
 
 }

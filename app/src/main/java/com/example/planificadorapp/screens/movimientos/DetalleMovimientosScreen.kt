@@ -14,8 +14,5 @@ fun DetalleMovimientosScreen(
     navController: NavController,
     idMovimiento: Long
 ) {
-    GraficaPastel(listOf(
-        "Acciones" to 80567.85f,
-        "AAA" to 1000.0f
-    ))
+
 }

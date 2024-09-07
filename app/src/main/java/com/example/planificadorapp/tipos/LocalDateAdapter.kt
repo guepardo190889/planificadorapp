@@ -6,7 +6,7 @@ import com.google.gson.stream.JsonWriter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class LocalDateTypeAdapter :  TypeAdapter<LocalDate>() {
+class LocalDateTypeAdapter : TypeAdapter<LocalDate>() {
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
     override fun write(out: JsonWriter, value: LocalDate?) {

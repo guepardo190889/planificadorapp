@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 
 /**
@@ -15,17 +16,15 @@ import androidx.compose.ui.unit.dp
  */
 @Composable
 fun TextoConEtiqueta(etiqueta: String, texto: String, styleLabel: String, styleBody: String) {
-    var textStyleLabel = MaterialTheme.typography.bodyMedium
-    var textStyleBody = MaterialTheme.typography.bodyMedium
 
-    textStyleLabel = when (styleLabel) {
+    val textStyleLabel: TextStyle = when (styleLabel) {
         "large" -> MaterialTheme.typography.labelLarge
         "medium" -> MaterialTheme.typography.labelMedium
         "small" -> MaterialTheme.typography.labelSmall
         else -> MaterialTheme.typography.labelMedium // Valor por defecto si styleLabel no coincide con ninguno
     }
 
-    textStyleBody = when (styleBody) {
+    val textStyleBody: TextStyle = when (styleBody) {
         "large" -> MaterialTheme.typography.bodyLarge
         "medium" -> MaterialTheme.typography.bodyMedium
         "small" -> MaterialTheme.typography.bodySmall

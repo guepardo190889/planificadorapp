@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.cuentas
 
 /**
  * Modelo de datos para representar una cuenta padre

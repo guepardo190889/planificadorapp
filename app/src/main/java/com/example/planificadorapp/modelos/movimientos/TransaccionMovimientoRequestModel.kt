@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.movimientos
 
 import java.time.LocalDate
 
@@ -7,10 +7,10 @@ import java.time.LocalDate
  */
 data class TransaccionMovimientoRequestModel(
     var monto: Double,
-    var concepto:String?,
-    var descripcion:String?,
+    var concepto: String?,
+    var descripcion: String?,
     var fecha: LocalDate,
-    var idCuenta:Long,
-    var tipo:String
+    var idCuenta: Long,
+    var tipo: String
 
 )

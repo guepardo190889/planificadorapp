@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.cuentas
 
 import java.time.LocalDateTime
 
@@ -12,8 +12,7 @@ data class CuentaModel(
     val saldo: Double,
     var fechaActualizacion: LocalDateTime? = null,
     val padre: CuentaPadreResponseModel? = null
-){
+) {
     val isPadre: Boolean
         get() = padre == null
 }
-

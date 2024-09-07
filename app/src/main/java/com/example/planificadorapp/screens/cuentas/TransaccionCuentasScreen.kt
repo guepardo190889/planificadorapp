@@ -8,12 +8,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,9 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.TransaccionCuentaRequestModel
 import com.example.planificadorapp.modelos.ValidacionModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoMonto
 import kotlinx.coroutines.launch
@@ -52,14 +49,26 @@ import kotlinx.coroutines.launch
 fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: NavController) {
     val cuentasRepository = remember { CuentasRepository() }
 
-    var cuentasPadre by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
-    var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
+    var cuentasPadre by remember {
+        mutableStateOf<List<CuentaModel>>(
+            emptyList()
+        )
+    }
+    var cuenta by remember {
+        mutableStateOf<CuentaModel?>(
+            null
+        )
+    }
     var descripcionBoton by remember { mutableStateOf("Guardar") }
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var saldo by remember { mutableStateOf("") }
-    var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
+    var cuentaSeleccionada by remember {
+        mutableStateOf<CuentaModel?>(
+            null
+        )
+    }
     var cuentaPrincipalListaHabilitada by remember { mutableStateOf(true) }
 
     var isNombreValido by remember { mutableStateOf(true) }

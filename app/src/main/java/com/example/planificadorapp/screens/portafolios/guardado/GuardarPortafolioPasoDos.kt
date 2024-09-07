@@ -41,8 +41,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.ActivoModel
-import com.example.planificadorapp.modelos.GuardarComposicionModel
+import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import kotlinx.coroutines.launch
 
 /**

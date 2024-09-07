@@ -22,7 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
 /**
  * Composable que muestra un menú desplegable para seleccionar una cuenta

@@ -1,7 +1,7 @@
 package com.example.planificadorapp.servicios
 
-import com.example.planificadorapp.modelos.MovimientoModel
-import com.example.planificadorapp.modelos.TransaccionMovimientoRequestModel
+import com.example.planificadorapp.modelos.movimientos.MovimientoModel
+import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,7 +18,7 @@ interface MovimientosService {
      * Guarda un movimiento en el servidor y devuelve el movimiento guardado
      */
     @POST("api/movimientos")
-    fun guardarMovimiento(@Body movimiento: TransaccionMovimientoRequestModel):Call<MovimientoModel>
+    fun guardarMovimiento(@Body movimiento: TransaccionMovimientoRequestModel): Call<MovimientoModel>
 
     /**
      * Busca los movimientos en el servidor y devuelve una lista de MovimientoModel

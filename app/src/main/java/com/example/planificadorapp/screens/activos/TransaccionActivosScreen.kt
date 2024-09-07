@@ -34,8 +34,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
-import com.example.planificadorapp.modelos.ActivoModel
-import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
+import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.activos.TransaccionActivoRequestModel
 import com.example.planificadorapp.repositorios.ActivosRepository
 import kotlinx.coroutines.launch
 

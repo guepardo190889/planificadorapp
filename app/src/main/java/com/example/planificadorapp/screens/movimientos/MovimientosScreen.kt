@@ -15,16 +15,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -50,14 +47,14 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.MovimientoModel
-import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.movimientos.MovimientoModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
 import com.example.planificadorapp.utilerias.enumeradores.FiltroMovimiento
+import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import java.time.LocalDate
 
 /**

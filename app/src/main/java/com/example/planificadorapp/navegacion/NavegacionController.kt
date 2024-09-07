@@ -25,8 +25,8 @@ import com.example.planificadorapp.navegacion.drawer.AppDrawer
 import com.example.planificadorapp.navegacion.drawer.DrawerItem
 import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.ReportesScreen
-import com.example.planificadorapp.screens.activos.DetalleActivosScreen
 import com.example.planificadorapp.screens.activos.ActivosScreen
+import com.example.planificadorapp.screens.activos.DetalleActivosScreen
 import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentasScreen
@@ -34,6 +34,7 @@ import com.example.planificadorapp.screens.cuentas.TransaccionCuentasScreen
 import com.example.planificadorapp.screens.movimientos.DetalleMovimientosScreen
 import com.example.planificadorapp.screens.movimientos.MovimientosScreen
 import com.example.planificadorapp.screens.movimientos.TransaccionMovimientosScreen
+import com.example.planificadorapp.screens.portafolios.DetallePortafoliosScreen
 import com.example.planificadorapp.screens.portafolios.Portafolios
 import com.example.planificadorapp.screens.portafolios.guardado.GuardarPortafolio
 import kotlinx.coroutines.CoroutineScope
@@ -127,10 +128,10 @@ fun NavegacionController(
                     composable(Ruta.MOVIMIENTOS_GUARDAR.ruta) {
                         TransaccionMovimientosScreen(modifier, navController, 0L)
                     }
-                    composable(Ruta.MOVIMIENTOS_DETALLE.ruta){
-                        var idMovimiento = it.arguments?.getString("idMovimiento");
+                    composable(Ruta.MOVIMIENTOS_DETALLE.ruta) {
+                        val idMovimiento = it.arguments?.getString("idMovimiento");
 
-                        if(idMovimiento != null){
+                        if (idMovimiento != null) {
                             DetalleMovimientosScreen(modifier, navController, idMovimiento.toLong())
                         }
                     }
@@ -140,6 +141,13 @@ fun NavegacionController(
                     }
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)
+                    }
+                    composable(Ruta.PORTAFOLIOS_DETALLE.ruta){
+                        val idPortafolio = it.arguments?.getString("idPortafolio");
+
+                        if(idPortafolio != null){
+                            DetallePortafoliosScreen(modifier, navController, idPortafolio.toLong())
+                        }
                     }
 
                     composable(Ruta.ACTIVOS.ruta) {

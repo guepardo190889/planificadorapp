@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -20,7 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.planificadorapp.modelos.ActivoModel
+import com.example.planificadorapp.modelos.activos.ActivoModel
 
 @Composable
 fun SeleccionarActivoDialogo(
@@ -45,7 +44,10 @@ fun SeleccionarActivoDialogo(
                             headlineContent = {
                                 if (activo.padre == null) {
                                     // Activo padre
-                                    Text(text = activo.nombre, style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black))
+                                    Text(
+                                        text = activo.nombre,
+                                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                                    )
                                 } else {
                                     // Activo hijo
                                     Row {

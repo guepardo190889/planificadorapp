@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.composiciones
 
 /**
  * Modelo de datos para guardar las composiciones de un portafolio

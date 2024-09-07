@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.TransaccionMovimientoRequestModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoMonto
@@ -75,7 +75,10 @@ fun TransaccionMovimientosScreen(
     LaunchedEffect(Unit) {
         fecha = LocalDate.now()
 
-        cuentasRepository.buscarCuentas(excluirCuentasAsociadas = false, incluirSoloCuentasPadre = true) { resultadoCuentas ->
+        cuentasRepository.buscarCuentas(
+            excluirCuentasAsociadas = false,
+            incluirSoloCuentasPadre = true
+        ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
             Log.i("TransaccionMovimientosScreen", "Cuentas cargadas: $resultadoCuentas")
         }
@@ -90,7 +93,7 @@ fun TransaccionMovimientosScreen(
      * Busca las subcuentas de la cuenta seleccionada
      */
     fun buscarSubcuentas() {
-        cuentasRepository.buscarSubcuentas(cuentaSeleccionada!!.id){
+        cuentasRepository.buscarSubcuentas(cuentaSeleccionada!!.id) {
             subcuentas = it ?: emptyList()
         }
     }
@@ -98,12 +101,11 @@ fun TransaccionMovimientosScreen(
     /**
      * Valida si el monto es válido
      */
-    fun validarMonto():Boolean {
+    fun validarMonto(): Boolean {
         return try {
             val montoValue = FormatoMonto.convertirADouble(monto)
             montoValue > 0
-        }
-        catch(e: NumberFormatException){
+        } catch (e: NumberFormatException) {
             return false
         }
     }
@@ -120,7 +122,8 @@ fun TransaccionMovimientosScreen(
      * Guarda el movimiento en la base de datos
      */
     fun guardarMovimiento() {
-        val idCuentaGuardar = if(subcuentaSeleccionada != null) subcuentaSeleccionada!!.id else cuentaSeleccionada!!.id
+        val idCuentaGuardar =
+            if (subcuentaSeleccionada != null) subcuentaSeleccionada!!.id else cuentaSeleccionada!!.id
 
         movimientosRepository.guardarMovimiento(
             TransaccionMovimientoRequestModel(
@@ -131,8 +134,7 @@ fun TransaccionMovimientosScreen(
                 idCuentaGuardar,
                 tipoMovimientoSeleccionado.name
             )
-        ) {
-            movimientoGuardado ->
+        ) { movimientoGuardado ->
             if (movimientoGuardado != null) {
                 snackbarMessage = "Movimiento guardado exitosamente"
                 snackbarType = "success"
@@ -238,7 +240,7 @@ fun TransaccionMovimientosScreen(
                     }
                 )
 
-                if(subcuentas.isNotEmpty()) {
+                if (subcuentas.isNotEmpty()) {
                     CuentasDropDown(
                         modifier = modifier,
                         etiqueta = "Selecciona una Subcuenta",
@@ -295,7 +297,7 @@ fun TransaccionMovimientosScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = concepto,
                     onValueChange = {
-                        if(it.length <= 64){
+                        if (it.length <= 64) {
                             concepto = it
                         }
                     },
@@ -317,7 +319,7 @@ fun TransaccionMovimientosScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = descripcion,
                     onValueChange = {
-                        if(it.length <= 256){
+                        if (it.length <= 256) {
                             descripcion = it
                         }
                     },

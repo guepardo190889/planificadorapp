@@ -1,4 +1,6 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.portafolios
+
+import com.example.planificadorapp.modelos.composiciones.ComposicionGuardarRequestModel
 
 /**
  * Modelo de datos para guardar un portafolio

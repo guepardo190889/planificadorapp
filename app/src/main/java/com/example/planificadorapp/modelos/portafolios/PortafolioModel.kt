@@ -1,4 +1,4 @@
-package com.example.planificadorapp.modelos
+package com.example.planificadorapp.modelos.portafolios
 
 /**
  * Modelo de datos para representar un portafolio

@@ -32,8 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.GuardarComposicionModel
+import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
 @Composable
 fun GuardarPortafolioPasoTres(
@@ -110,7 +110,9 @@ fun GuardarPortafolioPasoTres(
             Text(text = "Cuentas", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
                 items(composicionesPasoTres) { composicion ->
                     ActivoCard(
                         composicion,

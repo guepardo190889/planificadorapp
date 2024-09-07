@@ -26,11 +26,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
-import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
-import java.time.format.DateTimeFormatter
 
 /**
  * Composable que representa la pantalla de cuentas
@@ -38,7 +37,11 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     val cuentaRepository = remember { CuentasRepository() }
-    var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var cuentas by remember {
+        mutableStateOf<List<CuentaModel>>(
+            emptyList()
+        )
+    }
 
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(false, false) { cuentasEncontradas ->
@@ -86,7 +89,11 @@ fun CuentasList(
  * Composable que muestra un ítem de cuenta
  */
 @Composable
-fun CuentaItem(modifier: Modifier, cuenta: CuentaModel, navController: NavController) {
+fun CuentaItem(
+    modifier: Modifier,
+    cuenta: CuentaModel,
+    navController: NavController
+) {
     ListItem(
         modifier = modifier
             .padding(vertical = 8.dp)

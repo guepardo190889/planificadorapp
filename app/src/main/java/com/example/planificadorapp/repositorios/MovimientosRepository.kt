@@ -1,8 +1,8 @@
 package com.example.planificadorapp.repositorios
 
 import android.util.Log
-import com.example.planificadorapp.modelos.MovimientoModel
-import com.example.planificadorapp.modelos.TransaccionMovimientoRequestModel
+import com.example.planificadorapp.modelos.movimientos.MovimientoModel
+import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback

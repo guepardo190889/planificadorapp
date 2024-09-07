@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.example.planificadorapp.modelos.CuentaModel
 import com.example.planificadorapp.modelos.ValidacionModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import java.util.regex.Pattern
 
 @Composable

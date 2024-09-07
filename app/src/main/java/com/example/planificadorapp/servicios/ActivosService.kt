@@ -1,7 +1,7 @@
 package com.example.planificadorapp.servicios
 
-import com.example.planificadorapp.modelos.ActivoModel
-import com.example.planificadorapp.modelos.TransaccionActivoRequestModel
+import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.activos.TransaccionActivoRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

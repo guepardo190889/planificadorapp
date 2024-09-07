@@ -25,9 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.TextoConEtiqueta
-import com.example.planificadorapp.modelos.ComposicionGuardarRequestModel
-import com.example.planificadorapp.modelos.GuardarComposicionModel
-import com.example.planificadorapp.modelos.PortafolioGuardarRequestModel
+import com.example.planificadorapp.modelos.composiciones.ComposicionGuardarRequestModel
+import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
+import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 
 @Composable
 fun GuardarPortafolioResumen(
@@ -121,7 +121,9 @@ fun GuardarPortafolioResumen(
                 text = "Activos",
                 style = MaterialTheme.typography.titleMedium
             )
-            LazyColumn(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            LazyColumn(modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)) {
                 items(composiciones) { composicion ->
                     ResumenComposicionCard(composicion)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

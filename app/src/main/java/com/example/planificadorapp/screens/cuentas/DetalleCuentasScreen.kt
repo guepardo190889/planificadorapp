@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.TextoConEtiqueta
-import com.example.planificadorapp.modelos.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
@@ -65,9 +65,18 @@ fun DetalleCuentasScreen(
                 ) {
                     Column(modifier = modifier.padding(16.dp)) {
                         TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
-                        TextoConEtiqueta("Saldo: ", FormatoMonto.formato(it.saldo), "large", "medium")
+                        TextoConEtiqueta(
+                            "Saldo: ",
+                            FormatoMonto.formato(it.saldo),
+                            "large",
+                            "medium"
+                        )
                         TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
-                        TextoConEtiqueta("Fecha de actualización: ", it.fechaActualizacion?.let { FormatoFecha.formatoLargo(it)} ?: "", "large", "medium")
+                        TextoConEtiqueta(
+                            "Fecha de actualización: ",
+                            it.fechaActualizacion?.let { FormatoFecha.formatoLargo(it) } ?: "",
+                            "large",
+                            "medium")
                     }
                 }
             }

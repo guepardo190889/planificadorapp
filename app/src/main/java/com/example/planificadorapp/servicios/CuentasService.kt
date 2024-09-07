@@ -1,7 +1,7 @@
 package com.example.planificadorapp.servicios
 
-import com.example.planificadorapp.modelos.CuentaModel
-import com.example.planificadorapp.modelos.TransaccionCuentaRequestModel
+import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -25,7 +25,10 @@ interface CuentasService {
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
      */
     @PUT("/api/cuentas/{id}")
-    fun actualizarCuenta(@Path("id") id: Long, @Body cuenta: TransaccionCuentaRequestModel): Call<CuentaModel>
+    fun actualizarCuenta(
+        @Path("id") id: Long,
+        @Body cuenta: TransaccionCuentaRequestModel
+    ): Call<CuentaModel>
 
     /**
      * Obtiene una cuenta por su ID en el servidor y devuelve la cuenta encontrada
@@ -37,7 +40,10 @@ interface CuentasService {
      * Busca cuentas en el servidor y devuelve una lista de CuentaModel
      */
     @GET("/api/cuentas")
-    fun buscarCuentas(@Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean, @Query("incluirSoloCuentasPadre") incluirSoloCuentasPadre: Boolean): Call<List<CuentaModel>>
+    fun buscarCuentas(
+        @Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean,
+        @Query("incluirSoloCuentasPadre") incluirSoloCuentasPadre: Boolean
+    ): Call<List<CuentaModel>>
 
     /**
      * Busca subcuentas de una cuenta en el servidor y devuelve una lista de CuentaModel
