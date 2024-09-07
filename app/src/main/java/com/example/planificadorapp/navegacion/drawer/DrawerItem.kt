@@ -1,20 +1,18 @@
 package com.example.planificadorapp.navegacion.drawer
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.ui.graphics.vector.ImageVector
+import com.example.planificadorapp.R
 import com.example.planificadorapp.navegacion.Ruta
 
 enum class DrawerItem(
-    val icono: ImageVector,
+    val icono: Int,
     val titulo: String,
     val descripcion: String,
     val ruta: String
 ) {
-    CUENTAS(Icons.Default.Info, "Cuentas", "Cuentas", Ruta.CUENTAS.ruta),
-    MOVIMIENTO(Icons.Default.Info, "Movimientos", "Movimientos", Ruta.MOVIMIENTOS.ruta),
-    PORTAFOLIOS(Icons.Default.Info, "Portafolios", "Portafolios", Ruta.PORTAFOLIOS.ruta),
-    ACTIVOS(Icons.Default.Info, "Activos", "Activos", Ruta.ACTIVOS.ruta),
-    REPORTES(Icons.Default.Info, "Reportes", "Reportes", Ruta.REPORTES.ruta),
-    CONFIGURACION(Icons.Default.Info, "Configuración", "Configuración", Ruta.CONFIGURACIONES.ruta),
+    CUENTAS(R.drawable.baseline_account_balance_24, "Cuentas", "Cuentas", Ruta.CUENTAS.ruta),
+    MOVIMIENTO(R.drawable.outline_swap_horiz_24, "Movimientos", "Movimientos", Ruta.MOVIMIENTOS.ruta),
+    PORTAFOLIOS(R.drawable.outline_work_24, "Portafolios", "Portafolios", Ruta.PORTAFOLIOS.ruta),
+    ACTIVOS(R.drawable.outline_attach_money_24, "Activos", "Activos", Ruta.ACTIVOS.ruta),
+    REPORTES(R.drawable.outline_bar_chart_24, "Reportes", "Reportes", Ruta.REPORTES.ruta),
+    CONFIGURACION(R.drawable.outline_settings_24, "Configuración", "Configuración", Ruta.CONFIGURACIONES.ruta),
 }

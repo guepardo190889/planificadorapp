@@ -41,7 +41,7 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
     LaunchedEffect(Unit) {
         activosRepository.buscarActivos(false) { activosEncontrados ->
             activos = activosEncontrados ?: emptyList()
-            Log.i("ActivosScreen", "Cargados ${activos.size} activos")
+            Log.i("ActivosScreen", "Activos encontrados: ${activos.size}")
         }
     }
 
@@ -55,11 +55,16 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Activo")
             }
         },
-    ) { paddingValues ->
-        Column(modifier.padding(paddingValues)) {
-            ActivosList(activos, navController, Modifier.padding(16.dp))
+        content = {
+            Column(
+                modifier
+                    .fillMaxWidth()
+                    .padding(it)
+            ) {
+                ActivosList(modifier, navController, activos)
+            }
         }
-    }
+    )
 }
 
 /**
@@ -67,13 +72,13 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
  */
 @Composable
 fun ActivosList(
-    activos: List<ActivoModel>,
+    modifier: Modifier = Modifier,
     navController: NavController,
-    modifier: Modifier = Modifier
+    activos: List<ActivoModel>
 ) {
     LazyColumn(modifier.padding(16.dp)) {
         items(activos) { activo ->
-            ActivoItem(modifier, activo, navController)
+            ActivoItem(modifier, navController, activo)
             HorizontalDivider()
         }
     }
@@ -83,19 +88,25 @@ fun ActivosList(
  * Composable que muestra un ítem de activo
  */
 @Composable
-fun ActivoItem(modifier: Modifier, activo: ActivoModel, navController: NavController) {
+fun ActivoItem(
+    modifier: Modifier,
+    navController: NavController,
+    activo: ActivoModel,
+) {
     ListItem(
         modifier = modifier
-            .padding(vertical = 8.dp)
             .clickable {
                 navController.navigate("activos/detalle/${activo.id}")
             },
         headlineContent = {
             Text(activo.nombre)
         },
+        supportingContent = {
+            Text(if (activo.padre == null) "Activo" else "Subactivo")
+        },
         leadingContent = {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_account_balance_24),
+                painter = painterResource(id = R.drawable.outline_attach_money_24),
                 contentDescription = "Localized description",
             )
         },

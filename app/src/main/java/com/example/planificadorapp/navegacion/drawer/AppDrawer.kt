@@ -41,7 +41,12 @@ fun AppDrawer(
 
         menus.forEach { item ->
             NavigationDrawerItem(
-                icon = { Icon(item.icono, contentDescription = item.descripcion) },
+                icon = {
+                    Icon(
+                        painter = painterResource(id = item.icono),
+                        contentDescription = item.descripcion
+                    )
+                },
                 label = { Text(item.titulo) },
                 selected = route == item.ruta,
                 onClick = { onClickMenuItem(item) }
@@ -62,19 +67,19 @@ fun DrawerHeader(modifier: Modifier) {
             .fillMaxWidth()
     ) {
         Image(
-            painterResource(id = R.drawable.baseline_account_balance_24),
+            painterResource(id = R.drawable.outline_account_circle_24),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier
-                .size(16.dp)
+                .size(24.dp)
                 .clip(CircleShape)
         )
-        Spacer(modifier = Modifier.padding(16.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
 
         Text(
             text = stringResource(id = R.string.app_name),
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onPrimary,
         )
     }

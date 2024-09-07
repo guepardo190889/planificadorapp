@@ -121,9 +121,11 @@ fun GuardarPortafolioResumen(
                 text = "Activos",
                 style = MaterialTheme.typography.titleMedium
             )
-            LazyColumn(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 items(composiciones) { composicion ->
                     ResumenComposicionCard(composicion)
                     HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))

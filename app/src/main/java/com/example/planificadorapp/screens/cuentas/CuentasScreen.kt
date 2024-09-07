@@ -2,8 +2,11 @@ package com.example.planificadorapp.screens.cuentas
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,6 +16,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,12 +46,16 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             emptyList()
         )
     }
+    var totalSaldos by remember { mutableStateOf(0.00) }
 
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(false, false) { cuentasEncontradas ->
             cuentas = cuentasEncontradas ?: emptyList()
+            Log.i("CuentasScreen", "Cuentas encontradas: ${cuentasEncontradas!!.size}")
 
-            Log.i("Cuentas", "Cuentas encontradas: $cuentasEncontradas")
+            for (cuenta in cuentas) {
+                totalSaldos = totalSaldos.toDouble() + cuenta.saldo
+            }
         }
     }
 
@@ -60,12 +68,29 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
             }
+        },
+        content = {
+            Column(
+                modifier
+                    .fillMaxWidth()
+                    .padding(it)
+            ) {
+                CuentasList(modifier, cuentas, navController)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = "Total: ${FormatoMonto.formato(totalSaldos)}",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
         }
-    ) { paddingValues ->
-        Column(modifier.padding(paddingValues)) {
-            CuentasList(modifier, cuentas, navController)
-        }
-    }
+    )
 }
 
 /**
@@ -79,7 +104,7 @@ fun CuentasList(
 ) {
     LazyColumn(modifier.padding(16.dp)) {
         items(cuentas) { cuenta ->
-            CuentaItem(modifier, cuenta, navController)
+            CuentaItem(modifier, navController, cuenta)
             HorizontalDivider()
         }
     }
@@ -91,19 +116,20 @@ fun CuentasList(
 @Composable
 fun CuentaItem(
     modifier: Modifier,
-    cuenta: CuentaModel,
-    navController: NavController
+    navController: NavController,
+    cuenta: CuentaModel
 ) {
     ListItem(
         modifier = modifier
-            .padding(vertical = 8.dp)
             .clickable {
                 navController.navigate("cuentas/detalle/${cuenta.id}")
             },
         headlineContent = {
             Text(text = cuenta.nombre)
         },
-        supportingContent = { Text(FormatoMonto.formato(cuenta.saldo)) },
+        supportingContent = {
+            Text(cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "")
+        },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_account_balance_24),
@@ -111,9 +137,7 @@ fun CuentaItem(
             )
         },
         trailingContent = {
-            Text(cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "")
+            Text(FormatoMonto.formato(cuenta.saldo))
         }
     )
 }
-
-

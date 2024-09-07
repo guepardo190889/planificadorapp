@@ -110,9 +110,11 @@ fun GuardarPortafolioPasoTres(
             Text(text = "Cuentas", style = MaterialTheme.typography.headlineMedium)
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            LazyColumn(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 items(composicionesPasoTres) { composicion ->
                     ActivoCard(
                         composicion,

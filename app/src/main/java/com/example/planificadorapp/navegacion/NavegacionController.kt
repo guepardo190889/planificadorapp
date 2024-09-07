@@ -142,10 +142,10 @@ fun NavegacionController(
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)
                     }
-                    composable(Ruta.PORTAFOLIOS_DETALLE.ruta){
+                    composable(Ruta.PORTAFOLIOS_DETALLE.ruta) {
                         val idPortafolio = it.arguments?.getString("idPortafolio");
 
-                        if(idPortafolio != null){
+                        if (idPortafolio != null) {
                             DetallePortafoliosScreen(modifier, navController, idPortafolio.toLong())
                         }
                     }

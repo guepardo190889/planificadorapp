@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,8 +43,9 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
 
     LaunchedEffect(key1 = navController) {
         portafolioRepository.buscarPortafolios { result ->
-            Log.i("Portafolios", "Portafolios encontrados: $result")
             portafolios = result ?: emptyList()
+            Log.i("PortafoliosScreen", "Portafolios encontrados: ${portafolios.size}")
+
             isLoading = false
         }
     }
@@ -60,46 +62,63 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
             }
+        },
+        content = {
+            Column(
+                modifier
+                    .fillMaxWidth()
+                    .padding(it)
+            ) {
+                PortafoliosList(modifier, navController, portafolios)
+            }
         }
-    ) { paddingValues ->
-        Column(modifier = Modifier.padding(paddingValues)) {
-            PortafoliosList(portafolios, navController, Modifier.padding(16.dp))
-        }
-    }
+    )
 }
 
+/**
+ * Composable que muestra la lista de portafolios
+ */
 @Composable
 fun PortafoliosList(
-    portafolios: List<PortafolioModel>,
+    modifier: Modifier = Modifier,
     navController: NavController,
-    modifier: Modifier = Modifier
+    portafolios: List<PortafolioModel>
 ) {
-    LazyColumn(modifier = modifier.padding(16.dp)) {
+    LazyColumn(modifier.padding(16.dp)) {
         items(portafolios) { portafolio ->
-            PortafolioItem(portafolio, navController)
+            PortafolioItem(modifier, navController, portafolio)
             HorizontalDivider(color = Color(0xFFC2C2C2))
         }
     }
 }
 
+/**
+ * Composable que muestra un item de portafolio
+ */
 @Composable
-fun PortafolioItem(portafolio: PortafolioModel, navController: NavController) {
+fun PortafolioItem(
+    modifier: Modifier,
+    navController: NavController,
+    portafolio: PortafolioModel
+) {
     ListItem(
+        modifier = modifier
+            .clickable {
+                navController.navigate("portafolios/detalle/${portafolio.id}")
+            },
         headlineContent = {
             Text(text = portafolio.nombre, color = Color(0xFF000000))
         },
+        supportingContent = {
+            Text(portafolio.descripcion)
+        },
         leadingContent = {
             Icon(
-                painter = painterResource(id = R.drawable.baseline_account_balance_24),
+                painter = painterResource(id = R.drawable.outline_work_24),
                 contentDescription = "Localized description",
                 tint = Color(0xFF88C6F5)
             )
         },
-        trailingContent = { Text("$100,000.00", color = Color(0xFFC2C2C2)) },
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .clickable {
-                navController.navigate("portafolios/detalle/${portafolio.id}")
-            }
+        trailingContent = { Text("$100,000.00", color = Color(0xFFC2C2C2)) }
     )
 }

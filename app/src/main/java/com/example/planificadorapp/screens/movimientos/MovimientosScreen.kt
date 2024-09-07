@@ -42,10 +42,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.planificadorapp.R
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.movimientos.MovimientoModel
@@ -75,8 +77,8 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
 
     LaunchedEffect(Unit) {
         cuentasRepository.buscarCuentas(false, false) { resultadoCuentas ->
-            Log.i("MovimientosScreen", "Cuentas cargadas: ${resultadoCuentas?.size}")
             cuentas = resultadoCuentas ?: emptyList()
+            Log.i("MovimientosScreen", "Cuentas cargadas: ${cuentas?.size}")
         }
     }
 
@@ -94,10 +96,6 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     false,
                     false
                 ) { resultadoMovimientos ->
-                    Log.i(
-                        "MovimientosScreen",
-                        "Movimientos al día cargados: ${resultadoMovimientos?.size}"
-                    )
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
             } else if (FiltroMovimiento.MES_ANTERIOR == filtroSeleccionado) {
@@ -109,10 +107,6 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     true,
                     false
                 ) { resultadoMovimientos ->
-                    Log.i(
-                        "MovimientosScreen",
-                        "Movimientos del mes anterior cargados: ${resultadoMovimientos?.size}"
-                    )
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
             } else if (FiltroMovimiento.DOS_MESES_ATRAS == filtroSeleccionado) {
@@ -124,10 +118,6 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     false,
                     true
                 ) { resultadoMovimientos ->
-                    Log.i(
-                        "MovimientosScreen",
-                        "Movimientos dos meses atrás cargados: ${resultadoMovimientos?.size}"
-                    )
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
             } else if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
@@ -139,16 +129,13 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     false,
                     false
                 ) { resultadoMovimientos ->
-                    Log.i(
-                        "MovimientosScreen",
-                        "Movimientos cargados: ${resultadoMovimientos?.size}"
-                    )
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
             }
+
+            Log.i("MovimientosScreen", "Movimientos cargados: ${movimientos.size}")
         }
     }
-
 
     Scaffold(
         modifier = modifier.fillMaxWidth(),
@@ -160,10 +147,10 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Guardar Movimiento")
             }
         },
-        content = { paddingValues ->
+        content = {
             Column(
                 modifier
-                    .padding(paddingValues)
+                    .padding(it)
                     .padding(16.dp)
             ) {
                 CuentasDropDown(
@@ -412,7 +399,7 @@ fun MovimientosList(
     navController: NavController,
     movimientos: List<MovimientoModel>,
 ) {
-    LazyColumn(modifier.padding(16.dp)) {
+    LazyColumn() {
         items(movimientos) { movimiento ->
             MovimientoItem(modifier, navController, movimiento)
             HorizontalDivider()
@@ -427,11 +414,10 @@ fun MovimientosList(
 fun MovimientoItem(
     modifier: Modifier = Modifier,
     navController: NavController,
-    movimiento: MovimientoModel,
+    movimiento: MovimientoModel
 ) {
     ListItem(
         modifier = modifier
-            .padding(vertical = 8.dp)
             .clickable {
                 navController.navigate("movimientos/detalle/${movimiento.id}")
             },
@@ -441,6 +427,12 @@ fun MovimientoItem(
         supportingContent = {
             Text(
                 text = FormatoFecha.formatoCorto(movimiento.fecha)
+            )
+        },
+        leadingContent = {
+            Icon(
+                painter = painterResource(id = R.drawable.outline_swap_horiz_24),
+                contentDescription = "Localized description",
             )
         },
         trailingContent = {
@@ -458,4 +450,3 @@ fun MovimientoItem(
         }
     )
 }
-
