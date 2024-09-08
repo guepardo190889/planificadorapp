@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,13 +29,13 @@ import com.example.planificadorapp.repositorios.ActivosRepository
  * Composable que representa la pantalla de detalle de un activo
  */
 @Composable
-fun DetalleActivosScreen(modifier: Modifier, activoId: Long, navController: NavController) {
+fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idActivo: Long) {
     val activosRepository = remember { ActivosRepository() }
 
     var activo by remember { mutableStateOf<ActivoModel?>(null) }
 
-    LaunchedEffect(activoId) {
-        activosRepository.buscarActivoPorId(activoId) { activoEncontrado ->
+    LaunchedEffect(idActivo) {
+        activosRepository.buscarActivoPorId(idActivo) { activoEncontrado ->
             activo = activoEncontrado
         }
     }
@@ -44,7 +46,9 @@ fun DetalleActivosScreen(modifier: Modifier, activoId: Long, navController: NavC
             if (activo != null && activo!!.padre != null) {
                 FloatingActionButton(
                     modifier = Modifier,
-                    onClick = { navController.navigate("activos/editar/${activo?.id}") }
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    onClick = { navController.navigate("activos/editar/${activo?.id}") },
                 ) {
                     Icon(Icons.Default.Edit, contentDescription = "Actualizar Activo")
                 }
@@ -57,7 +61,11 @@ fun DetalleActivosScreen(modifier: Modifier, activoId: Long, navController: NavC
                     modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
                 ) {
                     Column(modifier.padding(16.dp)) {
                         TextoConEtiqueta("Activo principal: ", it.nombre, "large", "medium")

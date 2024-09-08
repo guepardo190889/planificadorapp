@@ -7,8 +7,8 @@ enum class Ruta(
 ) {
     CUENTAS("cuentas", "Cuentas", true),
     CUENTAS_GUARDAR("cuentas/guardar", "Guardar Cuenta"),
-    CUENTAS_DETALLE("cuentas/detalle/{cuentaId}", "Detalle de Cuenta", false),
-    CUENTAS_EDITAR("cuentas/editar/{cuentaId}", "Editar Cuenta", false),
+    CUENTAS_DETALLE("cuentas/detalle/{idCuenta}", "Detalle de Cuenta", false),
+    CUENTAS_EDITAR("cuentas/editar/{idCuenta}", "Editar Cuenta", false),
 
     MOVIMIENTOS("movimientos", "Movimientos", true),
     MOVIMIENTOS_GUARDAR("movimientos/guardar", "Guardar Movimiento", false),
@@ -20,8 +20,8 @@ enum class Ruta(
 
     ACTIVOS("activos", "Activos", true),
     ACTIVOS_GUARDAR("activos/guardar", "Guardar Activo", false),
-    ACTIVOS_DETALLE("activos/detalle/{activoId}", "Detalle de Activo", false),
-    ACTIVOS_EDITAR("activos/editar/{activoId}", "Editar Activo", false),
+    ACTIVOS_DETALLE("activos/detalle/{idActivo}", "Detalle de Activo", false),
+    ACTIVOS_EDITAR("activos/editar/{idActivo}", "Editar Activo", false),
 
     REPORTES("reportes", "Reportes", true),
 

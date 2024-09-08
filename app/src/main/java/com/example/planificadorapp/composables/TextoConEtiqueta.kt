@@ -18,17 +18,17 @@ import androidx.compose.ui.unit.dp
 fun TextoConEtiqueta(etiqueta: String, texto: String, styleLabel: String, styleBody: String) {
 
     val textStyleLabel: TextStyle = when (styleLabel) {
-        "large" -> MaterialTheme.typography.labelLarge
-        "medium" -> MaterialTheme.typography.labelMedium
-        "small" -> MaterialTheme.typography.labelSmall
-        else -> MaterialTheme.typography.labelMedium // Valor por defecto si styleLabel no coincide con ninguno
+        "large" -> MaterialTheme.typography.labelLarge.copy(MaterialTheme.colorScheme.onSurfaceVariant)
+        "medium" -> MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.onSurfaceVariant)
+        "small" -> MaterialTheme.typography.labelSmall.copy(MaterialTheme.colorScheme.onSurfaceVariant)
+        else -> MaterialTheme.typography.labelMedium.copy(MaterialTheme.colorScheme.onSurfaceVariant)
     }
 
     val textStyleBody: TextStyle = when (styleBody) {
-        "large" -> MaterialTheme.typography.bodyLarge
-        "medium" -> MaterialTheme.typography.bodyMedium
-        "small" -> MaterialTheme.typography.bodySmall
-        else -> MaterialTheme.typography.bodyMedium // Valor por defecto si styleBody no coincide con ninguno
+        "large" -> MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface)
+        "medium" -> MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
+        "small" -> MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurface)
+        else -> MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
     }
 
     Row(

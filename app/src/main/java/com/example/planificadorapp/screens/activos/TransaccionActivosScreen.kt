@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -44,7 +45,7 @@ import kotlinx.coroutines.launch
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController: NavController) {
+fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, activoId: Long) {
     val activosRepository = remember { ActivosRepository() }
 
     var activosPadre by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
@@ -95,7 +96,7 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
      * Valida si un nombre es válido
      */
     fun validarNombre(nombre: String): Boolean {
-        return !nombre.isNullOrBlank()
+        return nombre.isNotBlank()
     }
 
     /**
@@ -176,6 +177,7 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -184,6 +186,8 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (validarPantalla()) {
                                     if (activoId == 0L) {
@@ -224,7 +228,12 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
                         .fillMaxWidth(),
                     enabled = activoPrincipalListaHabilitada,
                     readOnly = true,
-                    label = { Text("Selecciona un Activo Principal") },
+                    label = {
+                        Text(
+                            "Selecciona un Activo Principal",
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    },
                     trailingIcon = {
                         Icon(
                             imageVector = if (activoPrincipalListaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
@@ -235,10 +244,12 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
                     supportingText = {
                         if (!isActivoSeleccionadoValido) {
                             Text(
-                                text = "El activo principal es requerido"
+                                text = "El activo principal es requerido",
+                                color = MaterialTheme.colorScheme.error
                             )
                         }
-                    }
+                    },
+                    colors = OutlinedTextFieldDefaults.colors()
                 )
 
                 ExposedDropdownMenu(
@@ -268,24 +279,26 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
                         nombre = it
                     }
                 },
-                label = { Text("Nombre") },
+                label = { Text("Nombre", color = MaterialTheme.colorScheme.onSurface) },
                 isError = !isNombreValido,
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge,
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     if (!isNombreValido) {
                         Text(
                             text = "El nombre es requerido",
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                     Text(
                         text = "${nombre.length}/52",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
                     )
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors()
             )
 
             OutlinedTextField(
@@ -295,17 +308,18 @@ fun TransaccionActivosSecreen(modifier: Modifier, activoId: Long, navController:
                         descripcion = it
                     }
                 },
-                label = { Text("Descripción") },
-                textStyle = MaterialTheme.typography.bodyLarge,
+                label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
                 modifier = Modifier.fillMaxWidth(),
                 supportingText = {
                     Text(
                         text = "${descripcion.length}/256",
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
                     )
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors()
             )
         }
     }

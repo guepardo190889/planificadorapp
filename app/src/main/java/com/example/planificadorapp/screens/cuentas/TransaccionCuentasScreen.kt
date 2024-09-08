@@ -10,11 +10,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -42,11 +42,10 @@ import com.example.planificadorapp.utilerias.FormatoMonto
 import kotlinx.coroutines.launch
 
 /**
- * Composable que representa la pantalla de guardado/actualización de una cuenta
+ * Composable que representa la pantalla de transacción (guardado/actualización) de una cuenta
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: NavController) {
+fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, idCuenta: Long) {
     val cuentasRepository = remember { CuentasRepository() }
 
     var cuentasPadre by remember {
@@ -83,7 +82,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
      * Valida si un nombre es válido
      */
     fun validarNombre(): Boolean {
-        return !nombre.isNullOrBlank()
+        return nombre.isNotBlank()
     }
 
     /**
@@ -112,7 +111,10 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
     }
 
     LaunchedEffect(Unit) {
-        cuentasRepository.buscarCuentas(false, true) { resultadoCuentasPadres ->
+        cuentasRepository.buscarCuentas(
+            excluirCuentasAsociadas = false,
+            incluirSoloCuentasPadre = true
+        ) { resultadoCuentasPadres ->
             cuentasPadre = resultadoCuentasPadres ?: emptyList()
             Log.i("CuentasScreen", "Cuentas padre cargados: $resultadoCuentasPadres")
 
@@ -214,6 +216,8 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (validarPantalla()) {
                                     if (idCuenta == 0L) {
@@ -269,6 +273,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                     if (!isNombreValido) {
                         Text(
                             text = "El nombre es requerido",
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                     Text(
@@ -277,7 +282,8 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
                     )
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors()
             )
 
             OutlinedTextField(
@@ -299,7 +305,8 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.End
                     )
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors()
             )
 
             OutlinedTextField(
@@ -309,7 +316,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                     // Filtra la entrada para permitir solo números y un punto
                     val regex = Regex("^\\d{0,9}(\\.\\d{0,2})?\$")
                     if (regex.matches(rawInput)) {
-                        saldo = "$rawInput"
+                        saldo = rawInput
                     }
                 },
                 label = { Text("Saldo") },
@@ -323,16 +330,14 @@ fun TransaccionCuentasScreen(modifier: Modifier, idCuenta: Long, navController: 
                         Text(
                             text = isSaldoValido.mensaje!!,
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End
                         )
                     }
-                }
+                },
+                colors = OutlinedTextFieldDefaults.colors()
             )
-
         }
     }
 }
-
-
-

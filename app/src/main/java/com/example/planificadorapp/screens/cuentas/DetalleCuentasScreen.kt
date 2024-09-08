@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,15 +33,15 @@ import com.example.planificadorapp.utilerias.FormatoMonto
 @Composable
 fun DetalleCuentasScreen(
     modifier: Modifier = Modifier,
-    cuentaId: Long,
     navController: NavController,
+    idCuenta: Long
 ) {
     val cuentaRepository = remember { CuentasRepository() }
 
     var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
 
-    LaunchedEffect(cuentaId) {
-        cuentaRepository.buscarCuentaPorId(cuentaId) { cuentaEncontrada ->
+    LaunchedEffect(idCuenta) {
+        cuentaRepository.buscarCuentaPorId(idCuenta) { cuentaEncontrada ->
             cuenta = cuentaEncontrada
         }
     }
@@ -49,7 +51,9 @@ fun DetalleCuentasScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.padding(16.dp),
-                onClick = { navController.navigate("cuentas/editar/${cuentaId}") },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                onClick = { navController.navigate("cuentas/editar/${idCuenta}") },
             ) {
                 Icon(Icons.Default.Edit, contentDescription = "Actualizar Cuenta")
             }
@@ -61,7 +65,11 @@ fun DetalleCuentasScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
-                        .padding(16.dp)
+                        .padding(16.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
                 ) {
                     Column(modifier = modifier.padding(16.dp)) {
                         TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")

@@ -21,6 +21,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.activos.ActivoModel
 
+/**
+ * Composable que muestra un diálogo para seleccionar un activo
+ */
 @Composable
 fun SeleccionarActivoDialogo(
     activos: List<ActivoModel>,
@@ -31,12 +34,19 @@ fun SeleccionarActivoDialogo(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Cerrar")
+                Text(
+                    text = "Cerrar",
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         },
         text = {
             Column {
-                Text(text = "Selecciona un Activo", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Selecciona un Activo",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 LazyColumn(modifier = Modifier.fillMaxWidth()) {
                     itemsIndexed(activos) { indice, activo ->
@@ -46,13 +56,17 @@ fun SeleccionarActivoDialogo(
                                     // Activo padre
                                     Text(
                                         text = activo.nombre,
-                                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
+                                        color = MaterialTheme.colorScheme.onSurface
                                     )
                                 } else {
                                     // Activo hijo
                                     Row {
                                         Spacer(modifier = Modifier.width(16.dp)) // Indentación para los activos hijos
-                                        Text(text = activo.nombre)
+                                        Text(
+                                            text = activo.nombre,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
                                     }
                                 }
                             },
@@ -66,7 +80,7 @@ fun SeleccionarActivoDialogo(
                         val isProximoPadre = !isUltimoElemento && activos[indice + 1].padre == null
 
                         if (isUltimoElemento || isProximoPadre) {
-                            HorizontalDivider()
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                         }
                     }
                 }

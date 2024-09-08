@@ -13,6 +13,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
@@ -49,8 +51,10 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
         modifier = modifier.fillMaxWidth(),
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.padding(16.dp),
                 onClick = { navController.navigate("activos/guardar") },
-                modifier = Modifier.padding(16.dp)
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Activo")
             }
@@ -79,7 +83,7 @@ fun ActivosList(
     LazyColumn(modifier.padding(16.dp)) {
         items(activos) { activo ->
             ActivoItem(modifier, navController, activo)
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         }
     }
 }
@@ -99,17 +103,28 @@ fun ActivoItem(
                 navController.navigate("activos/detalle/${activo.id}")
             },
         headlineContent = {
-            Text(activo.nombre)
+            Text(
+                text = activo.nombre,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = if (activo.padre == null) {
+                    MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                } else {
+                    MaterialTheme.typography.bodyLarge
+                }
+            )
         },
         supportingContent = {
-            Text(if (activo.padre == null) "Activo" else "Subactivo")
+            Text(
+                if (activo.padre == null) "Activo" else "Subactivo",
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.outline_attach_money_24),
-                contentDescription = "Localized description",
+                contentDescription = "Activo",
+                tint = MaterialTheme.colorScheme.primary
             )
         },
     )
 }
-

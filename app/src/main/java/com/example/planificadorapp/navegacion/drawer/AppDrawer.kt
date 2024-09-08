@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,7 +36,7 @@ fun AppDrawer(
 ) {
     val menus = DrawerItem.entries
 
-    ModalDrawerSheet(modifier = Modifier) {
+    ModalDrawerSheet(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
         DrawerHeader(modifier)
         Spacer(Modifier.padding(16.dp))
 
@@ -44,12 +45,26 @@ fun AppDrawer(
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icono),
-                        contentDescription = item.descripcion
+                        contentDescription = item.descripcion,
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 },
-                label = { Text(item.titulo) },
+                label = {
+                    Text(
+                        text = item.titulo,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                },
                 selected = route == item.ruta,
-                onClick = { onClickMenuItem(item) }
+                onClick = { onClickMenuItem(item) },
+                colors = NavigationDrawerItemDefaults.colors(
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer, // Color de fondo seleccionado
+                    selectedTextColor = MaterialTheme.colorScheme.onPrimaryContainer,    // Texto cuando está seleccionado
+                    selectedIconColor = MaterialTheme.colorScheme.onPrimaryContainer,    // Ícono cuando está seleccionado
+                    unselectedContainerColor = MaterialTheme.colorScheme.background,     // Fondo no seleccionado
+                    unselectedTextColor = MaterialTheme.colorScheme.onBackground,        // Texto no seleccionado
+                    unselectedIconColor = MaterialTheme.colorScheme.onBackground        // Ícono no seleccionado
+                )
             )
         }
     }
@@ -80,7 +95,7 @@ fun DrawerHeader(modifier: Modifier) {
             text = stringResource(id = R.string.app_name),
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimary,
+            color = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }

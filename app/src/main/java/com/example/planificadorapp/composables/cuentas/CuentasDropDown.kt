@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,7 +21,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
@@ -55,11 +55,13 @@ fun CuentasDropDown(
                 .fillMaxWidth(),
             enabled = isHabilitado,
             readOnly = true,
-            label = { Text(etiqueta) },
+            label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
+            colors = OutlinedTextFieldDefaults.colors(),
             trailingIcon = {
                 Icon(
                     imageVector = if (isDesplegadoDropdown) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface
                 )
             }
         )
@@ -76,7 +78,7 @@ fun CuentasDropDown(
                         text = {
                             Text(
                                 cuenta.nombre,
-                                style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black)
+                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
                             )
                         },
                         onClick = {
@@ -91,7 +93,10 @@ fun CuentasDropDown(
                         text = {
                             Row {
                                 Spacer(modifier = Modifier.width(16.dp)) // Añade indentación para las cuentas hijas
-                                Text(cuenta.nombre)
+                                Text(
+                                    cuenta.nombre,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         },
                         onClick = {
@@ -107,7 +112,7 @@ fun CuentasDropDown(
                 val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].isPadre
 
                 if (isUltimoElemento || isProximoPadre) {
-                    HorizontalDivider()
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }
         }

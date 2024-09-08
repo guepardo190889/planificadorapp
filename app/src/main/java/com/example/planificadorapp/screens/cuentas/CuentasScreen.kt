@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,15 +47,18 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             emptyList()
         )
     }
-    var totalSaldos by remember { mutableStateOf(0.00) }
+    var totalSaldos by remember { mutableDoubleStateOf(0.00) }
 
     LaunchedEffect(Unit) {
-        cuentaRepository.buscarCuentas(false, false) { cuentasEncontradas ->
+        cuentaRepository.buscarCuentas(
+            excluirCuentasAsociadas = false,
+            incluirSoloCuentasPadre = false
+        ) { cuentasEncontradas ->
             cuentas = cuentasEncontradas ?: emptyList()
             Log.i("CuentasScreen", "Cuentas encontradas: ${cuentasEncontradas!!.size}")
 
             for (cuenta in cuentas) {
-                totalSaldos = totalSaldos.toDouble() + cuenta.saldo
+                totalSaldos += cuenta.saldo
             }
         }
     }
@@ -64,7 +68,9 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("cuentas/guardar") },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
             }
@@ -85,7 +91,8 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                 ) {
                     Text(
                         text = "Total: ${FormatoMonto.formato(totalSaldos)}",
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -105,7 +112,7 @@ fun CuentasList(
     LazyColumn(modifier.padding(16.dp)) {
         items(cuentas) { cuenta ->
             CuentaItem(modifier, navController, cuenta)
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         }
     }
 }
@@ -125,19 +132,28 @@ fun CuentaItem(
                 navController.navigate("cuentas/detalle/${cuenta.id}")
             },
         headlineContent = {
-            Text(text = cuenta.nombre)
+            Text(
+                text = cuenta.nombre,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         },
         supportingContent = {
-            Text(cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "")
+            Text(
+                text = cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "",
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
         },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_account_balance_24),
-                contentDescription = "Localized description",
+                contentDescription = "Cuenta",
+                tint = MaterialTheme.colorScheme.primary
             )
         },
         trailingContent = {
-            Text(FormatoMonto.formato(cuenta.saldo))
+            Text(
+                text = FormatoMonto.formato(cuenta.saldo),
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     )
 }

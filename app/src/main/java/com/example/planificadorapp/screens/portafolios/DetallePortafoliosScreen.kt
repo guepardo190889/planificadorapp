@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,6 +50,8 @@ fun DetallePortafoliosScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier.padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 onClick = {
                     //navController.navigate("portafolios/editar/${idPortafolio}")
                 },
@@ -67,8 +71,12 @@ fun DetallePortafoliosScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
 
-                        ) {
+                    ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()

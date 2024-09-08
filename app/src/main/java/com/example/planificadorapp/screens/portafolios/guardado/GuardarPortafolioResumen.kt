@@ -13,6 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,6 +30,9 @@ import com.example.planificadorapp.modelos.composiciones.ComposicionGuardarReque
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 
+/**
+ * Composable que representa la pantalla de resumen del guardado de un portafolio
+ */
 @Composable
 fun GuardarPortafolioResumen(
     modifier: Modifier,
@@ -68,7 +72,9 @@ fun GuardarPortafolioResumen(
     Scaffold(
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -77,6 +83,8 @@ fun GuardarPortafolioResumen(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 onAtrasClick()
                             }
@@ -89,6 +97,8 @@ fun GuardarPortafolioResumen(
 
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 val modeloGuardado = crearModeloGuardado()
                                 onGuardarClick(modeloGuardado)
@@ -109,17 +119,32 @@ fun GuardarPortafolioResumen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            Text(text = "Resumen", style = MaterialTheme.typography.headlineMedium)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            Text(text = "Generales", style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = "Resumen",
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.outline
+            )
+            Text(
+                text = "Generales",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
             Spacer(modifier = Modifier.padding(vertical = 4.dp))
             TextoConEtiqueta(etiqueta = "Nombre: ", texto = nombre, "large", "medium")
             TextoConEtiqueta(etiqueta = "Descripción: ", texto = descripcion, "large", "medium")
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 8.dp),
+                color = MaterialTheme.colorScheme.outline
+            )
 
             Text(
                 text = "Activos",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
             LazyColumn(
                 modifier = Modifier
@@ -128,19 +153,26 @@ fun GuardarPortafolioResumen(
             ) {
                 items(composiciones) { composicion ->
                     ResumenComposicionCard(composicion)
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outline
+                    )
                 }
             }
         }
     }
 }
 
+/**
+ * Composable que representa una tarjeta de composición en el resumen del guardado de un portafolio
+ */
 @Composable
 fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Column(
             modifier = Modifier
@@ -154,11 +186,13 @@ fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
                 Text(
                     text = composicion.activo.nombre,
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.Left
                 )
                 Text(
                     text = "${composicion.porcentaje.toInt()}%",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     textAlign = TextAlign.End
                 )
             }
@@ -173,6 +207,7 @@ fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
                     Text(
                         text = cuenta.nombre,
                         style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
@@ -180,6 +215,7 @@ fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
                 Text(
                     text = "No hay cuentas asociadas",
                     style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.padding(vertical = 4.dp)
                 )
             }

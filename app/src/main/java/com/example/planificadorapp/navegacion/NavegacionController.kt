@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
@@ -27,7 +28,7 @@ import com.example.planificadorapp.screens.ConfiguracionScreen
 import com.example.planificadorapp.screens.ReportesScreen
 import com.example.planificadorapp.screens.activos.ActivosScreen
 import com.example.planificadorapp.screens.activos.DetalleActivosScreen
-import com.example.planificadorapp.screens.activos.TransaccionActivosSecreen
+import com.example.planificadorapp.screens.activos.TransaccionActivosScreen
 import com.example.planificadorapp.screens.cuentas.Cuentas
 import com.example.planificadorapp.screens.cuentas.DetalleCuentasScreen
 import com.example.planificadorapp.screens.cuentas.TransaccionCuentasScreen
@@ -86,6 +87,8 @@ fun NavegacionController(
                     BarraSuperior(
                         titulo = tituloBarraSuperior,
                         isPantallaPrincipal = isPantallaPrincipal,
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                         onBarraSuperiorIconClick = {
                             if (isPantallaPrincipal) {
                                 coroutineScope.launch { drawerState.open() }
@@ -94,7 +97,9 @@ fun NavegacionController(
                             }
                         }
                     )
-                }
+                },
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.onBackground
             ) { it ->
                 NavHost(
                     navController = navController,
@@ -105,20 +110,20 @@ fun NavegacionController(
                         Cuentas(modifier, navController)
                     }
                     composable(Ruta.CUENTAS_GUARDAR.ruta) {
-                        TransaccionCuentasScreen(modifier, 0L, navController)
+                        TransaccionCuentasScreen(modifier, navController, 0L)
                     }
                     composable(Ruta.CUENTAS_DETALLE.ruta) {
-                        val cuentaId = it.arguments?.getString("cuentaId")
+                        val idCuenta = it.arguments?.getString("idCuenta")
 
-                        if (cuentaId != null) {
-                            DetalleCuentasScreen(modifier, cuentaId.toLong(), navController)
+                        if (idCuenta != null && idCuenta.toLong() > 0) {
+                            DetalleCuentasScreen(modifier, navController, idCuenta.toLong())
                         }
                     }
                     composable(Ruta.CUENTAS_EDITAR.ruta) {
-                        val cuentaId = it.arguments?.getString("cuentaId")
+                        val idActivo = it.arguments?.getString("idActivo")
 
-                        if (cuentaId != null) {
-                            TransaccionCuentasScreen(modifier, cuentaId.toLong(), navController)
+                        if (idActivo != null && idActivo.toLong() > 0) {
+                            TransaccionCuentasScreen(modifier, navController, idActivo.toLong())
                         }
                     }
 
@@ -131,7 +136,7 @@ fun NavegacionController(
                     composable(Ruta.MOVIMIENTOS_DETALLE.ruta) {
                         val idMovimiento = it.arguments?.getString("idMovimiento");
 
-                        if (idMovimiento != null) {
+                        if (idMovimiento != null && idMovimiento.toLong() > 0) {
                             DetalleMovimientosScreen(modifier, navController, idMovimiento.toLong())
                         }
                     }
@@ -145,7 +150,7 @@ fun NavegacionController(
                     composable(Ruta.PORTAFOLIOS_DETALLE.ruta) {
                         val idPortafolio = it.arguments?.getString("idPortafolio");
 
-                        if (idPortafolio != null) {
+                        if (idPortafolio != null && idPortafolio.toLong() > 0) {
                             DetallePortafoliosScreen(modifier, navController, idPortafolio.toLong())
                         }
                     }
@@ -154,20 +159,20 @@ fun NavegacionController(
                         ActivosScreen(modifier, navController)
                     }
                     composable(Ruta.ACTIVOS_GUARDAR.ruta) {
-                        TransaccionActivosSecreen(modifier, 0L, navController)
+                        TransaccionActivosScreen(modifier, navController, 0L)
                     }
                     composable(Ruta.ACTIVOS_DETALLE.ruta) {
-                        val activoId = it.arguments?.getString("activoId")
+                        val idActivo = it.arguments?.getString("idActivo")
 
-                        if (activoId != null) {
-                            DetalleActivosScreen(modifier, activoId.toLong(), navController)
+                        if (idActivo != null && idActivo.toLong() > 0) {
+                            DetalleActivosScreen(modifier, navController, idActivo.toLong())
                         }
                     }
                     composable(Ruta.ACTIVOS_EDITAR.ruta) {
-                        val activoId = it.arguments?.getString("activoId")
+                        val idActivo = it.arguments?.getString("idActivo")
 
-                        if (activoId != null) {
-                            TransaccionActivosSecreen(modifier, activoId.toLong(), navController)
+                        if (idActivo != null && idActivo.toLong() > 0) {
+                            TransaccionActivosScreen(modifier, navController, idActivo.toLong())
                         }
                     }
 

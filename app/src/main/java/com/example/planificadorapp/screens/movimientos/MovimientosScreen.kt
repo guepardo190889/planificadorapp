@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,8 +28,11 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,7 +45,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
@@ -62,7 +65,6 @@ import java.time.LocalDate
 /**
  * Composable que representa la pantalla de movimientos
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     val cuentasRepository = remember { CuentasRepository() }
@@ -70,31 +72,34 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var movimientos by remember { mutableStateOf<List<MovimientoModel>>(emptyList()) }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
-    var filtroSeleccionado by remember { mutableStateOf<FiltroMovimiento>(FiltroMovimiento.AL_DIA) }
+    var filtroSeleccionado by remember { mutableStateOf(FiltroMovimiento.AL_DIA) }
     var isMostrarFiltros by remember { mutableStateOf(false) }
     var fechaInicio by remember { mutableStateOf<LocalDate?>(null) }
     var fechaFin by remember { mutableStateOf<LocalDate?>(null) }
 
     LaunchedEffect(Unit) {
-        cuentasRepository.buscarCuentas(false, false) { resultadoCuentas ->
+        cuentasRepository.buscarCuentas(
+            excluirCuentasAsociadas = false,
+            incluirSoloCuentasPadre = false
+        ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
-            Log.i("MovimientosScreen", "Cuentas cargadas: ${cuentas?.size}")
+            Log.i("MovimientosScreen", "Cuentas cargadas: $cuentas.size")
         }
     }
 
     /**
      * Busca los movimientos de acuerdo a los filtros seleccionados
      */
-    fun buscarMovimientos(): Unit {
+    fun buscarMovimientos() {
         if (cuentaSeleccionada != null) {
             if (FiltroMovimiento.AL_DIA == filtroSeleccionado) {
                 movimientosRepository.buscarMovimientos(
                     cuentaSeleccionada!!.id,
                     fechaInicio,
                     fechaFin,
-                    true,
-                    false,
-                    false
+                    isAlDia = true,
+                    isMesAnterior = false,
+                    isDosMesesAtras = false
                 ) { resultadoMovimientos ->
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
@@ -103,9 +108,9 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     cuentaSeleccionada!!.id,
                     fechaInicio,
                     fechaFin,
-                    false,
-                    true,
-                    false
+                    isAlDia = false,
+                    isMesAnterior = true,
+                    isDosMesesAtras = false
                 ) { resultadoMovimientos ->
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
@@ -114,9 +119,9 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     cuentaSeleccionada!!.id,
                     fechaInicio,
                     fechaFin,
-                    false,
-                    false,
-                    true
+                    isAlDia = false,
+                    isMesAnterior = false,
+                    isDosMesesAtras = true
                 ) { resultadoMovimientos ->
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
@@ -125,9 +130,9 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     cuentaSeleccionada!!.id,
                     fechaInicio,
                     fechaFin,
-                    false,
-                    false,
-                    false
+                    isAlDia = false,
+                    isMesAnterior = false,
+                    isDosMesesAtras = false
                 ) { resultadoMovimientos ->
                     movimientos = resultadoMovimientos ?: emptyList()
                 }
@@ -142,7 +147,9 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("movimientos/guardar") },
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Guardar Movimiento")
             }
@@ -159,8 +166,8 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     isHabilitado = true,
                     cuentaSeleccionada = cuentaSeleccionada,
                     cuentas = cuentas,
-                    onCuentaSeleccionada = {
-                        cuentaSeleccionada = it
+                    onCuentaSeleccionada = { cuenta ->
+                        cuentaSeleccionada = cuenta
                         buscarMovimientos()
                     }
                 )
@@ -172,10 +179,11 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                         .padding(8.dp),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Filtros")
+                    Text(text = "Filtros", color = MaterialTheme.colorScheme.onBackground)
                     Icon(
                         imageVector = if (isMostrarFiltros) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Mostrar filtros"
+                        contentDescription = "Mostrar filtros",
+                        tint = MaterialTheme.colorScheme.onBackground
                     )
                 }
 
@@ -246,21 +254,27 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                                     isMostrarFiltros = false
 
                                     buscarMovimientos()
-                                }) {
+                                },
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                )
+                            ) {
                                 Text(text = "Aplicar")
                             }
                         }
                     }
                 }
 
-                HorizontalDivider()
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
                 if (movimientos.isEmpty()) {
                     Text(
                         modifier = Modifier
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally),
-                        text = "Sin movimientos"
+                        text = "Sin movimientos",
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 } else {
                     MovimientosList(
@@ -286,9 +300,13 @@ fun RadioButtonGroup(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
                     selected = filtro == filtroSeleccionado,
-                    onClick = { onFiltroSeleccionado(filtro) }
+                    onClick = { onFiltroSeleccionado(filtro) },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary,
+                        unselectedColor = MaterialTheme.colorScheme.onSurface
+                    )
                 )
-                Text(text = filtro.texto)
+                Text(text = filtro.texto, color = MaterialTheme.colorScheme.onSurface)
             }
         }
     }
@@ -320,9 +338,13 @@ fun DatePickerInput(
         modifier.fillMaxWidth()
     ) {
         OutlinedTextField(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(64.dp),
+            colors = OutlinedTextFieldDefaults.colors(),
             value = fechaTexto,
             onValueChange = {},
-            label = { Text(etiqueta) },
+            label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
             readOnly = true,
             maxLines = 1, //Limita a una línea para evitar debordes
             textStyle = TextStyle(fontSize = TextUnit.Unspecified),
@@ -330,13 +352,11 @@ fun DatePickerInput(
                 IconButton(onClick = { isMostrarDatePicker = !isMostrarDatePicker }) {
                     Icon(
                         imageVector = Icons.Default.DateRange,
-                        contentDescription = "Selecciona fecha"
+                        contentDescription = "Selecciona fecha",
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 }
-            },
-            modifier = modifier
-                .fillMaxWidth()
-                .height(64.dp)
+            }
         )
 
         if (isMostrarDatePicker) {
@@ -357,7 +377,7 @@ fun DatePickerInput(
                         }
                         isMostrarDatePicker = false // Cierra el diálogo
                     }) {
-                        Text("OK")
+                        Text("Aceptar", color = MaterialTheme.colorScheme.primary)
                     }
                 },
                 dismissButton = {
@@ -365,7 +385,7 @@ fun DatePickerInput(
                         isMostrarDatePicker = false
                         onDismiss()
                     }) {
-                        Text("Cancel")
+                        Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
                     }
                 }
             ) {
@@ -399,10 +419,10 @@ fun MovimientosList(
     navController: NavController,
     movimientos: List<MovimientoModel>,
 ) {
-    LazyColumn() {
+    LazyColumn {
         items(movimientos) { movimiento ->
             MovimientoItem(modifier, navController, movimiento)
-            HorizontalDivider()
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         }
     }
 }
@@ -422,31 +442,36 @@ fun MovimientoItem(
                 navController.navigate("movimientos/detalle/${movimiento.id}")
             },
         headlineContent = {
-            Text(movimiento.descripcion)
+            Text(movimiento.descripcion, color = MaterialTheme.colorScheme.onSurface)
         },
         supportingContent = {
             Text(
-                text = FormatoFecha.formatoCorto(movimiento.fecha)
+                text = FormatoFecha.formatoCorto(movimiento.fecha),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.outline_swap_horiz_24),
-                contentDescription = "Localized description",
+                contentDescription = "Movimiento",
+                tint = MaterialTheme.colorScheme.primary
             )
         },
         trailingContent = {
-            if (TipoMovimiento.CARGO == movimiento.tipo) {
-                Text(
-                    text = "-${FormatoMonto.formato(movimiento.monto)}",
-                    color = Color.Red
-                )
+            val color = if (TipoMovimiento.CARGO == movimiento.tipo) {
+                MaterialTheme.colorScheme.error
             } else {
-                Text(
-                    text = FormatoMonto.formato(movimiento.monto),
-                    color = Color.Green
-                )
+                MaterialTheme.colorScheme.secondary
             }
+
+            Text(
+                text = if (TipoMovimiento.CARGO == movimiento.tipo) "-${
+                    FormatoMonto.formato(
+                        movimiento.monto
+                    )
+                }" else FormatoMonto.formato(movimiento.monto),
+                color = color
+            )
         }
     )
 }

@@ -14,6 +14,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -54,11 +54,12 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier.padding(16.dp),
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 onClick = {
                     navController.navigate(Ruta.PORTAFOLIOS_GUARDAR.ruta)
-                },
-                modifier = Modifier.padding(16.dp),
-                containerColor = Color(0xFF88C6F5)
+                }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
             }
@@ -87,7 +88,7 @@ fun PortafoliosList(
     LazyColumn(modifier.padding(16.dp)) {
         items(portafolios) { portafolio ->
             PortafolioItem(modifier, navController, portafolio)
-            HorizontalDivider(color = Color(0xFFC2C2C2))
+            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         }
     }
 }
@@ -107,18 +108,18 @@ fun PortafolioItem(
                 navController.navigate("portafolios/detalle/${portafolio.id}")
             },
         headlineContent = {
-            Text(text = portafolio.nombre, color = Color(0xFF000000))
+            Text(text = portafolio.nombre, color = MaterialTheme.colorScheme.onSurface)
         },
         supportingContent = {
-            Text(portafolio.descripcion)
+            Text(portafolio.descripcion, color = MaterialTheme.colorScheme.onSurfaceVariant)
         },
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.outline_work_24),
                 contentDescription = "Localized description",
-                tint = Color(0xFF88C6F5)
+                tint = MaterialTheme.colorScheme.primary
             )
         },
-        trailingContent = { Text("$100,000.00", color = Color(0xFFC2C2C2)) }
+        trailingContent = { Text("$100,000.00", color = MaterialTheme.colorScheme.secondary) }
     )
 }

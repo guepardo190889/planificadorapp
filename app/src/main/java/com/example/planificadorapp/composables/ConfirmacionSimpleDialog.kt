@@ -5,7 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
 
+/**
+ * Composable que muestra un diálogo de confirmación simple
+ */
 @Composable
 fun ConfirmacionSimpleDialog(
     texto: String,
@@ -16,16 +20,27 @@ fun ConfirmacionSimpleDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(onClick = onConfirmar) {
-                Text("Confirmar")
+                Text(
+                    "Confirmar",
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         },
         dismissButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Cancelar")
+                Text(
+                    "Cancelar",
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
         },
         text = {
-            Text(text = texto, style = MaterialTheme.typography.bodyMedium)
-        }
+            Text(
+                text = texto, style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.surface,
+        tonalElevation = 8.dp
     )
 }

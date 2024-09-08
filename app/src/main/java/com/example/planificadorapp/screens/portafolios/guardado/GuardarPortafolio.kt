@@ -10,6 +10,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,12 +49,13 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
     //Paso Dos
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var composiciones by remember { mutableStateOf<List<GuardarComposicionModel>>(emptyList()) }
-    var totalPorcentaje by remember { mutableStateOf(0) }
+    var totalPorcentaje by remember { mutableIntStateOf(0) }
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     Scaffold(
+        modifier = modifier.fillMaxSize(),
         snackbarHost = {
             SnackbarHost(snackbarHostState) {
                 SnackBarConColor(
@@ -62,117 +64,120 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                 )
             }
         },
-        modifier = modifier.fillMaxSize()
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
-        ) {
-            Log.i("GuardarPortafolio", "Paso actual: $pasoActual")
+        content = {
+            Column(
+                modifier = modifier
+                    .padding(it)
+                    .fillMaxSize()
+            ) {
+                Log.i("GuardarPortafolio", "Paso actual: $pasoActual")
 
-            when (pasoActual) {
-                PasoWizard.PASO_UNO -> GuardarPortafolioPasoUno(
-                    modifier,
-                    nombre,
-                    descripcion,
-                    onSiguienteClick = { nombrePortafolio, descripcionPortafolio ->
-                        nombre = nombrePortafolio
-                        descripcion = descripcionPortafolio
-                        pasoActual = PasoWizard.PASO_DOS
-                    }
-                )
-
-                PasoWizard.PASO_DOS -> {
-                    LaunchedEffect(Unit) {
-                        Log.i("GuardarPortafolioPasoDos", "Cargando activos...")
-                        activosRepository.buscarActivos(false) { result ->
-                            activos = result ?: emptyList()
-                        }
-                    }
-
-                    GuardarPortafolioPasoDos(
-                        modifier,
-                        activos,
-                        composiciones,
-                        totalPorcentaje,
-                        onAtrasClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
-                            composiciones = activosSeleccionadosPortafolio
-                            totalPorcentaje = totalPorcentajePortafolio
-                            pasoActual = PasoWizard.PASO_UNO
-                        },
-                        onSiguienteClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
-                            composiciones = activosSeleccionadosPortafolio
-                            totalPorcentaje = totalPorcentajePortafolio
-                            pasoActual = PasoWizard.PASO_TRES
-                        }
-                    )
-                }
-
-                PasoWizard.PASO_TRES -> {
-                    LaunchedEffect(Unit) {
-                        Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
-                        cuentasRepository.buscarCuentas(true, false) { result ->
-                            cuentas = result ?: emptyList()
-                        }
-                    }
-
-                    GuardarPortafolioPasoTres(
-                        modifier,
-                        composiciones,
-                        cuentas,
-                        onAtrasClick = { composicionesPasoTres ->
-                            composiciones = composicionesPasoTres
-                            pasoActual = PasoWizard.PASO_DOS
-                        },
-                        onSiguienteClick = { composicionesPasoTres ->
-                            composiciones = composicionesPasoTres
-                            pasoActual = PasoWizard.PASO_RESUMEN
-                        }
-                    )
-                }
-
-                PasoWizard.PASO_RESUMEN -> {
-                    GuardarPortafolioResumen(
+                when (pasoActual) {
+                    PasoWizard.PASO_UNO -> GuardarPortafolioPasoUno(
                         modifier,
                         nombre,
                         descripcion,
-                        composiciones,
-                        onAtrasClick = {
-                            pasoActual = PasoWizard.PASO_TRES
-                        },
-                        onGuardarClick = { portafolioPorGuardar ->
-                            Log.i(
-                                "GuardarPortafolio",
-                                "Guardando portafolio... $portafolioPorGuardar"
-                            )
+                        onSiguienteClick = { nombrePortafolio, descripcionPortafolio ->
+                            nombre = nombrePortafolio
+                            descripcion = descripcionPortafolio
+                            pasoActual = PasoWizard.PASO_DOS
+                        }
+                    )
 
-                            portafoliosRepository.guardarPortafolio(portafolioPorGuardar) { portafolioGuardado ->
+                    PasoWizard.PASO_DOS -> {
+                        LaunchedEffect(Unit) {
+                            Log.i("GuardarPortafolioPasoDos", "Cargando activos...")
+                            activosRepository.buscarActivos(false) { result ->
+                                activos = result ?: emptyList()
+                            }
+                        }
+
+                        GuardarPortafolioPasoDos(
+                            modifier,
+                            activos,
+                            composiciones,
+                            totalPorcentaje,
+                            onAtrasClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
+                                composiciones = activosSeleccionadosPortafolio
+                                totalPorcentaje = totalPorcentajePortafolio
+                                pasoActual = PasoWizard.PASO_UNO
+                            },
+                            onSiguienteClick = { activosSeleccionadosPortafolio, totalPorcentajePortafolio ->
+                                composiciones = activosSeleccionadosPortafolio
+                                totalPorcentaje = totalPorcentajePortafolio
+                                pasoActual = PasoWizard.PASO_TRES
+                            }
+                        )
+                    }
+
+                    PasoWizard.PASO_TRES -> {
+                        LaunchedEffect(Unit) {
+                            Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
+                            cuentasRepository.buscarCuentas(
+                                excluirCuentasAsociadas = true,
+                                incluirSoloCuentasPadre = false
+                            ) { result ->
+                                cuentas = result ?: emptyList()
+                            }
+                        }
+
+                        GuardarPortafolioPasoTres(
+                            modifier,
+                            composiciones,
+                            cuentas,
+                            onAtrasClick = { composicionesPasoTres ->
+                                composiciones = composicionesPasoTres
+                                pasoActual = PasoWizard.PASO_DOS
+                            },
+                            onSiguienteClick = { composicionesPasoTres ->
+                                composiciones = composicionesPasoTres
+                                pasoActual = PasoWizard.PASO_RESUMEN
+                            }
+                        )
+                    }
+
+                    PasoWizard.PASO_RESUMEN -> {
+                        GuardarPortafolioResumen(
+                            modifier,
+                            nombre,
+                            descripcion,
+                            composiciones,
+                            onAtrasClick = {
+                                pasoActual = PasoWizard.PASO_TRES
+                            },
+                            onGuardarClick = { portafolioPorGuardar ->
                                 Log.i(
                                     "GuardarPortafolio",
-                                    "Portafolio guardado: $portafolioGuardado"
+                                    "Guardando portafolio... $portafolioPorGuardar"
                                 )
 
-                                if (portafolioGuardado != null) {
-                                    snackbarMessage = "Portafolio guardado exitosamente"
-                                    snackbarType = "success"
-                                } else {
-                                    snackbarMessage = "Error al guardar el portafolio"
-                                    snackbarType = "error"
-                                }
-
-                                coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(snackbarMessage)
+                                portafoliosRepository.guardarPortafolio(portafolioPorGuardar) { portafolioGuardado ->
+                                    Log.i(
+                                        "GuardarPortafolio",
+                                        "Portafolio guardado: $portafolioGuardado"
+                                    )
 
                                     if (portafolioGuardado != null) {
-                                        navController.navigate("portafolios")
+                                        snackbarMessage = "Portafolio guardado exitosamente"
+                                        snackbarType = "success"
+                                    } else {
+                                        snackbarMessage = "Error al guardar el portafolio"
+                                        snackbarType = "error"
+                                    }
+
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(snackbarMessage)
+
+                                        if (portafolioGuardado != null) {
+                                            navController.navigate("portafolios")
+                                        }
                                     }
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }
-    }
+    )
 }

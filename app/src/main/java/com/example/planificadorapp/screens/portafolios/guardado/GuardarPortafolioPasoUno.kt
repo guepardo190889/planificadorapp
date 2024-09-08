@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,7 +46,7 @@ fun GuardarPortafolioPasoUno(
      * Valida si un nombre es válido
      */
     fun validarNombre(nombre: String): Boolean {
-        return !nombre.isNullOrBlank()
+        return nombre.isNotBlank()
     }
 
     /**
@@ -61,6 +62,8 @@ fun GuardarPortafolioPasoUno(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -69,6 +72,8 @@ fun GuardarPortafolioPasoUno(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (validarPantalla()) {
                                     onSiguienteClick(nombrePasoUno, descripcionPasoUno)
@@ -83,64 +88,77 @@ fun GuardarPortafolioPasoUno(
                     }
                 }
             )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(text = "Generales", style = MaterialTheme.typography.headlineMedium)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "Generales",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outline
+                )
 
-            OutlinedTextField(
-                value = nombrePasoUno,
-                onValueChange = {
-                    isNombreValido = validarNombre(it)
+                OutlinedTextField(
+                    value = nombrePasoUno,
+                    onValueChange = {
+                        isNombreValido = validarNombre(it)
 
-                    if (it.length <= 20) {
-                        nombrePasoUno = it
-                    }
-                },
-                label = { Text("Nombre") },
-                isError = !isNombreValido,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = {
-                    if (!isNombreValido) {
+                        if (it.length <= 20) {
+                            nombrePasoUno = it
+                        }
+                    },
+                    label = { Text("Nombre") },
+                    isError = !isNombreValido,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    modifier = Modifier.fillMaxWidth(),
+                    supportingText = {
+                        if (!isNombreValido) {
+                            Text(
+                                text = "El nombre es requerido",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                         Text(
-                            text = "El nombre es requerido",
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "${nombrePasoUno.length}/20",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.End
                         )
                     }
-                    Text(
-                        text = "${nombrePasoUno.length}/20",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                }
-            )
+                )
 
-            OutlinedTextField(
-                value = descripcionPasoUno,
-                onValueChange = {
-                    if (it.length <= 256) {
-                        descripcionPasoUno = it
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = descripcionPasoUno,
+                    onValueChange = {
+                        if (it.length <= 256) {
+                            descripcionPasoUno = it
+                        }
+                    },
+                    label = { Text("Descripción") },
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(),
+                    supportingText = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = "${descripcionPasoUno.length}/256",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.End
+                        )
                     }
-                },
-                label = { Text("Descripción") },
-                textStyle = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = {
-                    Text(
-                        text = "${descripcionPasoUno.length}/256",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                }
-            )
+                )
+            }
         }
-    }
+    )
 }

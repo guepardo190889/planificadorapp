@@ -18,6 +18,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,6 +33,8 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
+import com.example.planificadorapp.utilerias.Calculo
 import kotlinx.coroutines.launch
 
 /**
@@ -64,7 +68,7 @@ fun GuardarPortafolioPasoDos(
         )
     }
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
-    var totalPorcentajePasoDos by remember { mutableStateOf(totalPorcentaje) }
+    var totalPorcentajePasoDos by remember { mutableIntStateOf(totalPorcentaje) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -92,7 +96,7 @@ fun GuardarPortafolioPasoDos(
                         snackbarHostState.showSnackbar("Todos los porcentajes deben ser mayores a 0")
                     }
 
-                    break;
+                    break
                 } else {
                     sumaPorcentajes += composicion.porcentaje.toInt()
                 }
@@ -133,7 +137,9 @@ fun GuardarPortafolioPasoDos(
         },
         bottomBar = {
             BottomAppBar(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -142,6 +148,8 @@ fun GuardarPortafolioPasoDos(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 onAtrasClick(composicionesPasoDos, totalPorcentajePasoDos)
                             }
@@ -154,6 +162,8 @@ fun GuardarPortafolioPasoDos(
 
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (validarPantalla()) {
                                     onSiguienteClick(
@@ -171,65 +181,78 @@ fun GuardarPortafolioPasoDos(
                     }
                 }
             )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(text = "Composición de activos", style = MaterialTheme.typography.headlineMedium)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            ComposicionesList(
-                composiciones = composicionesPasoDos,
-                onEliminarComposicion = {
-                    composicionesPasoDos = composicionesPasoDos - it
-                    totalPorcentajePasoDos = sumarPorcentajes(composicionesPasoDos)
-                },
-                onPorcentajeCambiado = {
-                    totalPorcentajePasoDos = sumarPorcentajes(composicionesPasoDos)
-                }
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+        },
+        content = {
+            Column(
+                modifier = modifier
+                    .padding(it)
+                    .padding(16.dp)
             ) {
                 Text(
-                    text = "Total: ${totalPorcentajePasoDos.toInt()}%",
-                    style = MaterialTheme.typography.bodyLarge
+                    text = "Composición de activos",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                ComposicionesList(
+                    composiciones = composicionesPasoDos,
+                    onEliminarComposicion = {
+                        composicionesPasoDos = composicionesPasoDos - it
+                        totalPorcentajePasoDos = Calculo.sumarPorcentajes(composicionesPasoDos)
+                    },
+                    onPorcentajeCambiado = {
+                        totalPorcentajePasoDos = Calculo.sumarPorcentajes(composicionesPasoDos)
+                    }
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = "Total: ${totalPorcentajePasoDos}%",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Button(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    onClick = {
+                        mostrarDialogoActivos = true
+                    }
+                ) {
+                    Text("Agregar")
+                }
+            }
+
+            if (mostrarDialogoActivos) {
+                val activosDisponibles = activos.filterNot { activo ->
+                    composicionesPasoDos.any { it.activo == activo }
+                }
+
+                SeleccionarActivoDialogo(
+                    activosDisponibles,
+                    onActivoSeleccionado = { activoSeleccionado ->
+                        composicionesPasoDos = composicionesPasoDos + GuardarComposicionModel(
+                            activoSeleccionado
+                        )
+                        mostrarDialogoActivos = false
+                    },
+                    onDismissRequest = { mostrarDialogoActivos = false }
                 )
             }
-
-            Button(
-                onClick = {
-                    mostrarDialogoActivos = true
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            ) {
-                Text("Agregar")
-            }
         }
-
-        if (mostrarDialogoActivos) {
-            val activosDisponibles = activos.filterNot { activo ->
-                composicionesPasoDos.any { it.activo == activo }
-            }
-
-            SeleccionarActivoDialogo(
-                activosDisponibles,
-                onActivoSeleccionado = { activoSeleccionado ->
-                    composicionesPasoDos = composicionesPasoDos + GuardarComposicionModel(
-                        activoSeleccionado
-                    )
-                    mostrarDialogoActivos = false
-                },
-                onDismissRequest = { mostrarDialogoActivos = false }
-            )
-        }
-    }
+    )
 }
 
 /**
@@ -263,7 +286,7 @@ fun ComposicionItem(
     onEliminarComposicion: (GuardarComposicionModel) -> Unit,
     onPorcentajeCambiado: () -> Unit
 ) {
-    var posicionSlider by remember { mutableStateOf(composicion.porcentaje) }
+    var posicionSlider by remember { mutableFloatStateOf(composicion.porcentaje) }
 
     ListItem(
         headlineContent = {
@@ -312,8 +335,4 @@ fun ComposicionItem(
         }
     )
     HorizontalDivider()
-}
-
-fun sumarPorcentajes(activos: List<GuardarComposicionModel>): Int {
-    return activos.sumOf { it.porcentaje.toDouble() }.toInt()
 }

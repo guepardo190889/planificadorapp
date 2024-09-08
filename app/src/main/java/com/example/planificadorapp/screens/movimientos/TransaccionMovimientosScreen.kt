@@ -14,7 +14,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,6 +45,9 @@ import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+/**
+ * Composable que representa la pantalla de transacción (guardado/actualización) de un movimiento
+ */
 @Composable
 fun TransaccionMovimientosScreen(
     modifier: Modifier,
@@ -180,6 +185,8 @@ fun TransaccionMovimientosScreen(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (validarPantalla()) {
                                     if (idMovimiento == 0L) {
@@ -216,11 +223,14 @@ fun TransaccionMovimientosScreen(
                         ) {
                             RadioButton(
                                 selected = tipo == tipoMovimientoSeleccionado,
+                                colors = RadioButtonDefaults.colors(
+                                    selectedColor = MaterialTheme.colorScheme.primary
+                                ),
                                 onClick = {
                                     tipoMovimientoSeleccionado = tipo
                                 }
                             )
-                            Text(text = tipo.name)
+                            Text(text = tipo.name, color = MaterialTheme.colorScheme.onSurface)
                         }
                     }
                 }
@@ -263,10 +273,11 @@ fun TransaccionMovimientosScreen(
                             monto = nuevoMonto
                         }
                     },
-                    label = { Text("Monto") },
-                    leadingIcon = { Text("$") },
+                    label = { Text("Monto", color = MaterialTheme.colorScheme.onSurface) },
+                    leadingIcon = { Text("$", color = MaterialTheme.colorScheme.onSurface) },
                     isError = !isMontoValido,
                     textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     supportingText = {
@@ -275,6 +286,7 @@ fun TransaccionMovimientosScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 text = "El monto es requerido",
                                 style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.error,
                                 textAlign = TextAlign.End
                             )
                         }
@@ -301,14 +313,16 @@ fun TransaccionMovimientosScreen(
                             concepto = it
                         }
                     },
-                    label = { Text("Concepto") },
+                    label = { Text("Concepto", color = MaterialTheme.colorScheme.onSurface) },
                     singleLine = false,
                     maxLines = 2,
                     textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(),
                     supportingText = {
                         Text(
                             text = "${concepto.length}/64",
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End
                         )
@@ -323,14 +337,16 @@ fun TransaccionMovimientosScreen(
                             descripcion = it
                         }
                     },
-                    label = { Text("Descripción") },
+                    label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
                     singleLine = false,
                     maxLines = 3,
                     textStyle = MaterialTheme.typography.bodyLarge,
+                    colors = OutlinedTextFieldDefaults.colors(),
                     supportingText = {
                         Text(
                             text = "${descripcion.length}/256",
                             style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.End
                         )

@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
+/**
+ * Composable que muestra un diálogo para seleccionar una cuenta
+ */
 @Composable
 fun SeleccionarCuentaDialogo(
     cuentas: List<CuentaModel>,
@@ -25,21 +28,34 @@ fun SeleccionarCuentaDialogo(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(onClick = onDismissRequest) {
-                Text("Cerrar")
+                Text(
+                    text = "Cerrar",
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         },
         text = {
             Column {
-                Text(text = "Selecciona una Cuenta", style = MaterialTheme.typography.headlineSmall)
+                Text(
+                    text = "Selecciona una Cuenta",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 cuentas.forEach { cuenta ->
                     ListItem(
-                        headlineContent = { Text(text = cuenta.nombre) },
+                        headlineContent = {
+                            Text(
+                                text = cuenta.nombre,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
                         modifier = Modifier.clickable {
                             onCuentaSeleccionada(cuenta)
                         }
                     )
-                    HorizontalDivider()
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 }
             }
         }

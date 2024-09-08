@@ -35,6 +35,9 @@ import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
+/**
+ * Composable que representa la pantalla del tercer paso en el guardado de un portafolio.
+ */
 @Composable
 fun GuardarPortafolioPasoTres(
     modifier: Modifier = Modifier,
@@ -50,7 +53,7 @@ fun GuardarPortafolioPasoTres(
     var mostrarDialogoComposicionesSinCUentas by remember { mutableStateOf(false) }
 
     /**
-     *
+     *Valida si al menos una composición no tiene cuentas asociadas
      */
     fun alMenosUnaComposicionNoTieneCuentasAsociadas(): Boolean {
         return composicionesPasoTres.any { it.cuentas.isEmpty() }
@@ -60,6 +63,8 @@ fun GuardarPortafolioPasoTres(
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 content = {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -68,6 +73,8 @@ fun GuardarPortafolioPasoTres(
                     ) {
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 onAtrasClick(
                                     composicionesPasoTres
@@ -82,6 +89,8 @@ fun GuardarPortafolioPasoTres(
 
                         FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary,
                             onClick = {
                                 if (alMenosUnaComposicionNoTieneCuentasAsociadas()) {
                                     mostrarDialogoComposicionesSinCUentas = true
@@ -100,65 +109,76 @@ fun GuardarPortafolioPasoTres(
                     }
                 }
             )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            Text(text = "Cuentas", style = MaterialTheme.typography.headlineMedium)
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = modifier
+                    .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                items(composicionesPasoTres) { composicion ->
-                    ActivoCard(
-                        composicion,
-                        cuentas,
-                        composicionesPasoTres,
-                        onAgregarCuenta = { cuentaSeleccionada ->
-                            composicionesPasoTres = composicionesPasoTres.map {
-                                if (it == composicion) {
-                                    it.copy(cuentas = it.cuentas + cuentaSeleccionada)
-                                } else {
-                                    it
+                Text(
+                    text = "Cuentas",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    color = MaterialTheme.colorScheme.outline
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    items(composicionesPasoTres) { composicion ->
+                        ActivoCard(
+                            composicion,
+                            cuentas,
+                            composicionesPasoTres,
+                            onAgregarCuenta = { cuentaSeleccionada ->
+                                composicionesPasoTres = composicionesPasoTres.map {
+                                    if (it == composicion) {
+                                        it.copy(cuentas = it.cuentas + cuentaSeleccionada)
+                                    } else {
+                                        it
+                                    }
+                                }
+                            },
+                            onEliminarCuenta = { cuentaSeleccionada ->
+                                Log.i(
+                                    "GuardarPortafolioPasoTres",
+                                    "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
+                                )
+                                composicionesPasoTres = composicionesPasoTres.map {
+                                    if (it == composicion) {
+                                        it.copy(cuentas = it.cuentas - cuentaSeleccionada)
+                                    } else {
+                                        it
+                                    }
                                 }
                             }
-                        },
-                        onEliminarCuenta = { cuentaSeleccionada ->
-                            Log.i(
-                                "GuardarPortafolioPasoTres",
-                                "Cuenta seleccionada para eliminar: $cuentaSeleccionada"
-                            )
-                            composicionesPasoTres = composicionesPasoTres.map {
-                                if (it == composicion) {
-                                    it.copy(cuentas = it.cuentas - cuentaSeleccionada)
-                                } else {
-                                    it
-                                }
-                            }
-                        }
-                    )
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        )
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    }
                 }
             }
-        }
-    }
 
-    if (mostrarDialogoComposicionesSinCUentas) {
-        ConfirmacionSimpleDialog(
-            texto = "Hay activos sin cuentas asociadas. ¿Deseas continuar?",
-            onDismissRequest = {
-                mostrarDialogoComposicionesSinCUentas = false
-            },
-            onConfirmar = {
-                onSiguienteClick(composicionesPasoTres)
-            })
-    }
+            if (mostrarDialogoComposicionesSinCUentas) {
+                ConfirmacionSimpleDialog(
+                    texto = "Hay activos sin cuentas asociadas. ¿Deseas continuar?",
+                    onDismissRequest = {
+                        mostrarDialogoComposicionesSinCUentas = false
+                    },
+                    onConfirmar = {
+                        onSiguienteClick(composicionesPasoTres)
+                    })
+            }
+        }
+    )
 }
 
 @Composable
