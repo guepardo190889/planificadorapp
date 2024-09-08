@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.movimientos
+package com.example.planificadorapp.pantallas.movimientos
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

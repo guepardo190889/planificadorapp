@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.activos
+package com.example.planificadorapp.pantallas.activos
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

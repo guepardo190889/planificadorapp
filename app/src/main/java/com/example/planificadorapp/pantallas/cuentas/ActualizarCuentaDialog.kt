@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.cuentas
+package com.example.planificadorapp.pantallas.cuentas
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

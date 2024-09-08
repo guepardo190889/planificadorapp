@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.cuentas
+package com.example.planificadorapp.pantallas.cuentas
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

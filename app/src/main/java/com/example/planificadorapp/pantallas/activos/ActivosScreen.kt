@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.activos
+package com.example.planificadorapp.pantallas.activos
 
 import android.util.Log
 import androidx.compose.foundation.clickable

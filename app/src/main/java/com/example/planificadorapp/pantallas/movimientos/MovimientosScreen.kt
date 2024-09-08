@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.movimientos
+package com.example.planificadorapp.pantallas.movimientos
 
 import android.util.Log
 import androidx.compose.foundation.clickable

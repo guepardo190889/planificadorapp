@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.portafolios
+package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column

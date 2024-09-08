@@ -1,4 +1,4 @@
-package com.example.planificadorapp.screens.portafolios.guardado
+package com.example.planificadorapp.pantallas.portafolios.guardado
 
 /**
  * Enumeración que representa los pasos del wizard de guardado de un portafolio
