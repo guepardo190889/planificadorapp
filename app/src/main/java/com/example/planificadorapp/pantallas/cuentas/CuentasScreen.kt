@@ -22,12 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
@@ -35,6 +35,7 @@ import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
+import java.math.BigDecimal
 
 /**
  * Composable que representa la pantalla de cuentas
@@ -47,7 +48,7 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             emptyList()
         )
     }
-    var totalSaldos by remember { mutableDoubleStateOf(0.00) }
+    var totalSaldos by remember { mutableStateOf(BigDecimal.ZERO) }
 
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(
@@ -134,7 +135,12 @@ fun CuentaItem(
         headlineContent = {
             Text(
                 text = cuenta.nombre,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                style = if (cuenta.padre == null) {
+                    MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+                } else {
+                    MaterialTheme.typography.bodyLarge
+                }
             )
         },
         supportingContent = {

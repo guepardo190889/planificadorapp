@@ -1,5 +1,6 @@
 package com.example.planificadorapp.modelos.cuentas
 
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 /**
@@ -9,7 +10,7 @@ data class CuentaModel(
     var id: Long = 0,
     val nombre: String,
     val descripcion: String,
-    val saldo: Double,
+    val saldo: BigDecimal,
     var fechaActualizacion: LocalDateTime? = null,
     val padre: CuentaPadreResponseModel? = null
 ) {

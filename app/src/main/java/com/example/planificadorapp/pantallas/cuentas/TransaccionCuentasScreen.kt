@@ -32,14 +32,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.planificadorapp.composables.MonetaryInputField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
-import com.example.planificadorapp.modelos.ValidacionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoMonto
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 /**
  * Composable que representa la pantalla de transacción (guardado/actualización) de una cuenta
@@ -62,7 +63,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
-    var saldo by remember { mutableStateOf("") }
+    var saldo by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
     var cuentaSeleccionada by remember {
         mutableStateOf<CuentaModel?>(
             null
@@ -71,7 +72,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
     var cuentaPrincipalListaHabilitada by remember { mutableStateOf(true) }
 
     var isNombreValido by remember { mutableStateOf(true) }
-    var isSaldoValido by remember { mutableStateOf(ValidacionModel()) }
+    var isSaldoValido by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -88,17 +89,8 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
     /**
      * Valida si el saldo es válido
      */
-    fun validarSaldo(): ValidacionModel {
-        return try {
-            val saldoValue = FormatoMonto.convertirADouble(saldo)
-            if (saldoValue < 0 || saldoValue > 999_999_999.0) {
-                ValidacionModel(false, "El saldo debe estar entre 0 y 999,999,999.00")
-            } else {
-                ValidacionModel(true)
-            }
-        } catch (e: NumberFormatException) {
-            return ValidacionModel(false, "El saldo debe ser un número válido")
-        }
+    fun validarSaldo(): Boolean {
+        return saldo > BigDecimal.ZERO
     }
 
     /**
@@ -107,7 +99,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre()
         isSaldoValido = validarSaldo()
-        return isNombreValido && isSaldoValido.isValid
+        return isNombreValido && isSaldoValido
     }
 
     LaunchedEffect(Unit) {
@@ -125,7 +117,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
                         cuenta = resultadoCuentaExistente
                         nombre = resultadoCuentaExistente.nombre
                         descripcion = resultadoCuentaExistente.descripcion
-                        saldo = FormatoMonto.formato(resultadoCuentaExistente.saldo)
+                        saldo = resultadoCuentaExistente.saldo
                         cuentaSeleccionada =
                             cuentasPadre.find { it.id == resultadoCuentaExistente.padre?.id }
 
@@ -148,7 +140,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
             TransaccionCuentaRequestModel(
                 nombre,
                 descripcion,
-                saldo.toDouble(),
+                saldo,
                 cuentaSeleccionada?.id
             )
         ) { cuentaGuardada ->
@@ -176,7 +168,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
     fun actualizarCuenta() {
         cuentasRepository.actualizarCuenta(
             idCuenta, TransaccionCuentaRequestModel
-                (nombre, descripcion, FormatoMonto.convertirADouble(saldo), cuentaSeleccionada?.id)
+                (nombre, descripcion, saldo, cuentaSeleccionada?.id)
         ) {
             if (it != null) {
                 snackbarMessage = "Cuenta actualizada exitosamente"
@@ -245,7 +237,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
         ) {
             CuentasDropDown(
                 modifier = modifier,
-                etiqueta = "Selecciona una Cuenta",
+                etiqueta = "Selecciona una Cuenta Principal",
                 cuentaPrincipalListaHabilitada,
                 cuentaSeleccionada,
                 cuentasPadre,
@@ -309,26 +301,35 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
                 colors = OutlinedTextFieldDefaults.colors()
             )
 
-            OutlinedTextField(
-                value = saldo,
-                onValueChange = { newValue ->
-                    val rawInput = newValue.replace("$", "").replace(",", "").replace(" ", "")
-                    // Filtra la entrada para permitir solo números y un punto
+            MonetaryInputField(
+                modifier = modifier,
+                saldoInicial = saldo,
+                isSaldoValido = isSaldoValido,
+                onSaldoChange = {
+                    saldo = it
+                }
+            )
+
+
+            /*OutlinedTextField(
+                value = FormatoMonto.formatoBigDecimal(saldo),
+                onValueChange = { nuevoSaldo ->
+                    val nuevoSaldoLimpio = nuevoSaldo.replace(",", "")
                     val regex = Regex("^\\d{0,9}(\\.\\d{0,2})?\$")
-                    if (regex.matches(rawInput)) {
-                        saldo = rawInput
+                    if (regex.matches(nuevoSaldoLimpio)) {
+                        saldo = BigDecimal(nuevoSaldoLimpio)
                     }
                 },
                 label = { Text("Saldo") },
                 leadingIcon = { Text("$") },
-                isError = !isSaldoValido.isValid,
+                isError = !isSaldoValido,
                 textStyle = MaterialTheme.typography.bodyLarge,
                 modifier = modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 supportingText = {
-                    if (!isSaldoValido.isValid) {
+                    if (!isSaldoValido) {
                         Text(
-                            text = isSaldoValido.mensaje!!,
+                            text = "El saldo es requerido",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.error,
                             modifier = Modifier.fillMaxWidth(),
@@ -337,7 +338,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
                     }
                 },
                 colors = OutlinedTextFieldDefaults.colors()
-            )
+            )*/
         }
     }
 }

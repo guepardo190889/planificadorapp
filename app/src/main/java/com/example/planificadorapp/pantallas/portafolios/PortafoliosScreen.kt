@@ -2,7 +2,9 @@ package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +33,8 @@ import com.example.planificadorapp.R
 import com.example.planificadorapp.modelos.portafolios.PortafolioModel
 import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.PortafoliosRepository
+import com.example.planificadorapp.utilerias.FormatoMonto
+import java.math.BigDecimal
 
 /**
  * Composable que representa la pantalla de portafolios
@@ -39,14 +43,18 @@ import com.example.planificadorapp.repositorios.PortafoliosRepository
 fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
     val portafolioRepository = remember { PortafoliosRepository() }
     var portafolios by remember { mutableStateOf<List<PortafolioModel>>(emptyList()) }
-    var isLoading by remember { mutableStateOf(true) }
+    var totalSaldos by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
 
     LaunchedEffect(key1 = navController) {
         portafolioRepository.buscarPortafolios { result ->
             portafolios = result ?: emptyList()
             Log.i("PortafoliosScreen", "Portafolios encontrados: ${portafolios.size}")
 
-            isLoading = false
+            Log.i("PortafoliosScreen", "Total de saldos: $totalSaldos")
+
+            for (portafolio in portafolios) {
+                totalSaldos += portafolio.saldoTotal
+            }
         }
     }
 
@@ -71,6 +79,19 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
                     .padding(it)
             ) {
                 PortafoliosList(modifier, navController, portafolios)
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    Text(
+                        text = "Total: ${FormatoMonto.formato(totalSaldos)}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
             }
         }
     )
@@ -120,6 +141,11 @@ fun PortafolioItem(
                 tint = MaterialTheme.colorScheme.primary
             )
         },
-        trailingContent = { Text("$100,000.00", color = MaterialTheme.colorScheme.secondary) }
+        trailingContent = {
+            Text(
+                text = FormatoMonto.formato(portafolio.saldoTotal),
+                color = MaterialTheme.colorScheme.secondary
+            )
+        }
     )
 }

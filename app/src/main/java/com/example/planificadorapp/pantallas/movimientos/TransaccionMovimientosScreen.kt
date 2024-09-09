@@ -267,7 +267,6 @@ fun TransaccionMovimientosScreen(
                     modifier = Modifier.fillMaxWidth(),
                     value = monto,
                     onValueChange = { nuevoMonto ->
-                        Log.i("TransaccionMovimientosScreen", "Nuevo monto: $nuevoMonto")
                         val regex = Regex("^\\d{0,9}(\\.\\d{0,2})?\$")
                         if (regex.matches(nuevoMonto)) {
                             monto = nuevoMonto

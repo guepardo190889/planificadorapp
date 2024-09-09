@@ -120,10 +120,10 @@ fun NavegacionController(
                         }
                     }
                     composable(Ruta.CUENTAS_EDITAR.ruta) {
-                        val idActivo = it.arguments?.getString("idActivo")
+                        val idCuenta = it.arguments?.getString("idCuenta")
 
-                        if (idActivo != null && idActivo.toLong() > 0) {
-                            TransaccionCuentasScreen(modifier, navController, idActivo.toLong())
+                        if (idCuenta != null && idCuenta.toLong() > 0) {
+                            TransaccionCuentasScreen(modifier, navController, idCuenta.toLong())
                         }
                     }
 
@@ -134,7 +134,7 @@ fun NavegacionController(
                         TransaccionMovimientosScreen(modifier, navController, 0L)
                     }
                     composable(Ruta.MOVIMIENTOS_DETALLE.ruta) {
-                        val idMovimiento = it.arguments?.getString("idMovimiento");
+                        val idMovimiento = it.arguments?.getString("idMovimiento")
 
                         if (idMovimiento != null && idMovimiento.toLong() > 0) {
                             DetalleMovimientosScreen(modifier, navController, idMovimiento.toLong())
@@ -148,7 +148,7 @@ fun NavegacionController(
                         GuardarPortafolio(modifier, navController)
                     }
                     composable(Ruta.PORTAFOLIOS_DETALLE.ruta) {
-                        val idPortafolio = it.arguments?.getString("idPortafolio");
+                        val idPortafolio = it.arguments?.getString("idPortafolio")
 
                         if (idPortafolio != null && idPortafolio.toLong() > 0) {
                             DetallePortafoliosScreen(modifier, navController, idPortafolio.toLong())
