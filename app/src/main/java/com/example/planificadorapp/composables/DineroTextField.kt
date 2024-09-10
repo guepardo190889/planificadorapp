@@ -21,6 +21,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 const val MAX_ENTEROS = 9
+const val MAX_DECIMALES = 2
 
 /**
  * Composable que representa un campo de entrada de texto para el saldo monetario
@@ -45,84 +46,16 @@ fun DineroTextField(
         modifier = modifier
             .fillMaxWidth()
             .onKeyEvent { event ->
-                val montoString: String
+                monto = calcularMonto(event.nativeKeyEvent.keyCode, monto, isCapturaEntera)
 
-                val partes = monto
-                    .setScale(2, RoundingMode.DOWN)
-                    .toPlainString()
-                    .split(".")
+                onSaldoChange(monto)
 
-                val enteros = partes[0]
-                val decimales = partes[1]
-
-                when (event.nativeKeyEvent.keyCode) {
-                    // Capturamos teclas numéricas
-                    KeyEvent.KEYCODE_0, KeyEvent.KEYCODE_1, KeyEvent.KEYCODE_2, KeyEvent.KEYCODE_3, KeyEvent.KEYCODE_4,
-                    KeyEvent.KEYCODE_5, KeyEvent.KEYCODE_6, KeyEvent.KEYCODE_7, KeyEvent.KEYCODE_8, KeyEvent.KEYCODE_9 -> {
-                        val numeroPresionado = event.nativeKeyEvent.keyCode - KeyEvent.KEYCODE_0
-
-                        if (isCapturaEntera) {
-                            if (enteros.length < MAX_ENTEROS) {
-                                montoString = enteros + numeroPresionado.toString()
-                                monto = BigDecimal(montoString)
-                            }
-                        } else {
-                            if (decimales.trimEnd('0').length < 2) {
-                                if (decimales
-                                        .trimEnd('0')
-                                        .isEmpty()
-                                ) {
-                                    montoString = "$enteros.$numeroPresionado"
-                                    monto = BigDecimal(montoString)
-                                } else if (decimales.trimEnd('0').length == 1) {
-                                    montoString =
-                                        enteros + "." + decimales.dropLast(1) + numeroPresionado.toString()
-                                    monto = BigDecimal(montoString)
-                                }
-                            }
-                        }
-
-                        onSaldoChange(monto)
-
-                        true
-                    }
-
-                    KeyEvent.KEYCODE_PERIOD -> {
-                        isCapturaEntera = false
-
-                        true
-                    }
-
-                    KeyEvent.KEYCODE_DEL -> {
-                        if (isCapturaEntera) {
-                            montoString = enteros.dropLast(1)
-                        } else {
-                            if (decimales
-                                    .trimEnd('0')
-                                    .isEmpty()
-                            ) {
-                                isCapturaEntera = true
-                                montoString = enteros.dropLast(1)
-                            } else if (decimales.trimEnd('0').length == 1) {
-                                montoString = enteros
-                            } else {
-                                montoString = enteros + "." + decimales.dropLast(1)
-                            }
-                        }
-
-                        monto = if (montoString.isEmpty()) {
-                            BigDecimal.ZERO
-                        } else {
-                            BigDecimal(montoString)
-                        }
-
-                        onSaldoChange(monto)
-
-                        true
-                    }
-
-                    else -> true
+                // Cambiar el estado de captura según la tecla presionada
+                if (event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_PERIOD) {
+                    isCapturaEntera = false
                 }
+
+                true
             },
         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
         supportingText = {
@@ -138,4 +71,39 @@ fun DineroTextField(
         },
         colors = OutlinedTextFieldDefaults.colors()
     )
+}
+
+/**
+ * Calcula el monto a partir de la tecla presionada
+ */
+private fun calcularMonto(keyCode: Int, monto: BigDecimal, isCapturaEntera: Boolean): BigDecimal {
+    val montoString: String
+    val partes = monto.setScale(2, RoundingMode.DOWN).toPlainString().split(".")
+    val enteros = partes[0]
+    val decimales = partes[1].trimEnd('0')
+
+    when (keyCode) {
+        in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9 -> {
+            val numeroPresionado = keyCode - KeyEvent.KEYCODE_0
+            montoString = if (isCapturaEntera) {
+                if (enteros.length < MAX_ENTEROS) enteros + numeroPresionado else enteros
+            } else {
+                if (decimales.length < MAX_DECIMALES) "$enteros.$decimales$numeroPresionado" else "$enteros.$decimales"
+            }
+            return BigDecimal(montoString)
+        }
+        KeyEvent.KEYCODE_DEL -> {
+            montoString = if (isCapturaEntera) {
+                enteros.dropLast(1).ifEmpty { "0" }
+            } else {
+                when {
+                    decimales.isEmpty() -> enteros.dropLast(1).ifEmpty { "0" }
+                    decimales.length == 1 -> enteros
+                    else -> "$enteros.${decimales.dropLast(1)}"
+                }
+            }
+            return BigDecimal(montoString.ifEmpty { "0" })
+        }
+        else -> return monto
+    }
 }
