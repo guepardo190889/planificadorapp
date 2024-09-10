@@ -26,7 +26,7 @@ const val MAX_ENTEROS = 9
  * Composable que representa un campo de entrada de texto para el saldo monetario
  */
 @Composable
-fun MonetaryInputField(
+fun DineroTextField(
     modifier: Modifier,
     saldoInicial: BigDecimal?,
     isSaldoValido: Boolean,

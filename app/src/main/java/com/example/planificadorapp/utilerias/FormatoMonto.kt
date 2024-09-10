@@ -14,7 +14,7 @@ object FormatoMonto {
     /**
      * Formatea un monto en Bigdecimal al formato #,##0.00
      */
-    fun formatoBigDecimal(monto:BigDecimal): String{
+    fun formatoBigDecimal(monto: BigDecimal): String {
         val decimalFormat = DecimalFormat("#,##0.00")
         return decimalFormat.format(monto)
     }
@@ -32,7 +32,7 @@ object FormatoMonto {
     /**
      * Formatea un monto en formato de moneda para México
      */
-    fun formato (cantidad: BigDecimal): String {
+    fun formato(cantidad: BigDecimal): String {
         val formato: NumberFormat = NumberFormat.getCurrencyInstance(Locale("es", "MX"))
         formato.maximumFractionDigits = 2
         formato.minimumFractionDigits = 2

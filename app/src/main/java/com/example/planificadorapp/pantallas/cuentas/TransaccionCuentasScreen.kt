@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
@@ -28,17 +27,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.composables.MonetaryInputField
+import com.example.planificadorapp.composables.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
-import com.example.planificadorapp.utilerias.FormatoMonto
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -301,7 +298,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
                 colors = OutlinedTextFieldDefaults.colors()
             )
 
-            MonetaryInputField(
+            DineroTextField(
                 modifier = modifier,
                 saldoInicial = saldo,
                 isSaldoValido = isSaldoValido,
@@ -309,36 +306,6 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
                     saldo = it
                 }
             )
-
-
-            /*OutlinedTextField(
-                value = FormatoMonto.formatoBigDecimal(saldo),
-                onValueChange = { nuevoSaldo ->
-                    val nuevoSaldoLimpio = nuevoSaldo.replace(",", "")
-                    val regex = Regex("^\\d{0,9}(\\.\\d{0,2})?\$")
-                    if (regex.matches(nuevoSaldoLimpio)) {
-                        saldo = BigDecimal(nuevoSaldoLimpio)
-                    }
-                },
-                label = { Text("Saldo") },
-                leadingIcon = { Text("$") },
-                isError = !isSaldoValido,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                modifier = modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
-                supportingText = {
-                    if (!isSaldoValido) {
-                        Text(
-                            text = "El saldo es requerido",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    }
-                },
-                colors = OutlinedTextFieldDefaults.colors()
-            )*/
         }
     }
 }
