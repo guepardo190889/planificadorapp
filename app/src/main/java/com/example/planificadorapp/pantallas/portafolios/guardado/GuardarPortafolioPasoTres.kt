@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
+import com.example.planificadorapp.composables.cuentas.SeleccionarCuentaDialogo
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 

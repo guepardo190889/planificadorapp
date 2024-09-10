@@ -206,121 +206,122 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
                     }
                 }
             )
-        }
-    ) { paddingValues ->
-        Column(
-            modifier
-                .padding(paddingValues)
-                .padding(16.dp)
-        ) {
-            ExposedDropdownMenuBox(
-                expanded = activoPrincipalListaDesplegada,
-                onExpandedChange = {
-                    if (activoPrincipalListaHabilitada) { //No se permite modificar el activo principal de un activo existente
-                        activoPrincipalListaDesplegada = !activoPrincipalListaDesplegada
-                    }
-                }) {
-                OutlinedTextField(
-                    value = activoSeleccionado?.nombre ?: "",
-                    onValueChange = { },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth(),
-                    enabled = activoPrincipalListaHabilitada,
-                    readOnly = true,
-                    label = {
-                        Text(
-                            "Selecciona un Activo Principal",
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    },
-                    trailingIcon = {
-                        Icon(
-                            imageVector = if (activoPrincipalListaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                            contentDescription = null
-                        )
-                    },
-                    isError = !isActivoSeleccionadoValido,
-                    supportingText = {
-                        if (!isActivoSeleccionadoValido) {
+        },
+        content = { paddingValues ->
+            Column(
+                modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                ExposedDropdownMenuBox(
+                    expanded = activoPrincipalListaDesplegada,
+                    onExpandedChange = {
+                        if (activoPrincipalListaHabilitada) { //No se permite modificar el activo principal de un activo existente
+                            activoPrincipalListaDesplegada = !activoPrincipalListaDesplegada
+                        }
+                    }) {
+                    OutlinedTextField(
+                        value = activoSeleccionado?.nombre ?: "",
+                        onValueChange = { },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth(),
+                        enabled = activoPrincipalListaHabilitada,
+                        readOnly = true,
+                        label = {
                             Text(
-                                text = "El activo principal es requerido",
+                                "Selecciona un Activo Principal",
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                imageVector = if (activoPrincipalListaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
+                                contentDescription = null
+                            )
+                        },
+                        isError = !isActivoSeleccionadoValido,
+                        supportingText = {
+                            if (!isActivoSeleccionadoValido) {
+                                Text(
+                                    text = "El activo principal es requerido",
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        },
+                        colors = OutlinedTextFieldDefaults.colors()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = activoPrincipalListaDesplegada,
+                        onDismissRequest = { activoPrincipalListaDesplegada = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        activosPadre.forEach { activo ->
+                            DropdownMenuItem(
+                                text = { Text(activo.nombre) },
+                                onClick = {
+                                    activoSeleccionado = activo
+                                    activoPrincipalListaDesplegada = false
+                                    isActivoSeleccionadoValido = true
+                                }
+                            )
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = {
+                        isNombreValido = validarNombre(it)
+
+                        if (it.length <= 52) {
+                            nombre = it
+                        }
+                    },
+                    label = { Text("Nombre", color = MaterialTheme.colorScheme.onSurface) },
+                    isError = !isNombreValido,
+                    singleLine = true,
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier.fillMaxWidth(),
+                    supportingText = {
+                        if (!isNombreValido) {
+                            Text(
+                                text = "El nombre es requerido",
                                 color = MaterialTheme.colorScheme.error
                             )
                         }
+                        Text(
+                            text = "${nombre.length}/52",
+                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
                     },
                     colors = OutlinedTextFieldDefaults.colors()
                 )
 
-                ExposedDropdownMenu(
-                    expanded = activoPrincipalListaDesplegada,
-                    onDismissRequest = { activoPrincipalListaDesplegada = false },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    activosPadre.forEach { activo ->
-                        DropdownMenuItem(
-                            text = { Text(activo.nombre) },
-                            onClick = {
-                                activoSeleccionado = activo
-                                activoPrincipalListaDesplegada = false
-                                isActivoSeleccionadoValido = true
-                            }
-                        )
-                    }
-                }
-            }
-
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = {
-                    isNombreValido = validarNombre(it)
-
-                    if (it.length <= 52) {
-                        nombre = it
-                    }
-                },
-                label = { Text("Nombre", color = MaterialTheme.colorScheme.onSurface) },
-                isError = !isNombreValido,
-                singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = {
-                    if (!isNombreValido) {
+                OutlinedTextField(
+                    value = descripcion,
+                    onValueChange = {
+                        if (it.length <= 256) {
+                            descripcion = it
+                        }
+                    },
+                    label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
+                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
+                    modifier = Modifier.fillMaxWidth(),
+                    supportingText = {
                         Text(
-                            text = "El nombre es requerido",
-                            color = MaterialTheme.colorScheme.error
+                            text = "${descripcion.length}/256",
+                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
                         )
-                    }
-                    Text(
-                        text = "${nombre.length}/52",
-                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors()
-            )
-
-            OutlinedTextField(
-                value = descripcion,
-                onValueChange = {
-                    if (it.length <= 256) {
-                        descripcion = it
-                    }
-                },
-                label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                modifier = Modifier.fillMaxWidth(),
-                supportingText = {
-                    Text(
-                        text = "${descripcion.length}/256",
-                        style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors()
-            )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors()
+                )
+            }
         }
-    }
+    )
 }

@@ -1,4 +1,4 @@
-package com.example.planificadorapp.pantallas.portafolios.guardado
+package com.example.planificadorapp.composables.activos
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.activos.ActivoModel
 
@@ -56,7 +56,7 @@ fun SeleccionarActivoDialogo(
                                     // Activo padre
                                     Text(
                                         text = activo.nombre,
-                                        style = MaterialTheme.typography.bodyMedium.copy(color = Color.Black),
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                 } else {

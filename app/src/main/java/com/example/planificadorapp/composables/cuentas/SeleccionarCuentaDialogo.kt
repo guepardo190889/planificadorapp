@@ -1,4 +1,4 @@
-package com.example.planificadorapp.pantallas.portafolios.guardado
+package com.example.planificadorapp.composables.cuentas
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
