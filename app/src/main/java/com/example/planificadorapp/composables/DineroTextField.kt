@@ -8,6 +8,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,16 @@ fun DineroTextField(
 ) {
     var isCapturaEntera by remember { mutableStateOf(true) }
     var monto by remember { mutableStateOf(saldoInicial ?: BigDecimal.ZERO) }
+
+    // Actualizar 'monto' si 'saldoInicial' cambia
+    LaunchedEffect (saldoInicial) {
+        saldoInicial?.let {
+            monto = it
+
+            // Determinar si la captura es entera o decimal
+            isCapturaEntera = monto.remainder(BigDecimal.ONE) == BigDecimal.ZERO
+        }
+    }
 
     OutlinedTextField(
         value = FormatoMonto.formatoSinSimbolo(monto),
