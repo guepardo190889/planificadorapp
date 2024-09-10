@@ -42,12 +42,8 @@ import java.math.BigDecimal
  */
 @Composable
 fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
-    val cuentaRepository = remember { CuentasRepository() }
-    var cuentas by remember {
-        mutableStateOf<List<CuentaModel>>(
-            emptyList()
-        )
-    }
+    val cuentaRepository = CuentasRepository()
+    var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var totalSaldos by remember { mutableStateOf(BigDecimal.ZERO) }
 
     LaunchedEffect(Unit) {
@@ -55,11 +51,10 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             excluirCuentasAsociadas = false,
             incluirSoloCuentasPadre = false
         ) { cuentasEncontradas ->
-            cuentas = cuentasEncontradas ?: emptyList()
-            Log.i("CuentasScreen", "Cuentas encontradas: ${cuentasEncontradas!!.size}")
-
-            for (cuenta in cuentas) {
-                totalSaldos += cuenta.saldo
+            cuentasEncontradas?.let {
+                cuentas = it
+                totalSaldos = it.sumOf { cuenta -> cuenta.saldo }
+                Log.i("CuentasScreen", "Cuentas encontradas: ${it.size}")
             }
         }
     }
@@ -76,11 +71,11 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
             }
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier
                     .fillMaxWidth()
-                    .padding(it)
+                    .padding(paddingValues)
             ) {
                 CuentasList(modifier, cuentas, navController)
 
@@ -110,7 +105,10 @@ fun CuentasList(
     cuentas: List<CuentaModel>,
     navController: NavController
 ) {
-    LazyColumn(modifier.padding(16.dp)) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
         items(cuentas) { cuenta ->
             CuentaItem(modifier, navController, cuenta)
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -129,18 +127,14 @@ fun CuentaItem(
 ) {
     ListItem(
         modifier = modifier
-            .clickable {
-                navController.navigate("cuentas/detalle/${cuenta.id}")
-            },
+            .clickable { navController.navigate("cuentas/detalle/${cuenta.id}") },
         headlineContent = {
             Text(
                 text = cuenta.nombre,
                 color = MaterialTheme.colorScheme.onSurface,
-                style = if (cuenta.padre == null) {
-                    MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                } else {
-                    MaterialTheme.typography.bodyLarge
-                }
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = if (cuenta.padre == null) FontWeight.Bold else FontWeight.Normal
+                )
             )
         },
         supportingContent = {

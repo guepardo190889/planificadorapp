@@ -36,7 +36,7 @@ import com.example.planificadorapp.repositorios.ActivosRepository
  */
 @Composable
 fun ActivosScreen(modifier: Modifier, navController: NavController) {
-    val activosRepository = remember { ActivosRepository() }
+    val activosRepository = ActivosRepository()
 
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
 
@@ -80,7 +80,11 @@ fun ActivosList(
     navController: NavController,
     activos: List<ActivoModel>
 ) {
-    LazyColumn(modifier.padding(16.dp)) {
+    LazyColumn(
+        modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
         items(activos) { activo ->
             ActivoItem(modifier, navController, activo)
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -106,16 +110,14 @@ fun ActivoItem(
             Text(
                 text = activo.nombre,
                 color = MaterialTheme.colorScheme.onSurface,
-                style = if (activo.padre == null) {
-                    MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
-                } else {
-                    MaterialTheme.typography.bodyLarge
-                }
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = if (activo.padre == null) FontWeight.Bold else FontWeight.Normal
+                )
             )
         },
         supportingContent = {
             Text(
-                if (activo.padre == null) "Activo" else "Subactivo",
+                text = if (activo.padre == null) "Activo" else "Subactivo",
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
