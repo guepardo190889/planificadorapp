@@ -124,7 +124,7 @@ fun ActivoItem(
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.outline_attach_money_24),
-                contentDescription = "Activo",
+                contentDescription = "Icono de Activo",
                 tint = MaterialTheme.colorScheme.primary
             )
         },

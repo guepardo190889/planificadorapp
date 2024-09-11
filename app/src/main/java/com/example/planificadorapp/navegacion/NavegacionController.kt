@@ -142,7 +142,7 @@ fun NavegacionController(
                     }
 
                     composable(Ruta.PORTAFOLIOS.ruta) {
-                        Portafolios(navController)
+                        Portafolios(modifier, navController)
                     }
                     composable(Ruta.PORTAFOLIOS_GUARDAR.ruta) {
                         GuardarPortafolio(modifier, navController)

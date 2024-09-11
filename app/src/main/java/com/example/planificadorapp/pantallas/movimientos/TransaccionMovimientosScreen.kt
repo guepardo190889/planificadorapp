@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.planificadorapp.composables.DatePickerInput
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
@@ -212,6 +213,8 @@ fun TransaccionMovimientosScreen(
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
+
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -292,7 +295,7 @@ fun TransaccionMovimientosScreen(
                     }
                 )
 
-                DatePickerInput(
+                DatePickerInput (
                     modifier,
                     etiqueta = "Fecha",
                     fecha = fecha,

@@ -145,7 +145,7 @@ fun CuentaItem(
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_account_balance_24),
-                contentDescription = "Cuenta",
+                contentDescription = "Icono de Cuenta",
                 tint = MaterialTheme.colorScheme.primary
             )
         },

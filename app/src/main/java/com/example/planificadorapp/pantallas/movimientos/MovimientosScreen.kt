@@ -3,40 +3,29 @@ package com.example.planificadorapp.pantallas.movimientos
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,11 +35,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
+import com.example.planificadorapp.composables.DatePickerInput
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.movimientos.MovimientoModel
@@ -67,8 +55,8 @@ import java.time.LocalDate
  */
 @Composable
 fun MovimientosScreen(modifier: Modifier, navController: NavController) {
-    val cuentasRepository = remember { CuentasRepository() }
-    val movimientosRepository = remember { MovimientosRepository() }
+    val cuentasRepository = CuentasRepository()
+    val movimientosRepository = MovimientosRepository()
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var movimientos by remember { mutableStateOf<List<MovimientoModel>>(emptyList()) }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
@@ -154,10 +142,10 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Guardar Movimiento")
             }
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier
-                    .padding(it)
+                    .padding(paddingValues)
                     .padding(16.dp)
             ) {
                 CuentasDropDown(
@@ -188,89 +176,30 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                 }
 
                 if (isMostrarFiltros) {
-                    Column(modifier = modifier.padding(8.dp)) {
-                        RadioButtonGroup(filtroSeleccionado) { nuevoFiltro ->
-                            filtroSeleccionado = nuevoFiltro
-                        }
-
-                        if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
-                            Row(
-                                modifier = modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                DatePickerInput(
-                                    modifier.weight(1f),
-                                    etiqueta = "Fecha Inicio",
-                                    fecha = fechaInicio,
-                                    onFechaSeleccionada = { fechaSeleccionada ->
-                                        Log.i(
-                                            "MovimientosScreen",
-                                            "Fecha inicio seleccionada: $fechaSeleccionada"
-                                        )
-                                        fechaInicio = fechaSeleccionada
-                                    },
-                                    onDismiss = {
-                                        Log.i("MovimientosScreen", "onDismiss")
-                                    }
-                                )
-
-                                Spacer(modifier = Modifier.width(16.dp))
-
-                                DatePickerInput(
-                                    modifier.weight(1f),
-                                    etiqueta = "Fecha Fin",
-                                    fecha = fechaFin,
-                                    onFechaSeleccionada = { fechaSeleccionada ->
-                                        Log.i(
-                                            "MovimientosScreen",
-                                            "Fecha fin seleccionada: $fechaSeleccionada"
-                                        )
-                                        fechaFin = fechaSeleccionada
-                                    },
-                                    onDismiss = {
-                                        Log.i("MovimientosScreen", "onDismiss")
-                                    }
-                                )
+                    FiltrosMovimientos(
+                        modifier = modifier,
+                        filtroSeleccionado = filtroSeleccionado,
+                        onFiltroSeleccionado = { filtroSeleccionado = it },
+                        fechaInicio = fechaInicio,
+                        onFechaInicioSeleccionada = { fechaInicio = it },
+                        fechaFin = fechaFin,
+                        onFechaFinSeleccionada = { fechaFin = it },
+                        onAplicarClick = {
+                            if (filtroSeleccionado != FiltroMovimiento.POR_FECHA) {
+                                fechaInicio = null
+                                fechaFin = null
                             }
+                            isMostrarFiltros = false
+                            buscarMovimientos()
                         }
-
-                        Row(
-                            modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            Button(
-                                onClick = {
-                                    // Limpiar los filtros de fecha si se cambia el filtro
-                                    if (FiltroMovimiento.POR_FECHA != filtroSeleccionado) {
-                                        fechaInicio = null
-                                        fechaFin = null
-                                    }
-
-                                    isMostrarFiltros = false
-
-                                    buscarMovimientos()
-                                },
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                )
-                            ) {
-                                Text(text = "Aplicar")
-                            }
-                        }
-                    }
+                    )
                 }
 
                 HorizontalDivider(color = MaterialTheme.colorScheme.outline)
 
                 if (movimientos.isEmpty()) {
                     Text(
-                        modifier = Modifier
+                        modifier = modifier
                             .padding(16.dp)
                             .align(Alignment.CenterHorizontally),
                         text = "Sin movimientos",
@@ -285,6 +214,74 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
             }
         }
     )
+}
+
+/**
+ * Composable que muestra los filtros de movimientos
+ */
+@Composable
+fun FiltrosMovimientos(
+    modifier: Modifier,
+    filtroSeleccionado: FiltroMovimiento,
+    onFiltroSeleccionado: (FiltroMovimiento) -> Unit,
+    fechaInicio: LocalDate?,
+    onFechaInicioSeleccionada: (LocalDate?) -> Unit,
+    fechaFin: LocalDate?,
+    onFechaFinSeleccionada: (LocalDate?) -> Unit,
+    onAplicarClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        RadioButtonGroup(filtroSeleccionado, onFiltroSeleccionado)
+
+        if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DatePickerInput(
+                    modifier = Modifier.weight(1f),
+                    etiqueta = "Fecha Inicio",
+                    fecha = fechaInicio,
+                    onFechaSeleccionada = onFechaInicioSeleccionada,
+                    onDismiss = {}
+                )
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                DatePickerInput(
+                    modifier = Modifier.weight(1f),
+                    etiqueta = "Fecha Fin",
+                    fecha = fechaFin,
+                    onFechaSeleccionada = onFechaFinSeleccionada,
+                    onDismiss = {}
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = onAplicarClick,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text(text = "Aplicar")
+            }
+        }
+    }
 }
 
 /**
@@ -311,104 +308,6 @@ fun RadioButtonGroup(
         }
     }
 }
-
-/**
- * Composable que muestra un date picker
- */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun DatePickerInput(
-    modifier: Modifier = Modifier,
-    etiqueta: String,
-    fecha: LocalDate?,
-    onFechaSeleccionada: (LocalDate?) -> Unit,
-    onDismiss: () -> Unit
-) {
-    var isMostrarDatePicker by remember { mutableStateOf(false) }
-    val fechaTexto: String =
-        if (fecha != null) FormatoFecha.formatoCortoISO8601(fecha) else "yyyy-MM-dd"
-
-    val datePickerState = rememberDatePickerState(
-        initialSelectedDateMillis = if (fecha != null) FormatoFecha.convertirLocalDateAMilisegundos(
-            fecha
-        ) else null
-    )
-
-    Box(
-        modifier.fillMaxWidth()
-    ) {
-        OutlinedTextField(
-            modifier = modifier
-                .fillMaxWidth()
-                .height(64.dp),
-            colors = OutlinedTextFieldDefaults.colors(),
-            value = fechaTexto,
-            onValueChange = {},
-            label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
-            readOnly = true,
-            maxLines = 1, //Limita a una línea para evitar debordes
-            textStyle = TextStyle(fontSize = TextUnit.Unspecified),
-            trailingIcon = {
-                IconButton(onClick = { isMostrarDatePicker = !isMostrarDatePicker }) {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Selecciona fecha",
-                        tint = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        )
-
-        if (isMostrarDatePicker) {
-            DatePickerDialog(
-                onDismissRequest = {
-                    isMostrarDatePicker = false
-                    onDismiss()
-                },
-                confirmButton = {
-                    TextButton(onClick = {
-                        val selectedMillis = datePickerState.selectedDateMillis
-                        if (selectedMillis != null) {
-                            onFechaSeleccionada(
-                                FormatoFecha.convertirMilisegundosALocalDate(
-                                    selectedMillis
-                                )
-                            )
-                        }
-                        isMostrarDatePicker = false // Cierra el diálogo
-                    }) {
-                        Text("Aceptar", color = MaterialTheme.colorScheme.primary)
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = {
-                        isMostrarDatePicker = false
-                        onDismiss()
-                    }) {
-                        Text("Cancelar", color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
-            ) {
-                DatePicker(
-                    state = datePickerState,
-                    title = {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Selecciona una fecha"
-                            )
-                        }
-                    },
-                    showModeToggle = false
-                )
-            }
-        }
-    }
-}
-
 
 /**
  * Composable que muestra la lista de movimientos
@@ -469,7 +368,8 @@ fun MovimientoItem(
                     FormatoMonto.formato(
                         movimiento.monto
                     )
-                }" else FormatoMonto.formato(movimiento.monto),
+                }"
+                else FormatoMonto.formato(movimiento.monto),
                 color = color
             )
         }

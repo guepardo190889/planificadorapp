@@ -40,8 +40,8 @@ import java.math.BigDecimal
  * Composable que representa la pantalla de portafolios
  */
 @Composable
-fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
-    val portafolioRepository = remember { PortafoliosRepository() }
+fun Portafolios(modifier: Modifier, navController: NavController) {
+    val portafolioRepository = PortafoliosRepository()
     var portafolios by remember { mutableStateOf<List<PortafolioModel>>(emptyList()) }
     var totalSaldos by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
 
@@ -50,11 +50,8 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
             portafolios = result ?: emptyList()
             Log.i("PortafoliosScreen", "Portafolios encontrados: ${portafolios.size}")
 
+            totalSaldos = portafolios.sumOf { it.saldoTotal }
             Log.i("PortafoliosScreen", "Total de saldos: $totalSaldos")
-
-            for (portafolio in portafolios) {
-                totalSaldos += portafolio.saldoTotal
-            }
         }
     }
 
@@ -72,11 +69,11 @@ fun Portafolios(navController: NavController, modifier: Modifier = Modifier) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
             }
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier
                     .fillMaxWidth()
-                    .padding(it)
+                    .padding(paddingValues)
             ) {
                 PortafoliosList(modifier, navController, portafolios)
 
@@ -106,7 +103,11 @@ fun PortafoliosList(
     navController: NavController,
     portafolios: List<PortafolioModel>
 ) {
-    LazyColumn(modifier.padding(16.dp)) {
+    LazyColumn(
+        modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
         items(portafolios) { portafolio ->
             PortafolioItem(modifier, navController, portafolio)
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
@@ -137,7 +138,7 @@ fun PortafolioItem(
         leadingContent = {
             Icon(
                 painter = painterResource(id = R.drawable.outline_work_24),
-                contentDescription = "Localized description",
+                contentDescription = "Icono de portafolio",
                 tint = MaterialTheme.colorScheme.primary
             )
         },
