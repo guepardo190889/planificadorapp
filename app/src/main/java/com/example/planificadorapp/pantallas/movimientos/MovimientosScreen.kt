@@ -68,7 +68,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     LaunchedEffect(Unit) {
         cuentasRepository.buscarCuentas(
             excluirCuentasAsociadas = false,
-            incluirSoloCuentasPadre = false
+            incluirSoloCuentasNoAgrupadorasSinAgrupar = false
         ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
             Log.i("MovimientosScreen", "Cuentas cargadas: $cuentas.size")

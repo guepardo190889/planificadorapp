@@ -72,7 +72,7 @@ fun CuentasDropDown(
             modifier = modifier.fillMaxWidth()
         ) {
             cuentas.forEachIndexed { indice, cuenta ->
-                if (cuenta.isPadre) {
+                if (!cuenta.isHija) {
                     // Cuenta padre
                     DropdownMenuItem(
                         text = {
@@ -109,7 +109,7 @@ fun CuentasDropDown(
 
                 // Verifica si la siguiente cuenta es una cuenta padre o si es la última cuenta de la lista
                 val isUltimoElemento = indice == cuentas.size - 1
-                val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].isPadre
+                val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].isHija
 
                 if (isUltimoElemento || isProximoPadre) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

@@ -1,6 +1,7 @@
 package com.example.planificadorapp.servicios
 
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
@@ -19,7 +20,7 @@ interface CuentasService {
      * Guarda una cuenta en el servidor y devuelve la cuenta guardada
      */
     @POST("/api/cuentas")
-    fun guardarCuenta(@Body cuenta: TransaccionCuentaRequestModel): Call<CuentaModel>
+    fun guardarCuenta(@Body cuenta: GuardarCuentaRequestModel): Call<CuentaModel>
 
     /**
      * Actualiza una cuenta en el servidor y devuelve la cuenta actualizada
@@ -42,7 +43,7 @@ interface CuentasService {
     @GET("/api/cuentas")
     fun buscarCuentas(
         @Query("excluirCuentasAsociadas") excluirCuentasAsociadas: Boolean,
-        @Query("incluirSoloCuentasPadre") incluirSoloCuentasPadre: Boolean
+        @Query("incluirSoloCuentasNoAgrupadorasSinAgrupar") incluirSoloCuentasNoAgrupadorasSinAgrupar: Boolean
     ): Call<List<CuentaModel>>
 
     /**

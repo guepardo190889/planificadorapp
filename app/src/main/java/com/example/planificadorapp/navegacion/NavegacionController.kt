@@ -31,6 +31,7 @@ import com.example.planificadorapp.pantallas.activos.DetalleActivosScreen
 import com.example.planificadorapp.pantallas.activos.TransaccionActivosScreen
 import com.example.planificadorapp.pantallas.cuentas.Cuentas
 import com.example.planificadorapp.pantallas.cuentas.DetalleCuentasScreen
+import com.example.planificadorapp.pantallas.cuentas.GuardarCuentasScreen
 import com.example.planificadorapp.pantallas.cuentas.TransaccionCuentasScreen
 import com.example.planificadorapp.pantallas.movimientos.DetalleMovimientosScreen
 import com.example.planificadorapp.pantallas.movimientos.MovimientosScreen
@@ -110,7 +111,7 @@ fun NavegacionController(
                         Cuentas(modifier, navController)
                     }
                     composable(Ruta.CUENTAS_GUARDAR.ruta) {
-                        TransaccionCuentasScreen(modifier, navController, 0L)
+                        GuardarCuentasScreen(modifier, navController)
                     }
                     composable(Ruta.CUENTAS_DETALLE.ruta) {
                         val idCuenta = it.arguments?.getString("idCuenta")

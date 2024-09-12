@@ -34,6 +34,7 @@ import com.example.planificadorapp.composables.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import kotlinx.coroutines.launch
@@ -102,7 +103,7 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
     LaunchedEffect(Unit) {
         cuentasRepository.buscarCuentas(
             excluirCuentasAsociadas = false,
-            incluirSoloCuentasPadre = true
+            incluirSoloCuentasNoAgrupadorasSinAgrupar = true
         ) { resultadoCuentasPadres ->
             cuentasPadre = resultadoCuentasPadres ?: emptyList()
             Log.i("CuentasScreen", "Cuentas padre cargados: $resultadoCuentasPadres")
@@ -134,11 +135,11 @@ fun TransaccionCuentasScreen(modifier: Modifier, navController: NavController, i
      */
     fun guardarCuenta() {
         cuentasRepository.guardarCuenta(
-            TransaccionCuentaRequestModel(
+            GuardarCuentaRequestModel(
                 nombre,
                 descripcion,
                 saldo,
-                cuentaSeleccionada?.id
+                true
             )
         ) { cuentaGuardada ->
             if (cuentaGuardada != null) {

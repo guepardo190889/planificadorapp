@@ -115,7 +115,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                             Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
                             cuentasRepository.buscarCuentas(
                                 excluirCuentasAsociadas = true,
-                                incluirSoloCuentasPadre = false
+                                incluirSoloCuentasNoAgrupadorasSinAgrupar = false
                             ) { result ->
                                 cuentas = result ?: emptyList()
                             }

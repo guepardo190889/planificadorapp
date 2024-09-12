@@ -83,7 +83,7 @@ fun TransaccionMovimientosScreen(
 
         cuentasRepository.buscarCuentas(
             excluirCuentasAsociadas = false,
-            incluirSoloCuentasPadre = true
+            incluirSoloCuentasNoAgrupadorasSinAgrupar = true
         ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
             Log.i("TransaccionMovimientosScreen", "Cuentas cargadas: $resultadoCuentas")

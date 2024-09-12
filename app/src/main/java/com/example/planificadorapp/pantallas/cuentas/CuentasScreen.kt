@@ -49,7 +49,7 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(
             excluirCuentasAsociadas = false,
-            incluirSoloCuentasPadre = false
+            incluirSoloCuentasNoAgrupadorasSinAgrupar = false
         ) { cuentasEncontradas ->
             cuentasEncontradas?.let {
                 cuentas = it
@@ -125,15 +125,18 @@ fun CuentaItem(
     navController: NavController,
     cuenta: CuentaModel
 ) {
+    val paddingStart = if (cuenta.isHija) 16.dp else 0.dp
+
     ListItem(
         modifier = modifier
+            .padding(start = paddingStart)
             .clickable { navController.navigate("cuentas/detalle/${cuenta.id}") },
         headlineContent = {
             Text(
                 text = cuenta.nombre,
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = if (cuenta.padre == null) FontWeight.Bold else FontWeight.Normal
+                    fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
                 )
             )
         },
@@ -152,7 +155,10 @@ fun CuentaItem(
         trailingContent = {
             Text(
                 text = FormatoMonto.formato(cuenta.saldo),
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
+                )
             )
         }
     )

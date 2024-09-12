@@ -12,8 +12,10 @@ data class CuentaModel(
     val descripcion: String,
     val saldo: BigDecimal,
     var fechaActualizacion: LocalDateTime? = null,
-    val padre: CuentaPadreResponseModel? = null
+    val padre: CuentaPadreResponseModel? = null,
+    val agrupadora: Boolean = false,
+    var seleccionada: Boolean = false
 ) {
-    val isPadre: Boolean
-        get() = padre == null
+    val isHija: Boolean
+        get() = padre != null
 }

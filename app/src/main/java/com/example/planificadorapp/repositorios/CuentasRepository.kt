@@ -2,6 +2,7 @@ package com.example.planificadorapp.repositorios
 
 import android.util.Log
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
@@ -18,7 +19,7 @@ class CuentasRepository {
      * Guarda una cuenta en el servidor y devuelve la cuenta guardada
      */
     fun guardarCuenta(
-        cuenta: TransaccionCuentaRequestModel,
+        cuenta: GuardarCuentaRequestModel,
         onResult: (CuentaModel?) -> Unit
     ) {
         val call = apiService.guardarCuenta(cuenta)
@@ -117,10 +118,10 @@ class CuentasRepository {
      */
     fun buscarCuentas(
         excluirCuentasAsociadas: Boolean,
-        incluirSoloCuentasPadre: Boolean,
+        incluirSoloCuentasNoAgrupadorasSinAgrupar: Boolean,
         onResult: (List<CuentaModel>?) -> Unit
     ) {
-        apiService.buscarCuentas(excluirCuentasAsociadas, incluirSoloCuentasPadre)
+        apiService.buscarCuentas(excluirCuentasAsociadas, incluirSoloCuentasNoAgrupadorasSinAgrupar)
             .enqueue(object :
                 Callback<List<CuentaModel>> {
                 override fun onResponse(
