@@ -43,13 +43,15 @@ fun DetalleCuentasScreen(
 
     var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
     var cuentasAgrupadas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var isCuentaAgrupadora by remember { mutableStateOf(false) }
 
     LaunchedEffect(idCuenta) {
         cuentaRepository.buscarCuentaPorId(idCuenta) { cuentaEncontrada ->
             if(cuentaEncontrada != null) {
                 cuenta = cuentaEncontrada
+                isCuentaAgrupadora = cuenta!!.agrupadora
 
-                if(cuenta!!.agrupadora) {
+                if(isCuentaAgrupadora) {
                     cuentaRepository.buscarSubcuentas(cuenta!!.id) { cuentasAgrupadasEncontradas ->
                         cuentasAgrupadas = cuentasAgrupadasEncontradas ?: emptyList()
                         Log.i(
@@ -87,6 +89,14 @@ fun DetalleCuentasScreen(
                     )
                 ) {
                     Column(modifier = modifier) {
+                        if(it.padre != null) {
+                            TextoConEtiqueta(
+                                "Cuenta Agrupadora: ",
+                                it.padre.nombre,
+                                "large",
+                                "medium"
+                            )
+                        }
                         TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
                         TextoConEtiqueta(
                             "Saldo: ",
@@ -103,11 +113,14 @@ fun DetalleCuentasScreen(
                     }
                 }
 
-                Text(
-                    modifier = modifier.fillMaxWidth().padding(16.dp),
-                    text = "Cuentas Agrupadas:",
-                    style = MaterialTheme.typography.titleMedium)
-                CuentasListSimple(modifier, cuentasAgrupadas)
+                if(isCuentaAgrupadora) {
+                    Text(
+                        modifier = modifier.fillMaxWidth().padding(16.dp),
+                        text = "Cuentas Agrupadas:",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    CuentasListSimple(modifier, cuentasAgrupadas)
+                }
             }
         }
     }
