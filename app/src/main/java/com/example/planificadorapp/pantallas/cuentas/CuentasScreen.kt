@@ -1,6 +1,11 @@
 package com.example.planificadorapp.pantallas.cuentas
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -21,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,10 +53,13 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var totalSaldos by remember { mutableStateOf(BigDecimal.ZERO) }
 
+    val scrollState = rememberLazyListState()
+    val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
+
+
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(
-            excluirCuentasAsociadas = false,
-            incluirSoloCuentasNoAgrupadorasSinAgrupar = false
+            excluirCuentasAsociadas = false, incluirSoloCuentasNoAgrupadorasSinAgrupar = false
         ) { cuentasEncontradas ->
             cuentasEncontradas?.let {
                 cuentas = it
@@ -59,9 +69,12 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
+    Scaffold(modifier = modifier.fillMaxSize(), floatingActionButton = {
+        AnimatedVisibility(
+            visible = isFabVisible,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        ) {
             FloatingActionButton(
                 onClick = { navController.navigate("cuentas/guardar") },
                 modifier = Modifier.padding(16.dp),
@@ -70,40 +83,40 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
             }
-        },
-        content = { paddingValues ->
-            Column(
-                modifier
+        }
+    }, content = { paddingValues ->
+        Column(
+            modifier
+                .fillMaxWidth()
+                .padding(paddingValues)
+        ) {
+            LazyColumn(
+                modifier = modifier
                     .fillMaxWidth()
-                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .weight(1f),
+                state = scrollState
             ) {
-                LazyColumn(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .weight(1f)
-                ) {
-                    items(cuentas) { cuenta ->
-                        CuentaItem(modifier, navController, cuenta)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-                    }
-                }
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        text = "Total: ${FormatoMonto.formato(totalSaldos)}",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
+                items(cuentas) { cuenta ->
+                    CuentaItem(modifier, navController, cuenta)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
                 }
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Total: ${FormatoMonto.formato(totalSaldos)}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
         }
-    )
+    })
 }
 
 /**
@@ -111,16 +124,13 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
  */
 @Composable
 fun CuentaItem(
-    modifier: Modifier,
-    navController: NavController,
-    cuenta: CuentaModel
+    modifier: Modifier, navController: NavController, cuenta: CuentaModel
 ) {
     val paddingStart = if (cuenta.isHija) 16.dp else 0.dp
 
-    ListItem(
-        modifier = modifier
-            .padding(start = paddingStart)
-            .clickable { navController.navigate("cuentas/detalle/${cuenta.id}") },
+    ListItem(modifier = modifier
+        .padding(start = paddingStart)
+        .clickable { navController.navigate("cuentas/detalle/${cuenta.id}") },
         headlineContent = {
             Text(
                 text = cuenta.nombre,
@@ -131,8 +141,7 @@ fun CuentaItem(
             )
         },
         supportingContent = {
-            Text(
-                text = cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "",
+            Text(text = cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "",
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
         },
         leadingContent = {
@@ -150,6 +159,5 @@ fun CuentaItem(
                     fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
                 )
             )
-        }
-    )
+        })
 }
