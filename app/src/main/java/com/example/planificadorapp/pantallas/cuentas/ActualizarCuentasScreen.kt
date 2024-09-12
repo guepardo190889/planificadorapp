@@ -215,7 +215,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                 .padding(16.dp)
         ) {
             TextoConEtiqueta(
-                etiqueta = "Cuenta Agrupadora: ",
+                etiqueta = "¿Es Cuenta Agrupadora?: ",
                 texto = if (isCuentaAgrupadora) "Si" else "No",
                 styleLabel = "medium",
                 styleBody = "medium"
