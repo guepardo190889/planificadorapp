@@ -5,9 +5,9 @@ import java.math.BigDecimal
 /**
  * Modelo de datos para guardar o actualizar una cuenta
  */
-data class TransaccionCuentaRequestModel(
+data class ActualizarCuentaRequestModel(
     var nombre: String,
     var descripcion: String,
     var saldo: BigDecimal = BigDecimal.ZERO,
-    var idPadre: Long? = null
+    var idsCuentasAgrupadas: List<Long> = emptyList()
 )

@@ -1,5 +1,6 @@
 package com.example.planificadorapp.pantallas.cuentas
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.TextoConEtiqueta
+import com.example.planificadorapp.composables.cuentas.CuentasListSimple
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
@@ -39,10 +42,23 @@ fun DetalleCuentasScreen(
     val cuentaRepository = remember { CuentasRepository() }
 
     var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
+    var cuentasAgrupadas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     LaunchedEffect(idCuenta) {
         cuentaRepository.buscarCuentaPorId(idCuenta) { cuentaEncontrada ->
-            cuenta = cuentaEncontrada
+            if(cuentaEncontrada != null) {
+                cuenta = cuentaEncontrada
+
+                if(cuenta!!.agrupadora) {
+                    cuentaRepository.buscarSubcuentas(cuenta!!.id) { cuentasAgrupadasEncontradas ->
+                        cuentasAgrupadas = cuentasAgrupadasEncontradas ?: emptyList()
+                        Log.i(
+                            "DetalleCuentasScreen",
+                            "Cuentas agrupadas cargadas: ${cuentasAgrupadas.size}"
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -64,14 +80,13 @@ fun DetalleCuentasScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp)
                         .padding(16.dp),
                     colors = CardDefaults.cardColors(
                         containerColor = MaterialTheme.colorScheme.surface,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     )
                 ) {
-                    Column(modifier = modifier.padding(16.dp)) {
+                    Column(modifier = modifier) {
                         TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
                         TextoConEtiqueta(
                             "Saldo: ",
@@ -87,6 +102,12 @@ fun DetalleCuentasScreen(
                             "medium")
                     }
                 }
+
+                Text(
+                    modifier = modifier.fillMaxWidth().padding(16.dp),
+                    text = "Cuentas Agrupadas:",
+                    style = MaterialTheme.typography.titleMedium)
+                CuentasListSimple(modifier, cuentasAgrupadas)
             }
         }
     }

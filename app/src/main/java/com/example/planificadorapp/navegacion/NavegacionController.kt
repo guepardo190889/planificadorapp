@@ -32,7 +32,7 @@ import com.example.planificadorapp.pantallas.activos.TransaccionActivosScreen
 import com.example.planificadorapp.pantallas.cuentas.Cuentas
 import com.example.planificadorapp.pantallas.cuentas.DetalleCuentasScreen
 import com.example.planificadorapp.pantallas.cuentas.GuardarCuentasScreen
-import com.example.planificadorapp.pantallas.cuentas.TransaccionCuentasScreen
+import com.example.planificadorapp.pantallas.cuentas.ActualizarCuentasScreen
 import com.example.planificadorapp.pantallas.movimientos.DetalleMovimientosScreen
 import com.example.planificadorapp.pantallas.movimientos.MovimientosScreen
 import com.example.planificadorapp.pantallas.movimientos.TransaccionMovimientosScreen
@@ -124,7 +124,7 @@ fun NavegacionController(
                         val idCuenta = it.arguments?.getString("idCuenta")
 
                         if (idCuenta != null && idCuenta.toLong() > 0) {
-                            TransaccionCuentasScreen(modifier, navController, idCuenta.toLong())
+                            ActualizarCuentasScreen(modifier, navController, idCuenta.toLong())
                         }
                     }
 

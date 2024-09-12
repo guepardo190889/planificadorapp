@@ -2,7 +2,7 @@ package com.example.planificadorapp.servicios
 
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
-import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
+import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,7 +28,7 @@ interface CuentasService {
     @PUT("/api/cuentas/{id}")
     fun actualizarCuenta(
         @Path("id") id: Long,
-        @Body cuenta: TransaccionCuentaRequestModel
+        @Body cuenta: ActualizarCuentaRequestModel
     ): Call<CuentaModel>
 
     /**

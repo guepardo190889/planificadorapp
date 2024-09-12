@@ -3,7 +3,7 @@ package com.example.planificadorapp.repositorios
 import android.util.Log
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
-import com.example.planificadorapp.modelos.cuentas.TransaccionCuentaRequestModel
+import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,7 +54,7 @@ class CuentasRepository {
      */
     fun actualizarCuenta(
         id: Long,
-        cuenta: TransaccionCuentaRequestModel,
+        cuenta: ActualizarCuentaRequestModel,
         callback: (CuentaModel?) -> Unit
     ) {
 

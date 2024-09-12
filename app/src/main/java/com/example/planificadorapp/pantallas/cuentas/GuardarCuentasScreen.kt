@@ -7,17 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -35,17 +29,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.R
 import com.example.planificadorapp.composables.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
-import com.example.planificadorapp.utilerias.FormatoMonto
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -220,8 +212,8 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                             ) { cuentasEncontradas ->
                                 cuentasNoAgrupadorasSinAgrupar = cuentasEncontradas ?: emptyList()
                                 Log.i(
-                                    "CuentasScreen",
-                                    "Cuentas hijas sin asociación cargadas: ${cuentasNoAgrupadorasSinAgrupar.size}"
+                                    "GuardarCuentasScreen",
+                                    "Cuentas agrupadoras sin agrupar cargadas: ${cuentasNoAgrupadorasSinAgrupar.size}"
                                 )
                             }
                         }
@@ -309,7 +301,7 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                     Text(
                         text = "Selecciona las cuenta que deseas agrupar: "
                     )
-                    CuentasListConCheckbox(
+                    CuentasListConCheckbox (
                         modifier,
                         cuentasNoAgrupadorasSinAgrupar,
                         onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
@@ -336,74 +328,6 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                     }
                 }
             }
-        }
-    )
-}
-
-/**
- * Composable que muestra la lista de cuentas
- */
-@Composable
-fun CuentasListConCheckbox(
-    modifier: Modifier = Modifier,
-    cuentas: List<CuentaModel>,
-    onCuentaChequeada: (CuentaModel, Boolean) -> Unit
-) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        items(cuentas) { cuenta ->
-            CuentaItemConCheckbox(modifier, cuenta, onCuentaChequeada)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        }
-    }
-}
-
-/**
- * Composable que muestra un ítem de cuenta
- */
-@Composable
-fun CuentaItemConCheckbox(
-    modifier: Modifier,
-    cuenta: CuentaModel,
-    onCuentaChequeada: (CuentaModel, Boolean) -> Unit
-) {
-    ListItem(
-        modifier = modifier,
-        headlineContent = {
-            Text(
-                text = cuenta.nombre,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge
-            )
-        },
-        supportingContent = {
-            Text(
-                text = FormatoMonto.formato(cuenta.saldo),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        leadingContent = {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_account_balance_24),
-                contentDescription = "Icono de Cuenta",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        trailingContent = {
-            Checkbox(
-                checked = cuenta.seleccionada,
-                onCheckedChange = { isChecked ->
-                    onCuentaChequeada(cuenta, isChecked)
-                },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = MaterialTheme.colorScheme.primary,
-                    uncheckedColor = MaterialTheme.colorScheme.onSurface,
-                    checkmarkColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
         }
     )
 }

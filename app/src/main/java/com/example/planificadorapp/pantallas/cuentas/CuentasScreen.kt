@@ -77,7 +77,17 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                     .fillMaxWidth()
                     .padding(paddingValues)
             ) {
-                CuentasList(modifier, cuentas, navController)
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .weight(1f)
+                ) {
+                    items(cuentas) { cuenta ->
+                        CuentaItem(modifier, navController, cuenta)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                    }
+                }
 
                 Row(
                     modifier = Modifier
@@ -94,26 +104,6 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
             }
         }
     )
-}
-
-/**
- * Composable que muestra la lista de cuentas
- */
-@Composable
-fun CuentasList(
-    modifier: Modifier = Modifier,
-    cuentas: List<CuentaModel>,
-    navController: NavController
-) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(16.dp)) {
-        items(cuentas) { cuenta ->
-            CuentaItem(modifier, navController, cuenta)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        }
-    }
 }
 
 /**
