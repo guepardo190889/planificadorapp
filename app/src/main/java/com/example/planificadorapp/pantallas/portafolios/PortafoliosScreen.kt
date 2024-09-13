@@ -1,6 +1,11 @@
 package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -21,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,6 +52,9 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
     var portafolios by remember { mutableStateOf<List<PortafolioModel>>(emptyList()) }
     var totalSaldos by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
 
+    val scrollState = rememberLazyListState()
+    val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
+
     LaunchedEffect(key1 = navController) {
         portafolioRepository.buscarPortafolios { result ->
             portafolios = result ?: emptyList()
@@ -56,17 +66,24 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
     }
 
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-                onClick = {
-                    navController.navigate(Ruta.PORTAFOLIOS_GUARDAR.ruta)
-                }
+            AnimatedVisibility(
+                visible = isFabVisible,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
+                FloatingActionButton(
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                    onClick = {
+                        navController.navigate(Ruta.PORTAFOLIOS_GUARDAR.ruta)
+                    }
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = "Guardar Portafolio")
+                }
             }
         },
         content = { paddingValues ->
@@ -75,8 +92,18 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
                     .fillMaxWidth()
                     .padding(paddingValues)
             ) {
-                PortafoliosList(modifier, navController, portafolios)
-
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .weight(1f),
+                    state = scrollState
+                ) {
+                    items(portafolios) { portafolio ->
+                        PortafolioItem(modifier, navController, portafolio)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                    }
+                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -92,27 +119,6 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
             }
         }
     )
-}
-
-/**
- * Composable que muestra la lista de portafolios
- */
-@Composable
-fun PortafoliosList(
-    modifier: Modifier = Modifier,
-    navController: NavController,
-    portafolios: List<PortafolioModel>
-) {
-    LazyColumn(
-        modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        items(portafolios) { portafolio ->
-            PortafolioItem(modifier, navController, portafolio)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        }
-    }
 }
 
 /**
