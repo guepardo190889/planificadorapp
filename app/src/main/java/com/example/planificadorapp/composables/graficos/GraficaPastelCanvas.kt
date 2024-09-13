@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.planificadorapp.utilerias.GeneradorColor
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -40,11 +41,18 @@ fun GraficaPastelCanvas(
 ) {
     val total = datos.sumOf { it.second.toDouble() }
 
-    // Lista mejorada de colores suaves
-    val colores = listOf(
-        Color(0xFF1E88E5), Color(0xFF43A047), Color(0xFFFB8C00),
-        Color(0xFFE53935), Color(0xFF8E24AA), Color(0xFF00ACC1)
+    // Lista de colores base obtenidos de tu clase `Color.kt`
+    val baseColors = listOf(
+        Color(0xFF406836),  // primaryLight
+        Color(0xFF54634D),  // secondaryLight
+        Color(0xFF386568),  // tertiaryLight
+        Color(0xFFBA1A1A),  // errorLight
+        Color(0xFFC0EFAF),  // primaryContainerLight
+        Color(0xFFD7E8CD)   // secondaryContainerLight
     )
+
+    // Generar colores suaves utilizando el generador y la lista de colores base
+    val colores = GeneradorColor(datos.size, baseColors)
 
     Column(
         modifier = modifier.fillMaxWidth(),
