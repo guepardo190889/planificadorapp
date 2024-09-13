@@ -113,14 +113,14 @@ fun DetallePortafoliosScreen(
 
                 Log.i("DetallePortafoliosScreen", "Datos del portafolio: $datos")
 
-                GraficaPastel(
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally) // Centrando la gráfica
-                        .padding(16.dp) // Añadir un margen alrededor de la gráfica
-                        .widthIn(min = 200.dp, max = 400.dp) // Restricción de ancho
-                        .heightIn(min = 200.dp, max = 300.dp), // Restricción de altura
-                    titulo = "Distribución", datos
-                )
+//                GraficaPastel(
+//                    modifier = Modifier
+//                        .align(Alignment.CenterHorizontally) // Centrando la gráfica
+//                        .padding(16.dp) // Añadir un margen alrededor de la gráfica
+//                        .widthIn(min = 200.dp, max = 400.dp) // Restricción de ancho
+//                        .heightIn(min = 200.dp, max = 300.dp), // Restricción de altura
+//                    titulo = "Distribución", datos
+//                )
 
                 GraficaPastelCanvas(
                     modifier = Modifier

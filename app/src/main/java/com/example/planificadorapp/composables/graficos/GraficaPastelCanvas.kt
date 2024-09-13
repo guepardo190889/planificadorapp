@@ -26,6 +26,8 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlin.math.cos
+import kotlin.math.sin
 
 /**
  * Composable que representa una gráfica de pastel en un canvas mejorada
@@ -43,8 +45,6 @@ fun GraficaPastelCanvas(
         Color(0xFF1E88E5), Color(0xFF43A047), Color(0xFFFB8C00),
         Color(0xFFE53935), Color(0xFF8E24AA), Color(0xFF00ACC1)
     )
-
-    val hoverIndex by remember { mutableIntStateOf(-1) } // Para el hover
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -66,26 +66,19 @@ fun GraficaPastelCanvas(
                 val sweepAngle = (value / total) * 360f
                 var color = colores[index % colores.size]
 
-                // Aplicar hover al pasar el dedo o mouse
-                val arcSize = if (index == hoverIndex) size * 1.05f else size
-
                 // Dibujar sombra como efecto 3D
                 drawArcWithShadow(
                     color = color,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle.toFloat(),
-                    size = arcSize
+                    size = size
                 )
 
                 // Dibujar etiquetas con porcentajes
                 val porcentaje = (value / total) * 100
                 val middleAngle = startAngle + sweepAngle / 2
-                val labelX = center.x + (size.minDimension / 3) * kotlin.math.cos(Math.toRadians(
-                    middleAngle
-                )).toFloat()
-                val labelY = center.y + (size.minDimension / 3) * kotlin.math.sin(Math.toRadians(
-                    middleAngle
-                )).toFloat()
+                val labelX = center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle.toDouble())).toFloat()
+                val labelY = center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle.toDouble())).toFloat()
 
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
@@ -94,7 +87,7 @@ fun GraficaPastelCanvas(
                         labelY,
                         android.graphics.Paint().apply {
                             textSize = 30f
-                            color = Color.Black // Aquí usamos el valor correcto de tipo Int
+                            color = Color.Black
                             textAlign = android.graphics.Paint.Align.CENTER
                         }
                     )
@@ -115,19 +108,13 @@ fun GraficaPastelCanvas(
             datos.forEachIndexed { index, (label, _) ->
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    modifier = Modifier
-                        .background(
-                            color = if (index == hoverIndex) colores[index % colores.size].copy(alpha = 0.3f) else Color.Transparent,
-                            shape = CircleShape
-                        )
-                        .padding(4.dp)
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
                 ) {
                     // Dibujar el rectángulo de color para la leyenda
                     Box(
                         modifier = Modifier
                             .size(16.dp)
-                            .background(colores[index % colores.size])
+                            .background(colores[index % colores.size], shape = CircleShape)
                     )
 
                     // Mostrar el nombre de la leyenda
