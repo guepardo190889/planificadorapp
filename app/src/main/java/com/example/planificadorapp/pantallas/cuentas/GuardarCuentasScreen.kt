@@ -303,7 +303,7 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                     Text(
                         text = "Selecciona las cuenta que deseas agrupar: "
                     )
-                    CuentasListConCheckbox (
+                    CuentasListConCheckbox(
                         modifier,
                         cuentasNoAgrupadorasSinAgrupar,
                         onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->

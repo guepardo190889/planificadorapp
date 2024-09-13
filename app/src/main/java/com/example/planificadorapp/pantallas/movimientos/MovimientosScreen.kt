@@ -144,7 +144,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     Scaffold(
         modifier = modifier.fillMaxWidth(),
         floatingActionButton = {
-            AnimatedVisibility (
+            AnimatedVisibility(
                 visible = isFabVisible,
                 enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
                 exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
@@ -369,7 +369,7 @@ fun MovimientoItem(
             val color = if (TipoMovimiento.CARGO == movimiento.tipo) {
                 MaterialTheme.colorScheme.error
             } else {
-                MaterialTheme.colorScheme.secondary
+                MaterialTheme.colorScheme.primary
             }
 
             Text(

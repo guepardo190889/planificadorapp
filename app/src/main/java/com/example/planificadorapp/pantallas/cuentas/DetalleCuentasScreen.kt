@@ -47,11 +47,11 @@ fun DetalleCuentasScreen(
 
     LaunchedEffect(idCuenta) {
         cuentaRepository.buscarCuentaPorId(idCuenta) { cuentaEncontrada ->
-            if(cuentaEncontrada != null) {
+            if (cuentaEncontrada != null) {
                 cuenta = cuentaEncontrada
                 isCuentaAgrupadora = cuenta!!.agrupadora
 
-                if(isCuentaAgrupadora) {
+                if (isCuentaAgrupadora) {
                     cuentaRepository.buscarSubcuentas(cuenta!!.id) { cuentasAgrupadasEncontradas ->
                         cuentasAgrupadas = cuentasAgrupadasEncontradas ?: emptyList()
                         Log.i(
@@ -89,7 +89,7 @@ fun DetalleCuentasScreen(
                     )
                 ) {
                     Column(modifier = modifier) {
-                        if(it.padre != null) {
+                        if (it.padre != null) {
                             TextoConEtiqueta(
                                 "Cuenta Agrupadora: ",
                                 it.padre.nombre,
@@ -113,9 +113,11 @@ fun DetalleCuentasScreen(
                     }
                 }
 
-                if(isCuentaAgrupadora) {
+                if (isCuentaAgrupadora) {
                     Text(
-                        modifier = modifier.fillMaxWidth().padding(16.dp),
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
                         text = "Cuentas Agrupadas:",
                         style = MaterialTheme.typography.titleMedium
                     )

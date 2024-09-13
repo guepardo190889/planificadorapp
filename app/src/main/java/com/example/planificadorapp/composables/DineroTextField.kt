@@ -1,7 +1,6 @@
 package com.example.planificadorapp.composables
 
 import android.view.KeyEvent
-import androidx.collection.emptyIntSet
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +40,7 @@ fun DineroTextField(
     var monto by remember { mutableStateOf(saldoInicial ?: BigDecimal.ZERO) }
 
     // Actualizar 'monto' si 'saldoInicial' cambia
-    LaunchedEffect (saldoInicial) {
+    LaunchedEffect(saldoInicial) {
         saldoInicial?.let {
             monto = it
 
@@ -106,6 +105,7 @@ private fun calcularMonto(keyCode: Int, monto: BigDecimal, isCapturaEntera: Bool
             }
             return BigDecimal(montoString)
         }
+
         KeyEvent.KEYCODE_DEL -> {
             montoString = if (isCapturaEntera) {
                 enteros.dropLast(1).ifEmpty { "0" }
@@ -118,6 +118,7 @@ private fun calcularMonto(keyCode: Int, monto: BigDecimal, isCapturaEntera: Bool
             }
             return BigDecimal(montoString.ifEmpty { "0" })
         }
+
         else -> return monto
     }
 }

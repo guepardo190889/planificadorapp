@@ -42,6 +42,28 @@ class MovimientosRepository {
         })
     }
 
+    fun actualizarMovimiento(
+        id: Long,
+        movimiento: TransaccionMovimientoRequestModel,
+        callback: (MovimientoModel?) -> Unit
+    ) {
+        val call = apiService.actualizarMovimiento(id, movimiento)
+        call.enqueue(object : Callback<MovimientoModel> {
+            override fun onResponse(
+                call: Call<MovimientoModel>,
+                response: Response<MovimientoModel>
+            ) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                }
+            }
+
+            override fun onFailure(call: Call<MovimientoModel>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }
+
     /**
      * Obtiene un movimiento por su ID en el servidor y devuelve el movimiento encontrado
      */

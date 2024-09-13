@@ -37,6 +37,7 @@ import com.example.planificadorapp.composables.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.movimientos.MovimientoModel
 import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
@@ -57,11 +58,12 @@ fun TransaccionMovimientosScreen(
 
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
+    var movimiento by remember { mutableStateOf<MovimientoModel?>(null) }
 
     var monto by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
     var concepto by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
-    var fecha by remember { mutableStateOf<LocalDate?>(null) }
+    var fecha by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
     var tipoMovimientoSeleccionado by remember { mutableStateOf(TipoMovimiento.CARGO) }
 
     var descripcionBoton by remember { mutableStateOf("Guardar") }
@@ -74,18 +76,33 @@ fun TransaccionMovimientosScreen(
     var snackbarType by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        fecha = LocalDate.now()
-
         cuentasRepository.buscarCuentas(
             excluirCuentasAsociadas = false, incluirSoloCuentasNoAgrupadorasSinAgrupar = false
         ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
             Log.i("TransaccionMovimientosScreen", "Cuentas cargadas: $resultadoCuentas")
-        }
 
-        if (idMovimiento != 0L) {
-            descripcionBoton = "Actualizar"
-            //TODO Buscar movimiento
+            if (idMovimiento != 0L) {
+                movimientosRepository.buscarMovimientoPorId(idMovimiento) { resultadoMovimiento ->
+                    if (resultadoMovimiento != null) {
+                        Log.i(
+                            "TransaccionMovimientosScreen",
+                            "Movimiento encontrado: $resultadoMovimiento"
+                        )
+
+                        movimiento = resultadoMovimiento
+                        monto = resultadoMovimiento.monto
+                        concepto = resultadoMovimiento.concepto ?: ""
+                        descripcion = resultadoMovimiento.descripcion ?: ""
+                        fecha = resultadoMovimiento.fecha
+                        tipoMovimientoSeleccionado = resultadoMovimiento.tipo
+
+                        cuentaSeleccionada = cuentas.find { it.id == resultadoMovimiento.idCuenta }
+                    }
+                }
+
+                descripcionBoton = "Actualizar"
+            }
         }
     }
 
@@ -108,15 +125,13 @@ fun TransaccionMovimientosScreen(
      * Guarda el movimiento en la base de datos
      */
     fun guardarMovimiento() {
-        val idCuentaGuardar = cuentaSeleccionada!!.id
-
         movimientosRepository.guardarMovimiento(
             TransaccionMovimientoRequestModel(
                 monto.toDouble(),
                 concepto,
                 descripcion,
                 fecha!!,
-                idCuentaGuardar,
+                cuentaSeleccionada!!.id,
                 tipoMovimientoSeleccionado.name
             )
         ) { movimientoGuardado ->
@@ -141,7 +156,31 @@ fun TransaccionMovimientosScreen(
      * Actualiza el movimiento en la base de datos
      */
     fun actualizarMovimiento() {
+        movimientosRepository.actualizarMovimiento(
+            idMovimiento, TransaccionMovimientoRequestModel(
+                monto.toDouble(),
+                concepto,
+                descripcion,
+                fecha!!,
+                cuentaSeleccionada!!.id,
+                tipoMovimientoSeleccionado.name
+            )
+        ) { movimientoActualizado ->
+            if (movimientoActualizado != null) {
+                snackbarMessage = "Movimiento actualizado exitosamente"
+                snackbarType = "success"
+            } else {
+                snackbarMessage = "Error al actualizar el movimiento"
+            }
 
+            coroutineScope.launch {
+                snackbarHostState.showSnackbar(snackbarMessage)
+
+                if (movimientoActualizado != null) {
+                    navController.navigate("movimientos")
+                }
+            }
+        }
     }
 
     Scaffold(modifier, snackbarHost = {
@@ -214,16 +253,14 @@ fun TransaccionMovimientosScreen(
                     cuentaSeleccionada = it
                 })
 
-            DineroTextField(
-                modifier = modifier,
+            DineroTextField(modifier = modifier,
                 etiqueta = "Monto",
                 mensajeError = "El monto es requerido",
                 saldoInicial = monto,
                 isSaldoValido = isMontoValido,
                 onSaldoChange = {
                     monto = it
-                }
-            )
+                })
 
             DatePickerInput(modifier,
                 etiqueta = "Fecha",

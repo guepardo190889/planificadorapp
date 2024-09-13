@@ -1,6 +1,7 @@
 package com.example.planificadorapp.modelos.movimientos
 
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
+import java.math.BigDecimal
 import java.time.LocalDate
 
 /**
@@ -10,7 +11,7 @@ data class MovimientoModel(
     var id: Long = 0,
     val concepto: String,
     val descripcion: String,
-    val monto: Double,
+    val monto: BigDecimal,
     val fecha: LocalDate,
     val idCuenta: Long = 0,
     val tipo: TipoMovimiento

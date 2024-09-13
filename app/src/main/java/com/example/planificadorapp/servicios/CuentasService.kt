@@ -1,8 +1,8 @@
 package com.example.planificadorapp.servicios
 
+import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
-import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET

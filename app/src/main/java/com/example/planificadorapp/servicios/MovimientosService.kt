@@ -6,6 +6,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import java.time.LocalDate
@@ -20,6 +21,15 @@ interface MovimientosService {
      */
     @POST("api/movimientos")
     fun guardarMovimiento(@Body movimiento: TransaccionMovimientoRequestModel): Call<MovimientoModel>
+
+    /**
+     * Actualiza un movimiento en el servidor y devuelve el movimiento actualizado
+     */
+    @PUT("api/movimientos/{id}")
+    fun actualizarMovimiento(
+        @Path("id") id: Long,
+        @Body movimiento: TransaccionMovimientoRequestModel
+    ): Call<MovimientoModel>
 
     /**
      * Obtiene un movimiento por su ID en el servidor y devuelve el movimiento encontrado
