@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -89,16 +90,26 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                 .fillMaxWidth()
                 .padding(paddingValues)
         ) {
-            LazyColumn(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .weight(1f),
-                state = scrollState
-            ) {
-                items(cuentas) { cuenta ->
-                    CuentaItem(modifier, navController, cuenta)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+            if (cuentas.isEmpty()) {
+                Text(
+                    modifier = modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    text = "Sin cuentas",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            } else {
+                LazyColumn(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .weight(1f),
+                    state = scrollState
+                ) {
+                    items(cuentas) { cuenta ->
+                        CuentaItem(modifier, navController, cuenta)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                    }
                 }
             }
 

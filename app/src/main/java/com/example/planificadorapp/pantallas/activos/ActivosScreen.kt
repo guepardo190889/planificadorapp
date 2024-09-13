@@ -1,12 +1,18 @@
 package com.example.planificadorapp.pantallas.activos
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -18,6 +24,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +47,9 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
 
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
 
+    val scrollState = rememberLazyListState()
+    val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
+
     LaunchedEffect(Unit) {
         activosRepository.buscarActivos(false) { activosEncontrados ->
             activos = activosEncontrados ?: emptyList()
@@ -47,9 +57,12 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxWidth(),
-        floatingActionButton = {
+    Scaffold(modifier = modifier.fillMaxWidth(), floatingActionButton = {
+        AnimatedVisibility(
+            visible = isFabVisible,
+            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
+        ) {
             FloatingActionButton(
                 modifier = Modifier.padding(16.dp),
                 onClick = { navController.navigate("activos/guardar") },
@@ -58,38 +71,27 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Guardar Activo")
             }
-        },
-        content = {
-            Column(
-                modifier
+        }
+    }, content = {
+        Column(
+            modifier
+                .fillMaxWidth()
+                .padding(it)
+        ) {
+            LazyColumn(
+                modifier = modifier
                     .fillMaxWidth()
-                    .padding(it)
+                    .padding(16.dp)
+                    .weight(1f),
+                state = scrollState
             ) {
-                ActivosList(modifier, navController, activos)
+                items(activos) { activo ->
+                    ActivoItem(modifier, navController, activo)
+                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                }
             }
         }
-    )
-}
-
-/**
- * Composable que muestra la lista de activos
- */
-@Composable
-fun ActivosList(
-    modifier: Modifier = Modifier,
-    navController: NavController,
-    activos: List<ActivoModel>
-) {
-    LazyColumn(
-        modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ) {
-        items(activos) { activo ->
-            ActivoItem(modifier, navController, activo)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        }
-    }
+    })
 }
 
 /**
@@ -102,8 +104,7 @@ fun ActivoItem(
     activo: ActivoModel,
 ) {
     ListItem(
-        modifier = modifier
-            .clickable {
+        modifier = modifier.clickable {
                 navController.navigate("activos/detalle/${activo.id}")
             },
         headlineContent = {

@@ -13,29 +13,26 @@ import com.anychart.charts.Pie
  * Composable que representa una gráfica de pastel
  */
 @Composable
-fun GraficaPastel(titulo: String, datos: List<Pair<String, Float>>) {
-    AndroidView(
-        modifier = Modifier.fillMaxSize(),
-        factory = { context ->
-            // Crear la vista de AnyChart
-            val chartView = com.anychart.AnyChartView(context)
+fun GraficaPastel(modifier: Modifier, titulo: String, datos: List<Pair<String, Float>>) {
+    AndroidView(modifier = modifier.fillMaxSize(), factory = { context ->
+        // Crear la vista de AnyChart
+        val chartView = com.anychart.AnyChartView(context)
 
-            // Inicializar el gráfico de pastel
-            val pie: Pie = AnyChart.pie()
+        // Inicializar el gráfico de pastel
+        val pie: Pie = AnyChart.pie()
 
-            // Convertir los datos para el gráfico
-            val chartData: MutableList<DataEntry> = mutableListOf()
-            datos.forEach { (label, value) ->
-                chartData.add(ValueDataEntry(label, value))
-            }
-
-            pie.data(chartData)
-            pie.title(titulo)
-
-            // Configurar el gráfico en la vista
-            chartView.setChart(pie)
-
-            chartView // Devolver la vista creada
+        // Convertir los datos para el gráfico
+        val chartData: MutableList<DataEntry> = mutableListOf()
+        datos.forEach { (label, value) ->
+            chartData.add(ValueDataEntry(label, value))
         }
-    )
+
+        pie.data(chartData)
+        pie.title(titulo)
+
+        // Configurar el gráfico en la vista
+        chartView.setChart(pie)
+
+        chartView // Devolver la vista creada
+    })
 }

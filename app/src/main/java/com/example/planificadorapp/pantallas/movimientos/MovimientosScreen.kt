@@ -167,7 +167,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
             ) {
                 CuentasDropDown(
                     modifier = modifier,
-                    etiqueta = "Selecciona una cuenta",
+                    etiqueta = "Selecciona una Cuenta",
                     isHabilitado = true,
                     isCuentaAgrupadoraSeleccionable = false,
                     cuentaSeleccionada = cuentaSeleccionada,
