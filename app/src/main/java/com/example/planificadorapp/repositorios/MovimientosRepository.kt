@@ -43,6 +43,32 @@ class MovimientosRepository {
     }
 
     /**
+     * Obtiene un movimiento por su ID en el servidor y devuelve el movimiento encontrado
+     */
+    fun buscarMovimientoPorId(
+        id: Long,
+        callback: (MovimientoModel?) -> Unit
+    ) {
+        val call = apiService.buscarMovimientoPorId(id)
+        call.enqueue(object : Callback<MovimientoModel> {
+            override fun onResponse(
+                call: Call<MovimientoModel>,
+                response: Response<MovimientoModel>
+            ) {
+                if (response.isSuccessful) {
+                    callback(response.body())
+                } else {
+                    callback(null)
+                }
+            }
+
+            override fun onFailure(call: Call<MovimientoModel>, t: Throwable) {
+                callback(null)
+            }
+        })
+    }
+
+    /**
      * Busca los movimientos en el servidor y devuelve una lista de MovimientoModel
      */
     fun buscarMovimientos(

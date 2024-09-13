@@ -29,6 +29,14 @@ object FormatoFecha {
     }
 
     /**
+     * Formatea una fecha en formato de cadena con el patrón dd 'de' MMMM 'de' yyyy
+     */
+    fun formatoLargo(fecha: LocalDate): String {
+        val formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy", Locale("es", "MX"))
+        return fecha.format(formatter)
+    }
+
+    /**
      * Formatea una fecha en formato de cadena con el patrón yyyy-MM-dd hh:mm:ss
      */
     fun formatoCortoConHora(fecha: LocalDateTime): String {

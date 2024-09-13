@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, activoId: Long) {
-    val activosRepository = remember { ActivosRepository() }
+    val activosRepository = ActivosRepository()
 
     var activosPadre by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var activo by remember { mutableStateOf<ActivoModel?>(null) }

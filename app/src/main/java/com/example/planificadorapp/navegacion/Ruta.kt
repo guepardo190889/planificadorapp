@@ -13,6 +13,7 @@ enum class Ruta(
     MOVIMIENTOS("movimientos", "Movimientos", true),
     MOVIMIENTOS_GUARDAR("movimientos/guardar", "Guardar Movimiento", false),
     MOVIMIENTOS_DETALLE("movimientos/detalle/{idMovimiento}", "Detalle de Movimiento", false),
+    MOVIMIENTOS_EDITAR("movimientos/editar/{idMovimiento}", "Editar Movimiento", false),
 
     PORTAFOLIOS("portafolios", "Portafolios", true),
     PORTAFOLIOS_GUARDAR("portafolios/guardar", "Guardar Portafolio", false),

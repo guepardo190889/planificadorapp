@@ -30,7 +30,7 @@ import com.example.planificadorapp.repositorios.ActivosRepository
  */
 @Composable
 fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idActivo: Long) {
-    val activosRepository = remember { ActivosRepository() }
+    val activosRepository = ActivosRepository()
 
     var activo by remember { mutableStateOf<ActivoModel?>(null) }
 
@@ -53,27 +53,28 @@ fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idAct
                     Icon(Icons.Default.Edit, contentDescription = "Actualizar Activo")
                 }
             }
-        }
-    ) { paddingValues ->
-        activo?.let {
-            Column(modifier.padding(paddingValues)) {
-                Card(
-                    modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .padding(16.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface
-                    )
-                ) {
-                    Column(modifier.padding(16.dp)) {
-                        TextoConEtiqueta("Activo principal: ", it.nombre, "large", "medium")
-                        TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
-                        TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
+        },
+        content = { paddingValues ->
+            activo?.let {
+                Column(modifier.padding(paddingValues)) {
+                    Card(
+                        modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .padding(16.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface
+                        )
+                    ) {
+                        Column(modifier.padding(16.dp)) {
+                            TextoConEtiqueta("Activo principal: ", it.nombre, "large", "medium")
+                            TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
+                            TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
+                        }
                     }
                 }
             }
         }
-    }
+    )
 }

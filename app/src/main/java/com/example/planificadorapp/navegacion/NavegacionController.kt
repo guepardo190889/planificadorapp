@@ -141,6 +141,13 @@ fun NavegacionController(
                             DetalleMovimientosScreen(modifier, navController, idMovimiento.toLong())
                         }
                     }
+                    composable(Ruta.MOVIMIENTOS_EDITAR.ruta) {
+                        val idMovimiento = it.arguments?.getString("idMovimiento")
+
+                        if (idMovimiento != null && idMovimiento.toLong() > 0) {
+                            TransaccionMovimientosScreen(modifier, navController, idMovimiento.toLong())
+                        }
+                    }
 
                     composable(Ruta.PORTAFOLIOS.ruta) {
                         Portafolios(modifier, navController)

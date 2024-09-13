@@ -52,8 +52,8 @@ import java.time.LocalDate
 fun TransaccionMovimientosScreen(
     modifier: Modifier, navController: NavController, idMovimiento: Long
 ) {
-    val movimientosRepository = remember { MovimientosRepository() }
-    val cuentasRepository = remember { CuentasRepository() }
+    val movimientosRepository = MovimientosRepository()
+    val cuentasRepository = CuentasRepository()
 
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
