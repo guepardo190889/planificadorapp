@@ -1,6 +1,7 @@
 package com.example.planificadorapp.composables
 
 import android.view.KeyEvent
+import androidx.collection.emptyIntSet
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,8 @@ const val MAX_DECIMALES = 2
 @Composable
 fun DineroTextField(
     modifier: Modifier,
+    etiqueta: String,
+    mensajeError: String,
     saldoInicial: BigDecimal?,
     isSaldoValido: Boolean,
     onSaldoChange: (BigDecimal) -> Unit
@@ -50,7 +53,7 @@ fun DineroTextField(
     OutlinedTextField(
         value = FormatoMonto.formatoSinSimbolo(monto),
         onValueChange = { /* Ignoramos el cambio de valor aquí */ },
-        label = { Text("Saldo") },
+        label = { Text(etiqueta) },
         leadingIcon = { Text("$") },
         isError = !isSaldoValido,
         textStyle = MaterialTheme.typography.bodyLarge,
@@ -72,7 +75,7 @@ fun DineroTextField(
         supportingText = {
             if (!isSaldoValido) {
                 Text(
-                    text = "El saldo es requerido",
+                    text = mensajeError,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth(),

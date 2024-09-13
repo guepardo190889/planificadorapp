@@ -266,6 +266,8 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                 if (!isCuentaAgrupadora) {
                     DineroTextField(
                         modifier = modifier,
+                        etiqueta = "Saldo",
+                        mensajeError = "El saldo es requerido",
                         saldoInicial = saldo,
                         isSaldoValido = isSaldoValido,
                         onSaldoChange = {

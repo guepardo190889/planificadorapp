@@ -56,7 +56,6 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     val scrollState = rememberLazyListState()
     val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
 
-
     LaunchedEffect(Unit) {
         cuentaRepository.buscarCuentas(
             excluirCuentasAsociadas = false, incluirSoloCuentasNoAgrupadorasSinAgrupar = false

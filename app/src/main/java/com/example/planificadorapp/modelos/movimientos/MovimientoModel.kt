@@ -8,6 +8,7 @@ import java.time.LocalDate
  */
 data class MovimientoModel(
     var id: Long = 0,
+    val concepto: String,
     val descripcion: String,
     val monto: Double,
     val fecha: LocalDate,

@@ -256,6 +256,8 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
             if (!isCuentaAgrupadora) {
                 DineroTextField(modifier = modifier,
                     saldoInicial = saldo,
+                    etiqueta = "Saldo",
+                    mensajeError = "El saldo es requerido",
                     isSaldoValido = isSaldoValido,
                     onSaldoChange = {
                         saldo = it

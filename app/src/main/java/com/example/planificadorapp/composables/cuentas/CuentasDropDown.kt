@@ -1,19 +1,14 @@
 package com.example.planificadorapp.composables.cuentas
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,6 +28,7 @@ fun CuentasDropDown(
     modifier: Modifier,
     etiqueta: String,
     isHabilitado: Boolean,
+    isCuentaAgrupadoraSeleccionable: Boolean,
     cuentaSeleccionada: CuentaModel?,
     cuentas: List<CuentaModel>,
     onCuentaSeleccionada: (CuentaModel) -> Unit
@@ -40,15 +36,12 @@ fun CuentasDropDown(
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
     var cuentaSeleccionadaDropdown = cuentaSeleccionada
 
-    ExposedDropdownMenuBox(
-        expanded = isDesplegadoDropdown,
-        onExpandedChange = {
-            if (isHabilitado) {
-                isDesplegadoDropdown = !isDesplegadoDropdown
-            }
-        }) {
-        OutlinedTextField(
-            value = cuentaSeleccionadaDropdown?.nombre ?: "",
+    ExposedDropdownMenuBox(expanded = isDesplegadoDropdown, onExpandedChange = {
+        if (isHabilitado) {
+            isDesplegadoDropdown = !isDesplegadoDropdown
+        }
+    }) {
+        OutlinedTextField(value = cuentaSeleccionadaDropdown?.nombre ?: "",
             onValueChange = { },
             modifier = modifier
                 .menuAnchor()
@@ -56,15 +49,10 @@ fun CuentasDropDown(
             enabled = isHabilitado,
             readOnly = true,
             label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
-            colors = OutlinedTextFieldDefaults.colors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
             trailingIcon = {
-                Icon(
-                    imageVector = if (isDesplegadoDropdown) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-            }
-        )
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDesplegadoDropdown)
+            })
 
         ExposedDropdownMenu(
             expanded = isDesplegadoDropdown,
@@ -72,46 +60,43 @@ fun CuentasDropDown(
             modifier = modifier.fillMaxWidth()
         ) {
             cuentas.forEachIndexed { indice, cuenta ->
-                if (!cuenta.isHija) {
-                    // Cuenta padre
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                cuenta.nombre,
-                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface)
-                            )
-                        },
-                        onClick = {
-                            cuentaSeleccionadaDropdown = cuenta
-                            isDesplegadoDropdown = false
-                            onCuentaSeleccionada(cuenta)
-                        }
-                    )
+                val paddingStart = if (cuenta.isHija) 16.dp else 0.dp
+
+                // Definir si la cuenta agrupadora está habilitada
+                val isCuentaSeleccionable =
+                    if (cuenta.agrupadora) isCuentaAgrupadoraSeleccionable else true
+
+                // Ajustar el estilo y color de las cuentas agrupadoras si no son seleccionables
+                val colorTexto = if (cuenta.agrupadora && !isCuentaAgrupadoraSeleccionable) {
+                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f) // Color gris para deshabilitar
                 } else {
-                    // Cuenta hija
-                    DropdownMenuItem(
-                        text = {
-                            Row {
-                                Spacer(modifier = Modifier.width(16.dp)) // Añade indentación para las cuentas hijas
-                                Text(
-                                    cuenta.nombre,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        },
-                        onClick = {
-                            cuentaSeleccionadaDropdown = cuenta
-                            isDesplegadoDropdown = false
-                            onCuentaSeleccionada(cuenta)
-                        }
-                    )
+                    MaterialTheme.colorScheme.onSurface
                 }
 
-                // Verifica si la siguiente cuenta es una cuenta padre o si es la última cuenta de la lista
-                val isUltimoElemento = indice == cuentas.size - 1
-                val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].isHija
+                DropdownMenuItem(modifier = modifier
+                    .padding(start = paddingStart)
+                    .fillMaxWidth(),
+                    text = {
+                        Text(
+                            cuenta.nombre, style = MaterialTheme.typography.bodyMedium.copy(
+                                color = if (cuenta.agrupadora) colorTexto else MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        )
+                    },
+                    enabled = isCuentaSeleccionable,
+                    onClick = {
+                        cuentaSeleccionadaDropdown = cuenta
+                        isDesplegadoDropdown = false
+                        onCuentaSeleccionada(cuenta)
+                    })
 
-                if (isUltimoElemento || isProximoPadre) {
+                // Verifica si la siguiente cuenta es una cuenta agrupadora o si es la última cuenta de la lista
+                val isUltimoElemento = indice == cuentas.size - 1
+                val isProximaCuentaAgrupadora = !isUltimoElemento && cuentas[indice + 1].agrupadora
+                val isProximaCuentaNoAgrupadaSinAgrupar =
+                    !isUltimoElemento && !cuentas[indice + 1].agrupadora && cuentas[indice + 1].padre == null
+
+                if (isUltimoElemento || isProximaCuentaAgrupadora || isProximaCuentaNoAgrupadaSinAgrupar) {
                     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
                 }
             }

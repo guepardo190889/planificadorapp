@@ -1,6 +1,11 @@
 package com.example.planificadorapp.pantallas.movimientos
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -28,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -64,6 +71,9 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     var isMostrarFiltros by remember { mutableStateOf(false) }
     var fechaInicio by remember { mutableStateOf<LocalDate?>(null) }
     var fechaFin by remember { mutableStateOf<LocalDate?>(null) }
+
+    val scrollState = rememberLazyListState()
+    val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
 
     LaunchedEffect(Unit) {
         cuentasRepository.buscarCuentas(
@@ -126,6 +136,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                 }
             }
 
+            Log.i("MovimientosScreen", "Movimientos cargados: $movimientos")
             Log.i("MovimientosScreen", "Movimientos cargados: ${movimientos.size}")
         }
     }
@@ -133,13 +144,19 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     Scaffold(
         modifier = modifier.fillMaxWidth(),
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("movimientos/guardar") },
-                modifier = Modifier.padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
+            AnimatedVisibility (
+                visible = isFabVisible,
+                enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
+                exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
             ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Guardar Movimiento")
+                FloatingActionButton(
+                    onClick = { navController.navigate("movimientos/guardar") },
+                    modifier = Modifier.padding(16.dp),
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Guardar Movimiento")
+                }
             }
         },
         content = { paddingValues ->
@@ -152,6 +169,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                     modifier = modifier,
                     etiqueta = "Selecciona una cuenta",
                     isHabilitado = true,
+                    isCuentaAgrupadoraSeleccionable = false,
                     cuentaSeleccionada = cuentaSeleccionada,
                     cuentas = cuentas,
                     onCuentaSeleccionada = { cuenta ->
@@ -206,10 +224,18 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 } else {
-                    MovimientosList(
-                        navController = navController,
-                        movimientos = movimientos
-                    )
+                    LazyColumn(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .weight(1f),
+                        state = scrollState
+                    ) {
+                        items(movimientos) { movimiento ->
+                            MovimientoItem(modifier, navController, movimiento)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                        }
+                    }
                 }
             }
         }
@@ -310,23 +336,6 @@ fun RadioButtonGroup(
 }
 
 /**
- * Composable que muestra la lista de movimientos
- */
-@Composable
-fun MovimientosList(
-    modifier: Modifier = Modifier,
-    navController: NavController,
-    movimientos: List<MovimientoModel>,
-) {
-    LazyColumn {
-        items(movimientos) { movimiento ->
-            MovimientoItem(modifier, navController, movimiento)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-        }
-    }
-}
-
-/**
  * Composable que muestra un ítem de movimiento
  */
 @Composable
@@ -341,7 +350,7 @@ fun MovimientoItem(
                 navController.navigate("movimientos/detalle/${movimiento.id}")
             },
         headlineContent = {
-            Text(movimiento.descripcion, color = MaterialTheme.colorScheme.onSurface)
+            Text(movimiento.concepto ?: "", color = MaterialTheme.colorScheme.onSurface)
         },
         supportingContent = {
             Text(
