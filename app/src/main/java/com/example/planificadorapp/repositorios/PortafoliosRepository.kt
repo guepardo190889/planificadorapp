@@ -3,6 +3,7 @@ package com.example.planificadorapp.repositorios
 import android.util.Log
 import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 import com.example.planificadorapp.modelos.portafolios.PortafolioModel
+import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
 import com.example.planificadorapp.modelos.portafolios.graficos.DistribucionPortafolioGraficoModel
 import com.example.planificadorapp.servicios.ApiClient
 import retrofit2.Call
@@ -40,6 +41,29 @@ class PortafoliosRepository {
                 onResult(null)
             }
         })
+    }
+
+    /**
+     * Busca un portafolio por su ID en el servidor y devuelve un PortafolioBuscarResponseModel
+     */
+    fun buscarPortafolioPorId(id: Long, onResult: (PortafolioBuscarResponseModel?) -> Unit) {
+        apiService.buscarPortafolioPorId(id)
+            .enqueue(object : Callback<PortafolioBuscarResponseModel> {
+                override fun onResponse(
+                    call: Call<PortafolioBuscarResponseModel>,
+                    response: Response<PortafolioBuscarResponseModel>
+                ) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        onResult(null)
+                    }
+                }
+
+                override fun onFailure(call: Call<PortafolioBuscarResponseModel>, t: Throwable) {
+                    onResult(null)
+                }
+            })
     }
 
     /**

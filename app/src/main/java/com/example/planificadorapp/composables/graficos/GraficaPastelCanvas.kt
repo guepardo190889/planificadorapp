@@ -9,23 +9,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.planificadorapp.utilerias.FormatoMonto
 import com.example.planificadorapp.utilerias.GeneradorColor
 import kotlin.math.cos
 import kotlin.math.sin
@@ -35,9 +34,7 @@ import kotlin.math.sin
  */
 @Composable
 fun GraficaPastelCanvas(
-    modifier: Modifier = Modifier,
-    titulo: String,
-    datos: List<Pair<String, Float>>
+    modifier: Modifier, titulo: String, datos: List<Pair<String, Float>>
 ) {
     val total = datos.sumOf { it.second.toDouble() }
 
@@ -55,8 +52,10 @@ fun GraficaPastelCanvas(
     val colores = GeneradorColor(datos.size, baseColors)
 
     Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Mostrar el título de la gráfica
         Text(text = titulo, style = TextStyle(fontSize = 20.sp))
@@ -74,31 +73,32 @@ fun GraficaPastelCanvas(
                 val sweepAngle = (value / total) * 360f
                 var color = colores[index % colores.size]
 
-                // Dibujar sombra como efecto 3D
-                drawArcWithShadow(
+                // Dibujar el arco
+                drawArc(
                     color = color,
                     startAngle = startAngle,
                     sweepAngle = sweepAngle.toFloat(),
+                    useCenter = true,
                     size = size
                 )
 
                 // Dibujar etiquetas con porcentajes
                 val porcentaje = (value / total) * 100
                 val middleAngle = startAngle + sweepAngle / 2
-                val labelX = center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle.toDouble())).toFloat()
-                val labelY = center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle.toDouble())).toFloat()
+                val labelX =
+                    center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
+                val labelY =
+                    center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
 
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(
-                        String.format("%.1f%%", porcentaje),
+                    drawText(String.format("%.1f%%", porcentaje),
                         labelX,
                         labelY,
                         android.graphics.Paint().apply {
                             textSize = 30f
                             color = Color.Black
                             textAlign = android.graphics.Paint.Align.CENTER
-                        }
-                    )
+                        })
                 }
 
                 // Actualizar el ángulo de inicio para la siguiente sección
@@ -109,55 +109,51 @@ fun GraficaPastelCanvas(
         Spacer(modifier = Modifier.height(16.dp))
 
         // Dibujar leyendas debajo de la gráfica
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.padding(horizontal = 16.dp)
+        LazyColumn(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .heightIn(max = 200.dp)
         ) {
-            datos.forEachIndexed { index, (label, _) ->
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
-                ) {
-                    // Dibujar el rectángulo de color para la leyenda
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .background(colores[index % colores.size], shape = CircleShape)
-                    )
+            items(datos.size) { index ->
+                val (label, value) = datos[index]
+                val porcentaje = (value / total) * 100
 
-                    // Mostrar el nombre de la leyenda
-                    Text(text = label, style = TextStyle(fontSize = 14.sp))
-                }
+                ListItem(headlineContent = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        // Dibujar el círculo de color para la leyenda
+                        Box(
+                            modifier = Modifier
+                                .size(16.dp)
+                                .background(colores[index % colores.size], shape = CircleShape)
+                        )
+
+                        // Mostrar el nombre de la leyenda
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = label,
+                            maxLines = 2,
+                            style = TextStyle(fontSize = 14.sp)
+                        )
+
+                        // Mostrar el valor
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text =  FormatoMonto.formato(value.toDouble()),
+                            style = TextStyle(fontSize = 14.sp)
+                        )
+
+                        // Mostrar el porcentaje
+                        Text(
+                            modifier = Modifier.padding(start = 8.dp),
+                            text = String.format("%.1f%%", porcentaje),
+                            style = TextStyle(fontSize = 14.sp)
+                        )
+                    }
+                })
             }
         }
     }
-}
-
-/**
- * Función auxiliar para dibujar un arco con sombra en el Canvas
- */
-fun DrawScope.drawArcWithShadow(
-    color: Color,
-    startAngle: Float,
-    sweepAngle: Float,
-    size: Size
-) {
-    // Desplazar el arco un poco para simular sombra
-    drawArc(
-        color = color.copy(alpha = 0.5f), // Sombra
-        startAngle = startAngle,
-        sweepAngle = sweepAngle,
-        useCenter = true,
-        size = size,
-        topLeft = Offset(5f, 5f) // Desplazar la sombra
-    )
-
-    // Dibujar el arco principal encima de la sombra
-    drawArc(
-        color = color,
-        startAngle = startAngle,
-        sweepAngle = sweepAngle,
-        useCenter = true,
-        size = size
-    )
 }
