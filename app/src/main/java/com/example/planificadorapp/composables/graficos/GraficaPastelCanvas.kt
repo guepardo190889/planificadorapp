@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -54,19 +53,19 @@ fun GraficaPastelCanvas(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(8.dp), // Reducimos el padding para compactar la gráfica
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Mostrar el título de la gráfica
-        Text(text = titulo, style = TextStyle(fontSize = 20.sp))
+        Text(text = titulo, style = TextStyle(fontSize = 18.sp)) // Disminuí un poco el tamaño del texto
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp)) // Reducimos el espacio entre el título y la gráfica
 
         // Dibujar la gráfica de pastel
         Canvas(
             modifier = Modifier
-                .size(250.dp)
-                .padding(16.dp)
+                .size(220.dp) // Reducí un poco el tamaño del gráfico para compactar más
+                .padding(8.dp) // Reducimos el padding para compactar más
         ) {
             var startAngle = 0f
             datos.forEachIndexed { index, (_, value) ->
@@ -85,20 +84,20 @@ fun GraficaPastelCanvas(
                 // Dibujar etiquetas con porcentajes
                 val porcentaje = (value / total) * 100
                 val middleAngle = startAngle + sweepAngle / 2
-                val labelX =
-                    center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
-                val labelY =
-                    center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
+                val labelX = center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
+                val labelY = center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
 
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(String.format("%.1f%%", porcentaje),
+                    drawText(
+                        String.format("%.1f%%", porcentaje),
                         labelX,
                         labelY,
                         android.graphics.Paint().apply {
-                            textSize = 30f
+                            textSize = 26f // Reducí el tamaño de texto de los porcentajes
                             color = Color.Black
                             textAlign = android.graphics.Paint.Align.CENTER
-                        })
+                        }
+                    )
                 }
 
                 // Actualizar el ángulo de inicio para la siguiente sección
@@ -106,53 +105,57 @@ fun GraficaPastelCanvas(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        // Dibujar leyendas debajo de la gráfica
         LazyColumn(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .heightIn(max = 200.dp)
+                .padding(8.dp)
+                .padding(horizontal = 8.dp)
+                .heightIn(max = 150.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(datos.size) { index ->
                 val (label, value) = datos[index]
                 val porcentaje = (value / total) * 100
 
-                ListItem(headlineContent = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // Dibujar el círculo de color para la leyenda
-                        Box(
-                            modifier = Modifier
-                                .size(16.dp)
-                                .background(colores[index % colores.size], shape = CircleShape)
-                        )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(14.dp)
+                            .background(colores[index % colores.size], shape = CircleShape)
+                    )
 
-                        // Mostrar el nombre de la leyenda
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text = label,
-                            maxLines = 2,
-                            style = TextStyle(fontSize = 14.sp)
-                        )
+                    // Mostrar el nombre de la leyenda
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 4.dp),
+                        text = label,
+                        maxLines = 1,
+                        style = TextStyle(fontSize = 13.sp)
+                    )
 
-                        // Mostrar el valor
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text =  FormatoMonto.formato(value.toDouble()),
-                            style = TextStyle(fontSize = 14.sp)
-                        )
+                    // Mostrar el valor
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 4.dp),
+                        text = FormatoMonto.formato(value.toDouble()),
+                        style = TextStyle(fontSize = 13.sp)
+                    )
 
-                        // Mostrar el porcentaje
-                        Text(
-                            modifier = Modifier.padding(start = 8.dp),
-                            text = String.format("%.1f%%", porcentaje),
-                            style = TextStyle(fontSize = 14.sp)
-                        )
-                    }
-                })
+                    // Mostrar el porcentaje
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 4.dp),
+                        text = String.format("%.1f%%", porcentaje),
+                        style = TextStyle(fontSize = 13.sp)
+                    )
+                }
             }
         }
     }
