@@ -8,6 +8,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 /**
@@ -20,6 +21,12 @@ interface PortafoliosService {
      */
     @POST("api/portafolios")
     fun guardarPortafolio(@Body portafolio: PortafolioGuardarRequestModel): Call<PortafolioModel>
+
+    /**
+     * Actualiza un portafolio en el servidor y devuelve el portafolio actualizado
+     */
+    @PUT("api/portafolios/{id}")
+    fun actualizarPortafolio(@Path("id") id: Long, @Body portafolio: PortafolioGuardarRequestModel): Call<PortafolioModel>
 
     /**
      * Busca un portafolio por su ID en el servidor y devuelve un PortafolioBuscarResponseModel

@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.utilerias.validadores.PortafolioValidador
 
 /**
  * Composable que representa la pantalla del primer paso en el guardado de un portafolio.
@@ -43,17 +44,10 @@ fun GuardarPortafolioPasoUno(
     var isNombreValido by remember { mutableStateOf(true) }
 
     /**
-     * Valida si un nombre es válido
-     */
-    fun validarNombre(nombre: String): Boolean {
-        return nombre.isNotBlank()
-    }
-
-    /**
      * Valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
-        isNombreValido = validarNombre(nombrePasoUno)
+        isNombreValido = PortafolioValidador.validarNombre(nombrePasoUno)
 
         return isNombreValido
     }
@@ -108,7 +102,7 @@ fun GuardarPortafolioPasoUno(
                 OutlinedTextField(
                     value = nombrePasoUno,
                     onValueChange = {
-                        isNombreValido = validarNombre(it)
+                        isNombreValido = PortafolioValidador.validarNombre(it)
 
                         if (it.length <= 20) {
                             nombrePasoUno = it

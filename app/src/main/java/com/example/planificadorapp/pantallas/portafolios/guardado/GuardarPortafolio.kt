@@ -31,9 +31,9 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavController) {
-    val activosRepository = remember { ActivosRepository() }
-    val cuentasRepository = remember { CuentasRepository() }
-    val portafoliosRepository = remember { PortafoliosRepository() }
+    val activosRepository = ActivosRepository()
+    val cuentasRepository = CuentasRepository()
+    val portafoliosRepository = PortafoliosRepository()
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }

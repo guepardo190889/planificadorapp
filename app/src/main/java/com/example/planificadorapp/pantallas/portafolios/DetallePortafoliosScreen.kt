@@ -77,7 +77,7 @@ fun DetallePortafoliosScreen(
             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
         ) {
             FloatingActionButton(
-                onClick = { /* Edit action */ },
+                onClick = { navController.navigate("portafolios/editar/${idPortafolio}") },
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {

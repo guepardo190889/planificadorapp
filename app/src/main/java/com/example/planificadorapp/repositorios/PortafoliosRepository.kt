@@ -44,6 +44,34 @@ class PortafoliosRepository {
     }
 
     /**
+     *  Actualiza un portafolio en el servidor y devuelve el portafolio actualizado
+     */
+    fun actualizarPortafolio(
+        idPortafolio: Long,
+        portafolio: PortafolioGuardarRequestModel,
+        onResult: (PortafolioModel?) -> Unit
+    ) {
+        val call = apiService.actualizarPortafolio(idPortafolio, portafolio)
+        call.enqueue(object : Callback<PortafolioModel> {
+            override fun onResponse(
+                call: Call<PortafolioModel>,
+                response: Response<PortafolioModel>
+            ) {
+                if (response.isSuccessful) {
+                    onResult(response.body())
+                } else {
+                    onResult(null)
+                }
+
+            }
+
+            override fun onFailure(call: Call<PortafolioModel>, t: Throwable) {
+                onResult(null)
+            }
+        })
+    }
+
+    /**
      * Busca un portafolio por su ID en el servidor y devuelve un PortafolioBuscarResponseModel
      */
     fun buscarPortafolioPorId(id: Long, onResult: (PortafolioBuscarResponseModel?) -> Unit) {
@@ -116,5 +144,4 @@ class PortafoliosRepository {
                 }
             })
     }
-
 }
