@@ -21,6 +21,7 @@ import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.PortafoliosRepository
@@ -64,25 +65,26 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                 )
             }
         },
-        content = {
+        content = { paddingValues ->
             Column(
                 modifier = modifier
-                    .padding(it)
+                    .padding(paddingValues)
                     .fillMaxSize()
             ) {
                 Log.i("GuardarPortafolio", "Paso actual: $pasoActual")
 
                 when (pasoActual) {
-                    PasoWizard.PASO_UNO -> GuardarPortafolioPasoUno(
-                        modifier,
-                        nombre,
-                        descripcion,
-                        onSiguienteClick = { nombrePortafolio, descripcionPortafolio ->
-                            nombre = nombrePortafolio
-                            descripcion = descripcionPortafolio
-                            pasoActual = PasoWizard.PASO_DOS
-                        }
-                    )
+                    PasoWizard.PASO_UNO ->
+                        PortafolioDatosGenerales(
+                            modifier,
+                            nombre,
+                            descripcion,
+                            onNombreChange = { nombre = it },
+                            onDescripcionChange = { descripcion = it },
+                            onSiguienteClick = {
+                                pasoActual = PasoWizard.PASO_DOS
+                            }
+                        )
 
                     PasoWizard.PASO_DOS -> {
                         LaunchedEffect(Unit) {

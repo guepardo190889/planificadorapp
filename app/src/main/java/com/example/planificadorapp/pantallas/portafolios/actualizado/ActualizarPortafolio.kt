@@ -22,6 +22,7 @@ import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
+import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.guardado.PasoWizard
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
@@ -133,25 +134,27 @@ fun ActualizarPortafolio(
                 snackbarHostState = snackbarHostState, tipo = snackbarType
             )
         }
-    }, content = {
+    }, content = { paddingValues ->
         Column(
             modifier = modifier
-                .padding(it)
+                .padding(paddingValues)
                 .fillMaxSize()
         ) {
             Log.i("EditarPortafolio", "Paso actual: $pasoActual")
 
             if (isDatosCargados) {
                 when (pasoActual) {
-                    PasoWizard.PASO_UNO -> ActualizarPortafolioPasoUno(modifier,
-                        nombre,
-                        descripcion,
-                        onSiguienteClick = { nombrePortafolio, descripcionPortafolio ->
-                            nombre = nombrePortafolio
-                            descripcion = descripcionPortafolio
-                            pasoActual = PasoWizard.PASO_DOS
-                        })
-
+                    PasoWizard.PASO_UNO ->
+                        PortafolioDatosGenerales(
+                            modifier,
+                            nombre,
+                            descripcion,
+                            onNombreChange = { nombre = it },
+                            onDescripcionChange = { descripcion = it },
+                            onSiguienteClick = {
+                                pasoActual = PasoWizard.PASO_DOS
+                            }
+                        )
                     PasoWizard.PASO_DOS -> {
                         LaunchedEffect(Unit) {
                             activosRepository.buscarActivos(false) { result ->

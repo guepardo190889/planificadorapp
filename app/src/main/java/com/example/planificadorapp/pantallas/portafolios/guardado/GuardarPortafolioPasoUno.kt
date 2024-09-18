@@ -75,21 +75,21 @@ fun GuardarPortafolioPasoUno(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            PortafolioDatosGenerales(nombre = nombrePasoUno,
-                descripcion = descripcionPasoUno,
-                isNombreValido = isNombreValido,
-                onNombreChange = { newNombre ->
-                    if (newNombre.length <= 20) {
-                        isNombreValido.value = true
-
-                        nombrePasoUno.value = newNombre
-                    }
-                },
-                onDescripcionChange = { newDescripcion ->
-                    if (newDescripcion.length <= 256) {
-                        descripcionPasoUno.value = newDescripcion
-                    }
-                })
+//            PortafolioDatosGenerales(nombre = nombrePasoUno,
+//                descripcion = descripcionPasoUno,
+//                isNombreValido = isNombreValido,
+//                onNombreChange = { newNombre ->
+//                    if (newNombre.length <= 20) {
+//                        isNombreValido.value = true
+//
+//                        nombrePasoUno.value = newNombre
+//                    }
+//                },
+//                onDescripcionChange = { newDescripcion ->
+//                    if (newDescripcion.length <= 256) {
+//                        descripcionPasoUno.value = newDescripcion
+//                    }
+//                })
         }
     })
 }
