@@ -23,6 +23,7 @@ import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
+import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
 import com.example.planificadorapp.pantallas.portafolios.guardado.PasoWizard
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
@@ -113,7 +114,8 @@ fun ActualizarPortafolio(
                                 excluirCuentasAsociadas = true,
                                 incluirSoloCuentasNoAgrupadorasSinAgrupar = false
                             ) { cuentasNoAsociadasEncontradas ->
-                                cuentasNoAsociadasAComposiciones = cuentasNoAsociadasEncontradas ?: emptyList()
+                                cuentasNoAsociadasAComposiciones =
+                                    cuentasNoAsociadasEncontradas ?: emptyList()
                                 Log.i(
                                     "EditarPortafolio",
                                     "Cuentas no asociadas encontradas: $cuentasNoAsociadasAComposiciones"
@@ -144,17 +146,15 @@ fun ActualizarPortafolio(
 
             if (isDatosCargados) {
                 when (pasoActual) {
-                    PasoWizard.PASO_UNO ->
-                        PortafolioDatosGenerales(
-                            modifier,
-                            nombre,
-                            descripcion,
-                            onNombreChange = { nombre = it },
-                            onDescripcionChange = { descripcion = it },
-                            onSiguienteClick = {
-                                pasoActual = PasoWizard.PASO_DOS
-                            }
-                        )
+                    PasoWizard.PASO_UNO -> PortafolioDatosGenerales(modifier,
+                        nombre,
+                        descripcion,
+                        onNombreChange = { nombre = it },
+                        onDescripcionChange = { descripcion = it },
+                        onSiguienteClick = {
+                            pasoActual = PasoWizard.PASO_DOS
+                        })
+
                     PasoWizard.PASO_DOS -> {
                         LaunchedEffect(Unit) {
                             activosRepository.buscarActivos(false) { result ->
@@ -162,18 +162,27 @@ fun ActualizarPortafolio(
                             }
                         }
 
-                        ActualizarPortafolioPasoDos(modifier,
-                            activos,
-                            composiciones,
-                            totalPorcentaje,
-                            onAtrasClick = { composicionesEditadas, totalEditado ->
-                                composiciones = composicionesEditadas
-                                totalPorcentaje = totalEditado
+                        PortafolioDistribucionActivos(modifier = modifier,
+                            activos = activos,
+                            composiciones = composiciones,
+                            onAgregarComposicion = { nuevaComposicion ->
+                                composiciones = composiciones + nuevaComposicion
+                            },
+                            onEliminarComposicion = { composicionAEliminar ->
+                                composiciones = composiciones.filter { it != composicionAEliminar }
+                            },
+                            onPorcentajeCambiado = { composicion, nuevoPorcentaje ->
+                                composiciones = composiciones.map {
+                                    if (it.activo == composicion.activo) {
+                                        it.copy(porcentaje = nuevoPorcentaje.toFloat())
+                                    } else it
+                                }
+                                totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
+                            },
+                            onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_UNO
                             },
-                            onSiguienteClick = { composicionesEditadas, totalEditado ->
-                                composiciones = composicionesEditadas
-                                totalPorcentaje = totalEditado
+                            onSiguienteClick = {
                                 pasoActual = PasoWizard.PASO_TRES
                             })
                     }
