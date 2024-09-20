@@ -68,9 +68,82 @@ fun PortafolioDistribucionActivos(
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
 
-    LaunchedEffect(composiciones) {
+    var isMostrarFlechaArriba by remember { mutableStateOf(false) }
+    var isMostrarFlechaAbajo by remember { mutableStateOf(false) }
+
+    val firstVisibleItemIndex by remember {
+        derivedStateOf {
+            listState.firstVisibleItemIndex
+        }
+    }
+
+    val firstVisibleItemOffset by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset
+        }
+    }
+
+    val lastVisibleItem by remember {
+        derivedStateOf {
+            listState.layoutInfo.visibleItemsInfo.lastOrNull()
+        }
+    }
+
+    val isLastItemVisible by remember {
+        derivedStateOf {
+            lastVisibleItem?.index == listState.layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    val isLastItemCompletelyVisible by remember {
+        derivedStateOf {
+            val lastItem = lastVisibleItem
+            lastItem != null &&
+                    (lastItem.size + lastItem.offset) <= listState.layoutInfo.viewportEndOffset &&
+                    listState.layoutInfo.totalItemsCount > 0 &&
+                    lastItem.index == listState.layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    LaunchedEffect(composiciones, listState, firstVisibleItemIndex, firstVisibleItemOffset) {
         totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
-        Log.i("PortafolioDistribucionActivos", "Nuevo totalPorcentaje: $totalPorcentaje")
+
+        Log.i("PortafolioDistribucionActivos", "Número de composiciones: ${composiciones.size}")
+
+        if (composiciones.isNotEmpty()) {
+            // Verificar si se debe mostrar la flecha hacia arriba
+            isMostrarFlechaArriba = firstVisibleItemIndex > 0 || firstVisibleItemOffset > 0
+            Log.i("PortafolioDistribucionActivos", "isMostrarFlechaArriba: $isMostrarFlechaArriba")
+
+            // Verificar si se debe mostrar la flecha hacia abajo
+            isMostrarFlechaAbajo = !(isLastItemVisible && isLastItemCompletelyVisible)
+
+            // Debug para verificar el comportamiento al eliminar elementos
+            Log.i(
+                "PortafolioDistribucionActivos",
+                "isLastItemVisible: $isLastItemVisible, isLastItemCompletelyVisible: $isLastItemCompletelyVisible"
+            )
+            Log.i("PortafolioDistribucionActivos", "isMostrarFlechaAbajo: $isMostrarFlechaAbajo")
+        } else {
+            // Si no hay composiciones, no mostrar flechas
+            isMostrarFlechaArriba = false
+            isMostrarFlechaAbajo = false
+            Log.i("PortafolioDistribucionActivos", "No hay composiciones. Flechas ocultas.")
+        }
+
+        // Nueva verificación explícita después de un cambio en el tamaño de las composiciones
+        if (composiciones.size > 0) {
+            // Asegurarse de que las flechas se actualicen correctamente al eliminar o agregar elementos
+            val isLastCompositionVisible = lastVisibleItem?.index == composiciones.size - 1
+            val isFullyVisible = isLastCompositionVisible && isLastItemCompletelyVisible
+
+            if (isLastCompositionVisible && !isFullyVisible) {
+                isMostrarFlechaAbajo = true
+            } else {
+                isMostrarFlechaAbajo = false
+            }
+            Log.i("PortafolioDistribucionActivos", "isFullyVisible: $isFullyVisible, isMostrarFlechaAbajo: $isMostrarFlechaAbajo")
+        }
     }
 
     /**
@@ -99,7 +172,6 @@ fun PortafolioDistribucionActivos(
 
     Scaffold(bottomBar = {
         BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
-            Log.i("PortafolioDistribucionActivos", "totalPorcentaje: $totalPorcentaje")
             validarComposiciones()
 
             if (isComposicionesValidas) {
@@ -115,8 +187,7 @@ fun PortafolioDistribucionActivos(
             EncabezadoPortafolio(titulo = "Distribución de activos")
 
             Box(modifier = Modifier.weight(1f, false)) {
-                val mostrarFlechaArriba by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
-                if (mostrarFlechaArriba) {
+                if (isMostrarFlechaArriba) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowUp,
                         contentDescription = "Desplazar arriba",
@@ -130,7 +201,7 @@ fun PortafolioDistribucionActivos(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 350.dp)
+                        .heightIn(max = 400.dp)
                         .padding(16.dp),
                     state = listState
                 ) {
@@ -144,13 +215,7 @@ fun PortafolioDistribucionActivos(
                     }
                 }
 
-                val mostrarFlechaAbajo by remember {
-                    derivedStateOf {
-                        (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                            ?: 0) < listState.layoutInfo.totalItemsCount - 1
-                    }
-                }
-                if (mostrarFlechaAbajo) {
+                if (isMostrarFlechaAbajo) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowDown,
                         contentDescription = "Desplazar abajo",
