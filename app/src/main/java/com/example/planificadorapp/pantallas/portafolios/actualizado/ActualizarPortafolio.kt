@@ -10,7 +10,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -195,8 +194,10 @@ fun ActualizarPortafolio(
                             cuentasRepository.buscarCuentas(
                                 excluirCuentasAsociadas = true,
                                 incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-                            ) { result ->
-                                cuentas = result ?: emptyList()
+                            ) { cuentasEncontradas ->
+                                cuentas = cuentasEncontradas ?: emptyList()
+                                //Filtrar solo las cuentas que no están asignadas a alguna composición
+                                cuentas = cuentas.filter { composiciones.any { composicion -> it !in composicion.cuentas } }
                             }
                         }
 

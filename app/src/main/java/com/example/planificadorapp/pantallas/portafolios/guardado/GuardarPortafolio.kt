@@ -57,6 +57,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var cuentasDisponiblesParaAsignar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     Scaffold(modifier = modifier.fillMaxSize(), snackbarHost = {
         SnackbarHost(snackbarHostState) {
@@ -117,24 +118,36 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
 
                 PasoWizard.PASO_TRES -> {
                     LaunchedEffect(Unit) {
-                        Log.i("GuardarPortafolioPasoDos", "Cargando cuentas...")
+                        Log.i("GuardarPortafolio", "Cargando cuentas...")
                         cuentasRepository.buscarCuentas(
                             excluirCuentasAsociadas = true,
                             incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-                        ) { result ->
-                            cuentas = result ?: emptyList()
+                        ) { cuentasEncontradas ->
+                            cuentas = cuentasEncontradas ?: emptyList()
+
+                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                                composiciones.none { composicion ->
+                                    composicion.cuentas.any { it.id == cuenta.id }
+                                }
+                            }
                         }
                     }
 
                     PortafolioAsignacionCuentasConActivos(
                         modifier = modifier,
                         composiciones = composiciones,
-                        cuentas = cuentas,
+                        cuentas = cuentasDisponiblesParaAsignar,
                         onAsignarCuenta = { composicion, cuentaSeleccionada ->
                             composiciones = composiciones.map {
                                 if (it == composicion) {
                                     it.copy(cuentas = it.cuentas + cuentaSeleccionada)
                                 } else it
+                            }
+
+                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                                composiciones.none { composicion ->
+                                    composicion.cuentas.any { it.id == cuenta.id }
+                                }
                             }
                         },
                         onDesasignarCuenta = { composicion, cuentaSeleccionada ->
@@ -142,6 +155,12 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                                 if (it == composicion) {
                                     it.copy(cuentas = it.cuentas - cuentaSeleccionada)
                                 } else it
+                            }
+
+                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                                composiciones.none { composicion ->
+                                    composicion.cuentas.any { it.id == cuenta.id }
+                                }
                             }
                         },
                         onAtrasClick = {

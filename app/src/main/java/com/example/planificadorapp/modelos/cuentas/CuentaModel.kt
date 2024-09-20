@@ -18,4 +18,7 @@ data class CuentaModel(
 ) {
     val isHija: Boolean
         get() = padre != null
+
+    val isAgrupadora: Boolean
+        get() = agrupadora
 }

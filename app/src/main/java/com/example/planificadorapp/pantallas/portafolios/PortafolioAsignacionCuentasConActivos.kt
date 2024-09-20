@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -74,9 +75,8 @@ fun PortafolioAsignacionCuentasConActivos(
                     .padding(16.dp)
             ) {
                 items(composiciones) { composicion ->
-                    ActivoCard(composicion = composicion,
+                    ComposicionCard(composicion = composicion,
                         cuentas = cuentas,
-                        composiciones,
                         onAgregarCuenta = { cuentaSeleccionada ->
                             onAsignarCuenta(composicion, cuentaSeleccionada)
                         },
@@ -103,21 +103,26 @@ fun PortafolioAsignacionCuentasConActivos(
     })
 }
 
+/**
+ * Composable que representa una composición con sus cuentas asociadas
+ */
 @Composable
-fun ActivoCard(
+fun ComposicionCard(
     composicion: GuardarComposicionModel,
     cuentas: List<CuentaModel>,
-    composicionesPasoTres: List<GuardarComposicionModel>,
     onAgregarCuenta: (CuentaModel) -> Unit,
     onEliminarCuenta: (CuentaModel) -> Unit
 ) {
-    var mostrarDialogoCuentas by remember { mutableStateOf(false) }
-    val cuentasAsociadas = cuentas.filter { composicion.cuentas.contains(it) }
+    var isMostrarDialogoCuentas by remember { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
     ) {
         Column(
             modifier = Modifier
@@ -130,7 +135,7 @@ fun ActivoCard(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            cuentasAsociadas.forEach { cuenta ->
+            composicion.cuentas.forEach { cuenta ->
                 ListItem(headlineContent = {
                     Text(
                         text = cuenta.nombre,
@@ -149,7 +154,7 @@ fun ActivoCard(
 
             Button(
                 onClick = {
-                    mostrarDialogoCuentas = true
+                    isMostrarDialogoCuentas = true
                 }, modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text("Agregar")
@@ -157,16 +162,12 @@ fun ActivoCard(
         }
     }
 
-    val cuentasDisponibles = cuentas.filterNot { cuenta ->
-        composicionesPasoTres.any { it.cuentas.contains(cuenta) }
-    }
-
-    if (mostrarDialogoCuentas) {
-        SeleccionarCuentaDialogo(cuentasDisponibles, onCuentaSeleccionada = { cuentaSeleccionada ->
+    if (isMostrarDialogoCuentas) {
+        SeleccionarCuentaDialogo(cuentas, onCuentaSeleccionada = { cuentaSeleccionada ->
             onAgregarCuenta(cuentaSeleccionada)
-            mostrarDialogoCuentas = false
+            isMostrarDialogoCuentas = false
         }, onDismissRequest = {
-            mostrarDialogoCuentas = false
+            isMostrarDialogoCuentas = false
         })
     }
 }
