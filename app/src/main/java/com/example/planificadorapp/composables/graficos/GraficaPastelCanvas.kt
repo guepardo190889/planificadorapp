@@ -57,7 +57,10 @@ fun GraficaPastelCanvas(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Mostrar el título de la gráfica
-        Text(text = titulo, style = TextStyle(fontSize = 18.sp)) // Disminuí un poco el tamaño del texto
+        Text(
+            text = titulo,
+            style = TextStyle(fontSize = 18.sp)
+        ) // Disminuí un poco el tamaño del texto
 
         Spacer(modifier = Modifier.height(8.dp)) // Reducimos el espacio entre el título y la gráfica
 
@@ -84,8 +87,10 @@ fun GraficaPastelCanvas(
                 // Dibujar etiquetas con porcentajes
                 val porcentaje = (value / total) * 100
                 val middleAngle = startAngle + sweepAngle / 2
-                val labelX = center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
-                val labelY = center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
+                val labelX =
+                    center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
+                val labelY =
+                    center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
 
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(

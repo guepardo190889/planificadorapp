@@ -50,18 +50,18 @@ fun ActualizarPortafolioResumen(
         return PortafolioGuardarRequestModel(nombre, descripcion, composicionesPorGuardar)
     }
 
-    Scaffold (
+    Scaffold(
         bottomBar = {
-            BottomAppBar (
+            BottomAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 content = {
-                    Row (
+                    Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        FloatingActionButton (
+                        FloatingActionButton(
                             modifier = Modifier.padding(16.dp),
                             containerColor = MaterialTheme.colorScheme.primary,
                             contentColor = MaterialTheme.colorScheme.onPrimary,
@@ -94,7 +94,7 @@ fun ActualizarPortafolioResumen(
             )
         },
         content = { paddingValues ->
-            Column (
+            Column(
                 modifier = Modifier
                     .padding(paddingValues)
                     .padding(16.dp)
@@ -150,7 +150,7 @@ fun ActualizarPortafolioResumen(
 
 @Composable
 fun ResumenComposicionCard(composicion: GuardarComposicionModel) {
-    Card (
+    Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp),

@@ -72,7 +72,8 @@ fun DetallePortafoliosScreen(
     }
 
     Scaffold(floatingActionButton = {
-        AnimatedVisibility(visible = isFabVisible,
+        AnimatedVisibility(
+            visible = isFabVisible,
             enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
             exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
         ) {

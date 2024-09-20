@@ -21,6 +21,8 @@ import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.pantallas.portafolios.PasoWizard
+import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
 import com.example.planificadorapp.repositorios.ActivosRepository
@@ -124,17 +126,31 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                         }
                     }
 
-                    GuardarPortafolioPasoTres(modifier,
-                        composiciones,
-                        cuentas,
-                        onAtrasClick = { composicionesPasoTres ->
-                            composiciones = composicionesPasoTres
+                    PortafolioAsignacionCuentasConActivos(
+                        modifier = modifier,
+                        composiciones = composiciones,
+                        cuentas = cuentas,
+                        onAsignarCuenta = { composicion, cuentaSeleccionada ->
+                            composiciones = composiciones.map {
+                                if (it == composicion) {
+                                    it.copy(cuentas = it.cuentas + cuentaSeleccionada)
+                                } else it
+                            }
+                        },
+                        onDesasignarCuenta = { composicion, cuentaSeleccionada ->
+                            composiciones = composiciones.map {
+                                if (it == composicion) {
+                                    it.copy(cuentas = it.cuentas - cuentaSeleccionada)
+                                } else it
+                            }
+                        },
+                        onAtrasClick = {
                             pasoActual = PasoWizard.PASO_DOS
                         },
-                        onSiguienteClick = { composicionesPasoTres ->
-                            composiciones = composicionesPasoTres
+                        onSiguienteClick = {
                             pasoActual = PasoWizard.PASO_RESUMEN
-                        })
+                        }
+                    )
                 }
 
                 PasoWizard.PASO_RESUMEN -> {

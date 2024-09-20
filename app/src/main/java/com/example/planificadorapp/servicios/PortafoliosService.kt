@@ -26,7 +26,10 @@ interface PortafoliosService {
      * Actualiza un portafolio en el servidor y devuelve el portafolio actualizado
      */
     @PUT("api/portafolios/{id}")
-    fun actualizarPortafolio(@Path("id") id: Long, @Body portafolio: PortafolioGuardarRequestModel): Call<PortafolioModel>
+    fun actualizarPortafolio(
+        @Path("id") id: Long,
+        @Body portafolio: PortafolioGuardarRequestModel
+    ): Call<PortafolioModel>
 
     /**
      * Busca un portafolio por su ID en el servidor y devuelve un PortafolioBuscarResponseModel

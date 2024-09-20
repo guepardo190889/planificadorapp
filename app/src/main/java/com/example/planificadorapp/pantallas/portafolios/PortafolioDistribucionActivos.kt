@@ -2,18 +2,25 @@ package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -25,9 +32,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -54,12 +63,16 @@ fun PortafolioDistribucionActivos(
     onAtrasClick: () -> Unit,
     onSiguienteClick: () -> Unit
 ) {
-    val totalPorcentaje by remember {
-        derivedStateOf { composiciones.sumOf { it.porcentaje.toInt() } }
-    }
+    var totalPorcentaje by remember { mutableIntStateOf(0) }
     var isComposicionesValidas by remember { mutableStateOf(true) }
     var mensajeErrorComposiciones by remember { mutableStateOf("") }
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(composiciones) {
+        totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
+        Log.i("PortafolioDistribucionActivos", "Nuevo totalPorcentaje: $totalPorcentaje")
+    }
 
     /**
      * Función que valida si las composiciones son válidas
@@ -72,10 +85,12 @@ fun PortafolioDistribucionActivos(
                 isComposicionesValidas = false
                 mensajeErrorComposiciones = "El portafolio debe tener al menos un activo"
             }
+
             composiciones.any { it.porcentaje < 1 } -> {
                 isComposicionesValidas = false
                 mensajeErrorComposiciones = "Todos los porcentajes deben ser mayores a 0"
             }
+
             totalPorcentaje != 100 -> {
                 isComposicionesValidas = false
                 mensajeErrorComposiciones = "La suma de los porcentajes debe ser igual a 100"
@@ -83,35 +98,80 @@ fun PortafolioDistribucionActivos(
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            BarraNavegacionInferior(
-                onAtrasClick = onAtrasClick,
-                onSiguienteClick = {
-                    validarComposiciones()
+    Scaffold(bottomBar = {
+        BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
+            Log.i("PortafolioDistribucionActivos", "totalPorcentaje: $totalPorcentaje")
+            validarComposiciones()
 
-                    if(isComposicionesValidas){
-                        onSiguienteClick()
+            if (isComposicionesValidas) {
+                onSiguienteClick()
+            }
+        })
+    }, content = { paddingValues ->
+        Column(
+            modifier = modifier
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            EncabezadoPortafolio("Composición de activos")
+
+            Box(modifier = Modifier.weight(1f, false)) {
+                val mostrarFlechaArriba by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+                if (mostrarFlechaArriba) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowUp,
+                        contentDescription = "Desplazar arriba",
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 350.dp)
+                        .padding(16.dp),
+                    state = listState
+                ) {
+                    items(composiciones) { composicion ->
+                        ComposicionItem(
+                            composicion = composicion,
+                            onEliminarComposicion = onEliminarComposicion,
+                            onPorcentajeCambiado = onPorcentajeCambiado
+                        )
+                        HorizontalDivider()
                     }
                 }
-            )
-        },
-        content = { paddingValues ->
+
+                val mostrarFlechaAbajo by remember {
+                    derivedStateOf {
+                        (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                            ?: 0) < listState.layoutInfo.totalItemsCount - 1
+                    }
+                }
+                if (mostrarFlechaAbajo) {
+                    Icon(
+                        imageVector = Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "Desplazar abajo",
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .size(24.dp),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+
             Column(
-                modifier = modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
+                modifier = modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                EncabezadoPortafolio("Composición de activos")
-
-                ComposicionesList(
-                    modifier = modifier,
-                    composiciones = composiciones,
-                    onEliminarComposicion = onEliminarComposicion,
-                    onPorcentajeCambiado = onPorcentajeCambiado
-                )
-
-                if(!isComposicionesValidas) {
+                if (!isComposicionesValidas) {
+                    Log.i(
+                        "PortafolioDistribucionActivos",
+                        "mensajeErrorComposiciones: $mensajeErrorComposiciones"
+                    )
                     Text(
                         text = mensajeErrorComposiciones,
                         color = MaterialTheme.colorScheme.error,
@@ -126,46 +186,22 @@ fun PortafolioDistribucionActivos(
                     onClick = { mostrarDialogoActivos = true }) {
                     Text("Agregar activo")
                 }
-
-                if (mostrarDialogoActivos) {
-                    val activosDisponibles = activos.filterNot { activo ->
-                        composiciones.any { it.activo == activo }
-                    }
-
-                    SeleccionarActivoDialogo(activosDisponibles,
-                        onActivoSeleccionado = { activoSeleccionado ->
-                            onAgregarComposicion(GuardarComposicionModel(activoSeleccionado))
-                            mostrarDialogoActivos = false
-                        },
-                        onDismissRequest = { mostrarDialogoActivos = false })
-                }
             }
-        })
 
+            if (mostrarDialogoActivos) {
+                val activosDisponibles = activos.filterNot { activo ->
+                    composiciones.any { it.activo == activo }
+                }
 
-}
-
-/**
- * Composable que muestra una lista de activos seleccionados con opciones de eliminación
- * y modificación de los porcentajes.
- */
-@Composable
-fun ComposicionesList(
-    modifier: Modifier,
-    composiciones: List<GuardarComposicionModel>,
-    onEliminarComposicion: (GuardarComposicionModel) -> Unit,
-    onPorcentajeCambiado: (GuardarComposicionModel, Int) -> Unit
-) {
-    LazyColumn(modifier = modifier.padding(16.dp)) {
-        items(composiciones) { composicion ->
-            ComposicionItem(
-                composicion = composicion,
-                onEliminarComposicion = onEliminarComposicion,
-                onPorcentajeCambiado = onPorcentajeCambiado
-            )
-            HorizontalDivider()
+                SeleccionarActivoDialogo(activosDisponibles,
+                    onActivoSeleccionado = { activoSeleccionado ->
+                        onAgregarComposicion(GuardarComposicionModel(activoSeleccionado))
+                        mostrarDialogoActivos = false
+                    },
+                    onDismissRequest = { mostrarDialogoActivos = false })
+            }
         }
-    }
+    })
 }
 
 /**
@@ -188,13 +224,10 @@ fun ComposicionItem(
             modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Slider(
-                modifier = Modifier.fillMaxWidth(0.7f),
-                value = posicionSlider,
-                onValueChange = {
+                modifier = Modifier.fillMaxWidth(0.7f), value = posicionSlider, onValueChange = {
                     posicionSlider = it
                     onPorcentajeCambiado(composicion, it.toInt())
-                },
-                valueRange = 0f..100f
+                }, valueRange = 0f..100f
             )
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -231,13 +264,76 @@ fun ComposicionItem(
 @Composable
 fun SeccionPorcentajeTotalDistribucionActivos(totalPorcentaje: Int) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.End
+        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
     ) {
         Text(
             text = "Total: ${totalPorcentaje}%",
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+@Composable
+fun ListaConFlechasIndicadoras(
+    items: List<String>
+) {
+    val listState = rememberLazyListState()
+
+    // Variables para controlar la visibilidad de las flechas
+    val showUpArrow by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    }
+    val showDownArrow by remember {
+        derivedStateOf {
+            (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+                ?: 0) < listState.layoutInfo.totalItemsCount - 1
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Flecha hacia arriba (solo se muestra si el usuario puede desplazarse hacia arriba)
+        if (showUpArrow) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowUp,
+                contentDescription = "Scroll up",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp)
+                    .size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
+
+        // Lista de elementos
+        LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 40.dp) // Ajusta para dejar espacio para las flechas
+        ) {
+            items(items.size) { index ->
+                Text(
+                    text = items[index],
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
+
+        // Flecha hacia abajo (solo se muestra si el usuario puede desplazarse hacia abajo)
+        if (showDownArrow) {
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = "Scroll down",
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(16.dp)
+                    .size(24.dp),
+                tint = MaterialTheme.colorScheme.primary
+            )
+        }
     }
 }

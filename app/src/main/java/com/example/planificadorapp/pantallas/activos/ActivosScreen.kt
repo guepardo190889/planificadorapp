@@ -105,8 +105,8 @@ fun ActivoItem(
 ) {
     ListItem(
         modifier = modifier.clickable {
-                navController.navigate("activos/detalle/${activo.id}")
-            },
+            navController.navigate("activos/detalle/${activo.id}")
+        },
         headlineContent = {
             Text(
                 text = activo.nombre,

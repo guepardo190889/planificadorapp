@@ -22,9 +22,10 @@ import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
+import com.example.planificadorapp.pantallas.portafolios.PasoWizard
+import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
-import com.example.planificadorapp.pantallas.portafolios.guardado.PasoWizard
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.PortafoliosRepository
@@ -58,7 +59,6 @@ fun ActualizarPortafolio(
     //Paso Dos
     var activos by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var composiciones by remember { mutableStateOf<List<GuardarComposicionModel>>(emptyList()) }
-    var totalPorcentaje by remember { mutableIntStateOf(0) }
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
@@ -104,8 +104,6 @@ fun ActualizarPortafolio(
                                             cuentas = cuentasPortafolio
                                         )
                                     }
-                                //sumar el total del porcentaje
-                                totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
                             }
 
                             //TODO Implementar método que me traiga toda las cuentas NO AGRUPADORAS (o a menos que esta lista la manipule manualmente para solo poder seleccionar lo permitido)
@@ -166,18 +164,23 @@ fun ActualizarPortafolio(
                             activos = activos,
                             composiciones = composiciones,
                             onAgregarComposicion = { nuevaComposicion ->
+                                Log.i("ActualizarPortafolio", "Agregando nueva composición: $nuevaComposicion")
+                                Log.i("ActualizarPortafolio", "Composiciones actuales (agregar): $composiciones")
                                 composiciones = composiciones + nuevaComposicion
+                                Log.i("ActualizarPortafolio", "Composiciones actualizadas (agregar): $composiciones")
                             },
                             onEliminarComposicion = { composicionAEliminar ->
+                                Log.i("ActualizarPortafolio", "Eliminando composición: $composicionAEliminar")
+                                Log.i("ActualizarPortafolio", "Composiciones actuales (eliminar): $composiciones")
                                 composiciones = composiciones.filter { it != composicionAEliminar }
+                                Log.i("ActualizarPortafolio", "Composiciones actualizadas (eliminar): $composiciones")
                             },
                             onPorcentajeCambiado = { composicion, nuevoPorcentaje ->
                                 composiciones = composiciones.map {
-                                    if (it.activo == composicion.activo) {
+                                    if (it == composicion) {
                                         it.copy(porcentaje = nuevoPorcentaje.toFloat())
                                     } else it
                                 }
-                                totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
                             },
                             onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_UNO
@@ -197,17 +200,31 @@ fun ActualizarPortafolio(
                             }
                         }
 
-                        ActualizarPortafolioPasoTres(modifier,
-                            composiciones,
-                            cuentas,
-                            onAtrasClick = { composicionesEditadas ->
-                                composiciones = composicionesEditadas
+                        PortafolioAsignacionCuentasConActivos(
+                            modifier = modifier,
+                            composiciones = composiciones,
+                            cuentas = cuentas,
+                            onAsignarCuenta = { composicion, cuentaSeleccionada ->
+                                composiciones = composiciones.map {
+                                    if (it == composicion) {
+                                        it.copy(cuentas = it.cuentas + cuentaSeleccionada)
+                                    } else it
+                                }
+                            },
+                            onDesasignarCuenta = { composicion, cuentaSeleccionada ->
+                                composiciones = composiciones.map {
+                                    if (it == composicion) {
+                                        it.copy(cuentas = it.cuentas - cuentaSeleccionada)
+                                    } else it
+                                }
+                            },
+                            onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_DOS
                             },
-                            onSiguienteClick = { composicionesEditadas ->
-                                composiciones = composicionesEditadas
+                            onSiguienteClick = {
                                 pasoActual = PasoWizard.PASO_RESUMEN
-                            })
+                            }
+                        )
                     }
 
                     PasoWizard.PASO_RESUMEN -> {
