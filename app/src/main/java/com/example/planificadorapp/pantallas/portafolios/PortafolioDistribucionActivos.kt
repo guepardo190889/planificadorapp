@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -111,9 +110,9 @@ fun PortafolioDistribucionActivos(
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            EncabezadoPortafolio("Composición de activos")
+            EncabezadoPortafolio(titulo = "Distribución de activos")
 
             Box(modifier = Modifier.weight(1f, false)) {
                 val mostrarFlechaArriba by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
@@ -271,69 +270,5 @@ fun SeccionPorcentajeTotalDistribucionActivos(totalPorcentaje: Int) {
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
-    }
-}
-
-@Composable
-fun ListaConFlechasIndicadoras(
-    items: List<String>
-) {
-    val listState = rememberLazyListState()
-
-    // Variables para controlar la visibilidad de las flechas
-    val showUpArrow by remember {
-        derivedStateOf { listState.firstVisibleItemIndex > 0 }
-    }
-    val showDownArrow by remember {
-        derivedStateOf {
-            (listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-                ?: 0) < listState.layoutInfo.totalItemsCount - 1
-        }
-    }
-
-    Box(modifier = Modifier.fillMaxSize()) {
-        // Flecha hacia arriba (solo se muestra si el usuario puede desplazarse hacia arriba)
-        if (showUpArrow) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowUp,
-                contentDescription = "Scroll up",
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(16.dp)
-                    .size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        // Lista de elementos
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 40.dp) // Ajusta para dejar espacio para las flechas
-        ) {
-            items(items.size) { index ->
-                Text(
-                    text = items[index],
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-        }
-
-        // Flecha hacia abajo (solo se muestra si el usuario puede desplazarse hacia abajo)
-        if (showDownArrow) {
-            Icon(
-                imageVector = Icons.Filled.KeyboardArrowDown,
-                contentDescription = "Scroll down",
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(16.dp)
-                    .size(24.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-        }
     }
 }

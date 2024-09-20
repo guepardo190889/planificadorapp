@@ -64,9 +64,9 @@ fun PortafolioAsignacionCuentasConActivos(
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(16.dp)
+                .padding(horizontal = 16.dp)
         ) {
-            EncabezadoPortafolio("Asignación de Cuentas")
+            EncabezadoPortafolio(titulo = "Asignación de Cuentas")
 
             LazyColumn(
                 modifier = Modifier
