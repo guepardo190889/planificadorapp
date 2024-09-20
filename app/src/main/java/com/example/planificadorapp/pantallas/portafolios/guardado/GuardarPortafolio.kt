@@ -19,12 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.composiciones.ComposicionGuardarRequestModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 import com.example.planificadorapp.pantallas.portafolios.PasoWizard
 import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
+import com.example.planificadorapp.pantallas.portafolios.ResumenPortafolio
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.PortafoliosRepository
@@ -57,7 +60,32 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
-    var cuentasDisponiblesParaAsignar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var cuentasDisponiblesParaAsociar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+
+    /**
+     * Crea un modelo de datos para guardar un portafolio
+     */
+    fun crearModeloGuardado(): PortafolioGuardarRequestModel {
+        val composicionesPorGuardar = mutableListOf<ComposicionGuardarRequestModel>()
+
+        for (composicion in composiciones) {
+            val cuentasPorGuardar = mutableListOf<Long>()
+
+            for (cuenta in composicion.cuentas) {
+                cuentasPorGuardar.add(cuenta.id)
+            }
+
+            composicionesPorGuardar.add(
+                ComposicionGuardarRequestModel(
+                    composicion.activo.id, composicion.porcentaje.toInt(), cuentasPorGuardar
+                )
+            )
+        }
+
+        val portafolio = PortafolioGuardarRequestModel(nombre, descripcion, composicionesPorGuardar)
+
+        return portafolio
+    }
 
     Scaffold(modifier = modifier.fillMaxSize(), snackbarHost = {
         SnackbarHost(snackbarHostState) {
@@ -125,7 +153,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                         ) { cuentasEncontradas ->
                             cuentas = cuentasEncontradas ?: emptyList()
 
-                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                            cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
                                 composiciones.none { composicion ->
                                     composicion.cuentas.any { it.id == cuenta.id }
                                 }
@@ -136,7 +164,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                     PortafolioAsignacionCuentasConActivos(
                         modifier = modifier,
                         composiciones = composiciones,
-                        cuentas = cuentasDisponiblesParaAsignar,
+                        cuentas = cuentasDisponiblesParaAsociar,
                         onAsignarCuenta = { composicion, cuentaSeleccionada ->
                             composiciones = composiciones.map {
                                 if (it == composicion) {
@@ -144,7 +172,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                                 } else it
                             }
 
-                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                            cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
                                 composiciones.none { composicion ->
                                     composicion.cuentas.any { it.id == cuenta.id }
                                 }
@@ -157,7 +185,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                                 } else it
                             }
 
-                            cuentasDisponiblesParaAsignar = cuentas.filter { cuenta ->
+                            cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
                                 composiciones.none { composicion ->
                                     composicion.cuentas.any { it.id == cuenta.id }
                                 }
@@ -173,14 +201,16 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                 }
 
                 PasoWizard.PASO_RESUMEN -> {
-                    GuardarPortafolioResumen(modifier,
+                    ResumenPortafolio(modifier,
                         nombre,
                         descripcion,
                         composiciones,
                         onAtrasClick = {
                             pasoActual = PasoWizard.PASO_TRES
                         },
-                        onGuardarClick = { portafolioPorGuardar ->
+                        onTransaccopmClick = {
+                            val portafolioPorGuardar = crearModeloGuardado()
+
                             Log.i(
                                 "GuardarPortafolio",
                                 "Guardando portafolio... $portafolioPorGuardar"

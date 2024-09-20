@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -19,8 +20,10 @@ import androidx.compose.ui.Modifier
 @Composable
 fun BarraNavegacionInferior(
     modifier: Modifier = Modifier,
+    isTransaccionGuardar: Boolean? = true,
     onAtrasClick: (() -> Unit)? = null,
-    onSiguienteClick: (() -> Unit)? = null
+    onSiguienteClick: (() -> Unit)? = null,
+    onTransaccionClick: (() -> Unit)? = null
 ) {
     BottomAppBar(modifier = modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surface,
@@ -29,6 +32,7 @@ fun BarraNavegacionInferior(
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = when {
                     onAtrasClick != null && onSiguienteClick != null -> Arrangement.SpaceBetween
+                    onAtrasClick != null && onTransaccionClick != null -> Arrangement.SpaceBetween
                     onAtrasClick != null -> Arrangement.Start
                     onSiguienteClick != null -> Arrangement.End
                     else -> Arrangement.Center
@@ -53,6 +57,19 @@ fun BarraNavegacionInferior(
                         Icon(
                             Icons.AutoMirrored.Default.ArrowForward,
                             contentDescription = "Siguiente"
+                        )
+                    }
+                }
+
+                if (onTransaccionClick != null) {
+                    FloatingActionButton(
+                        onClick = onTransaccionClick,
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ) {
+                        Icon(
+                            Icons.Default.Done,
+                            contentDescription = if (isTransaccionGuardar == true) "Guardar" else "Actualizar"
                         )
                     }
                 }

@@ -18,13 +18,16 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.modelos.composiciones.ComposicionGuardarRequestModel
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
 import com.example.planificadorapp.pantallas.portafolios.PasoWizard
 import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
+import com.example.planificadorapp.pantallas.portafolios.ResumenPortafolio
 import com.example.planificadorapp.repositorios.ActivosRepository
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.PortafoliosRepository
@@ -61,9 +64,24 @@ fun ActualizarPortafolio(
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
-    var cuentasNoAsociadasAComposiciones by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var cuentasDisponiblesParaAsociar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     var isDatosCargados by remember { mutableStateOf(false) }
+
+    /**
+     * Crea el modelo de datos para actualizar un portafolio
+     */
+    fun crearModeloActualizado(): PortafolioGuardarRequestModel {
+        val composicionesPorGuardar = composiciones.map { composicion ->
+            val cuentasPorGuardar = composicion.cuentas.map { it.id }
+            ComposicionGuardarRequestModel(
+                idActivo = composicion.activo.id,
+                porcentaje = composicion.porcentaje.toInt(),
+                idCuentas = cuentasPorGuardar
+            )
+        }
+        return PortafolioGuardarRequestModel(nombre, descripcion, composicionesPorGuardar)
+    }
 
     LaunchedEffect(idPortafolio) {
         //Buscar portafolio
@@ -105,21 +123,23 @@ fun ActualizarPortafolio(
                                     }
                             }
 
-                            //TODO Implementar método que me traiga toda las cuentas NO AGRUPADORAS (o a menos que esta lista la manipule manualmente para solo poder seleccionar lo permitido)
-                            //Buscar todas las cuentas no asociadas a ninguna composición (TODO Revisar cómo se deben mostrar estas cuentas para que el usuario las elija ahora que hay cuentas agrupadoras)
-                            cuentasRepository.buscarCuentas(
-                                excluirCuentasAsociadas = true,
-                                incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-                            ) { cuentasNoAsociadasEncontradas ->
-                                cuentasNoAsociadasAComposiciones =
-                                    cuentasNoAsociadasEncontradas ?: emptyList()
-                                Log.i(
-                                    "EditarPortafolio",
-                                    "Cuentas no asociadas encontradas: $cuentasNoAsociadasAComposiciones"
-                                )
+                            isDatosCargados = true
 
-                                isDatosCargados = true
-                            }
+//                            //TODO Implementar método que me traiga toda las cuentas NO AGRUPADORAS (o a menos que esta lista la manipule manualmente para solo poder seleccionar lo permitido)
+//                            //Buscar todas las cuentas no asociadas a ninguna composición (TODO Revisar cómo se deben mostrar estas cuentas para que el usuario las elija ahora que hay cuentas agrupadoras)
+//                            cuentasRepository.buscarCuentas(
+//                                excluirCuentasAsociadas = true,
+//                                incluirSoloCuentasNoAgrupadorasSinAgrupar = false
+//                            ) { cuentasNoAsociadasEncontradas ->
+//                                cuentasDisponiblesParaAsociar =
+//                                    cuentasNoAsociadasEncontradas ?: emptyList()
+//                                Log.i(
+//                                    "ActualizarPortafolio",
+//                                    "Cuentas no asociadas encontradas: $cuentasDisponiblesParaAsociar"
+//                                )
+//
+//                                isDatosCargados = true
+//                            }
                         }
                     }
                 }
@@ -163,16 +183,34 @@ fun ActualizarPortafolio(
                             activos = activos,
                             composiciones = composiciones,
                             onAgregarComposicion = { nuevaComposicion ->
-                                Log.i("ActualizarPortafolio", "Agregando nueva composición: $nuevaComposicion")
-                                Log.i("ActualizarPortafolio", "Composiciones actuales (agregar): $composiciones")
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Agregando nueva composición: $nuevaComposicion"
+                                )
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Composiciones actuales (agregar): $composiciones"
+                                )
                                 composiciones = composiciones + nuevaComposicion
-                                Log.i("ActualizarPortafolio", "Composiciones actualizadas (agregar): $composiciones")
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Composiciones actualizadas (agregar): $composiciones"
+                                )
                             },
                             onEliminarComposicion = { composicionAEliminar ->
-                                Log.i("ActualizarPortafolio", "Eliminando composición: $composicionAEliminar")
-                                Log.i("ActualizarPortafolio", "Composiciones actuales (eliminar): $composiciones")
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Eliminando composición: $composicionAEliminar"
+                                )
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Composiciones actuales (eliminar): $composiciones"
+                                )
                                 composiciones = composiciones.filter { it != composicionAEliminar }
-                                Log.i("ActualizarPortafolio", "Composiciones actualizadas (eliminar): $composiciones")
+                                Log.i(
+                                    "ActualizarPortafolio",
+                                    "Composiciones actualizadas (eliminar): $composiciones"
+                                )
                             },
                             onPorcentajeCambiado = { composicion, nuevoPorcentaje ->
                                 composiciones = composiciones.map {
@@ -196,8 +234,12 @@ fun ActualizarPortafolio(
                                 incluirSoloCuentasNoAgrupadorasSinAgrupar = false
                             ) { cuentasEncontradas ->
                                 cuentas = cuentasEncontradas ?: emptyList()
-                                //Filtrar solo las cuentas que no están asignadas a alguna composición
-                                cuentas = cuentas.filter { composiciones.any { composicion -> it !in composicion.cuentas } }
+
+                                cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
+                                    composiciones.none { composicion ->
+                                        composicion.cuentas.any { it.id == cuenta.id }
+                                    }
+                                }
                             }
                         }
 
@@ -211,12 +253,24 @@ fun ActualizarPortafolio(
                                         it.copy(cuentas = it.cuentas + cuentaSeleccionada)
                                     } else it
                                 }
+
+                                cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
+                                    composiciones.none { composicion ->
+                                        composicion.cuentas.any { it.id == cuenta.id }
+                                    }
+                                }
                             },
                             onDesasignarCuenta = { composicion, cuentaSeleccionada ->
                                 composiciones = composiciones.map {
                                     if (it == composicion) {
                                         it.copy(cuentas = it.cuentas - cuentaSeleccionada)
                                     } else it
+                                }
+
+                                cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
+                                    composiciones.none { composicion ->
+                                        composicion.cuentas.any { it.id == cuenta.id }
+                                    }
                                 }
                             },
                             onAtrasClick = {
@@ -229,23 +283,29 @@ fun ActualizarPortafolio(
                     }
 
                     PasoWizard.PASO_RESUMEN -> {
-                        ActualizarPortafolioResumen(modifier,
+                        ResumenPortafolio(modifier,
                             nombre,
                             descripcion,
                             composiciones,
+                            isTransaccionGuardar = false,
                             onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_TRES
                             },
-                            onGuardarClick = { portafolioPorGuardar ->
+                            onTransaccopmClick = {
+                                val portafolioPorActualizar = crearModeloActualizado()
+
                                 Log.i(
-                                    "EditarPortafolio",
-                                    "Guardando cambios en portafolio... $portafolioPorGuardar"
+                                    "ActualizarPortafolio",
+                                    "Actualizando portafolio... $portafolioPorActualizar"
                                 )
 
-                                portafoliosRepository.actualizarPortafolio(
-                                    idPortafolio, portafolioPorGuardar
-                                ) { actualizado ->
-                                    if (actualizado != null) {
+                                portafoliosRepository.guardarPortafolio(portafolioPorActualizar) { portafolioActualizado ->
+                                    Log.i(
+                                        "GuardarPortafolio",
+                                        "Portafolio guardado: $portafolioActualizado"
+                                    )
+
+                                    if (portafolioActualizado != null) {
                                         snackbarMessage = "Portafolio actualizado exitosamente"
                                         snackbarType = "success"
                                     } else {
@@ -256,7 +316,7 @@ fun ActualizarPortafolio(
                                     coroutineScope.launch {
                                         snackbarHostState.showSnackbar(snackbarMessage)
 
-                                        if (actualizado != null) {
+                                        if (portafolioActualizado != null) {
                                             navController.navigate("portafolios")
                                         }
                                     }

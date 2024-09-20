@@ -1,22 +1,26 @@
 package com.example.planificadorapp.pantallas.portafolios
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
 import com.example.planificadorapp.composables.cuentas.SeleccionarCuentaDialogo
@@ -47,65 +52,65 @@ fun PortafolioAsignacionCuentasConActivos(
     var mostrarDialogoComposicionesSinCuentas by remember { mutableStateOf(false) }
 
     /**
-     *Valida si al menos una composición no tiene cuentas asociadas
+     * Valida si al menos una composición no tiene cuentas asociadas
      */
     fun alMenosUnaComposicionNoTieneCuentasAsociadas(): Boolean {
         return composiciones.any { it.cuentas.isEmpty() }
     }
 
-    Scaffold(bottomBar = {
-        BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
-            if (alMenosUnaComposicionNoTieneCuentasAsociadas()) {
-                mostrarDialogoComposicionesSinCuentas = true
-            } else {
-                onSiguienteClick()
-            }
-        })
-    }, content = { paddingValues ->
-        Column(
-            modifier = modifier
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
-        ) {
-            EncabezadoPortafolio(titulo = "Asignación de Cuentas")
-
-            LazyColumn(
-                modifier = Modifier
+    Scaffold(
+        bottomBar = {
+            BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
+                if (alMenosUnaComposicionNoTieneCuentasAsociadas()) {
+                    mostrarDialogoComposicionesSinCuentas = true
+                } else {
+                    onSiguienteClick()
+                }
+            })
+        },
+        content = { paddingValues ->
+            Column(
+                modifier = modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = 8.dp, vertical = 4.dp)
                     .fillMaxWidth()
-                    .padding(16.dp)
             ) {
-                items(composiciones) { composicion ->
-                    ComposicionCard(composicion = composicion,
-                        cuentas = cuentas,
-                        onAgregarCuenta = { cuentaSeleccionada ->
-                            onAsignarCuenta(composicion, cuentaSeleccionada)
-                        },
-                        onEliminarCuenta = { cuentaSeleccionada ->
-                            onDesasignarCuenta(composicion, cuentaSeleccionada)
-                        })
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.outlineVariant
-                    )
+                EncabezadoPortafolio(
+                    titulo = "Asociación de Cuentas",
+                    descripcion = "Cuentas asociadas a los activos"
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                ) {
+                    items(composiciones) { composicion ->
+                        ComposicionCard(composicion = composicion,
+                            cuentas = cuentas,
+                            onAgregarCuenta = { cuentaSeleccionada ->
+                                onAsignarCuenta(composicion, cuentaSeleccionada)
+                            },
+                            onEliminarCuenta = { cuentaSeleccionada ->
+                                onDesasignarCuenta(composicion, cuentaSeleccionada)
+                            })
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.outlineVariant
+                        )
+                    }
                 }
             }
-        }
 
-        if (mostrarDialogoComposicionesSinCuentas) {
-            ConfirmacionSimpleDialog(texto = "Hay activos sin cuentas asociadas. ¿Deseas continuar?",
-                onDismissRequest = {
-                    mostrarDialogoComposicionesSinCuentas = false
-                },
-                onConfirmar = {
-                    onSiguienteClick()
-                })
-        }
-    })
+            if (mostrarDialogoComposicionesSinCuentas) {
+                ConfirmacionSimpleDialog(texto = "Hay activos sin cuentas asociadas. ¿Deseas continuar?",
+                    onDismissRequest = { mostrarDialogoComposicionesSinCuentas = false },
+                    onConfirmar = { onSiguienteClick() })
+            }
+        })
 }
 
-/**
- * Composable que representa una composición con sus cuentas asociadas
- */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposicionCard(
     composicion: GuardarComposicionModel,
@@ -115,59 +120,66 @@ fun ComposicionCard(
 ) {
     var isMostrarDialogoCuentas by remember { mutableStateOf(false) }
 
-    Card(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
+            .padding(vertical = 4.dp)
     ) {
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = composicion.activo.nombre,
+                maxLines = 2,
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(bottom = 8.dp)
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Start
             )
 
-            composicion.cuentas.forEach { cuenta ->
-                ListItem(headlineContent = {
-                    Text(
-                        text = cuenta.nombre,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }, trailingContent = {
-                    IconButton(onClick = {
-                        onEliminarCuenta(cuenta)
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Eliminar Cuenta")
-                    }
-                })
-
-            }
-
-            Button(
-                onClick = {
-                    isMostrarDialogoCuentas = true
-                }, modifier = Modifier.align(Alignment.CenterHorizontally)
+            TooltipBox(
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                tooltip = { PlainTooltip { Text("Asociar una cuenta al activo") } },
+                state = rememberTooltipState()
             ) {
-                Text("Agregar")
+                IconButton(onClick = { isMostrarDialogoCuentas = true }) {
+                    Icon(Icons.Filled.Add, contentDescription = "Asociar Cuenta")
+                }
             }
         }
-    }
 
-    if (isMostrarDialogoCuentas) {
-        SeleccionarCuentaDialogo(cuentas, onCuentaSeleccionada = { cuentaSeleccionada ->
-            onAgregarCuenta(cuentaSeleccionada)
-            isMostrarDialogoCuentas = false
-        }, onDismissRequest = {
-            isMostrarDialogoCuentas = false
-        })
+        Text(
+            text = if (composicion.cuentas.isEmpty()) "Sin cuentas" else "Cuentas:",
+            style = MaterialTheme.typography.bodySmall,
+            modifier = Modifier.padding(vertical = 2.dp)
+        )
+
+        composicion.cuentas.forEach { cuenta ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 2.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = cuenta.nombre,
+                    maxLines = 2,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f)
+                )
+
+                IconButton(onClick = { onEliminarCuenta(cuenta) }) {
+                    Icon(Icons.Default.Delete, contentDescription = "Eliminar Cuenta")
+                }
+            }
+        }
+
+        if (isMostrarDialogoCuentas) {
+            SeleccionarCuentaDialogo(cuentas, onCuentaSeleccionada = { cuentaSeleccionada ->
+                onAgregarCuenta(cuentaSeleccionada)
+                isMostrarDialogoCuentas = false
+            }, onDismissRequest = { isMostrarDialogoCuentas = false })
+        }
     }
 }
