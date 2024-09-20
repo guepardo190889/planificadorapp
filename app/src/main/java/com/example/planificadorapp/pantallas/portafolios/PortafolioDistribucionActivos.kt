@@ -1,6 +1,7 @@
 package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,18 +9,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -32,7 +28,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -66,84 +61,9 @@ fun PortafolioDistribucionActivos(
     var isComposicionesValidas by remember { mutableStateOf(true) }
     var mensajeErrorComposiciones by remember { mutableStateOf("") }
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
-    val listState = rememberLazyListState()
 
-    var isMostrarFlechaArriba by remember { mutableStateOf(false) }
-    var isMostrarFlechaAbajo by remember { mutableStateOf(false) }
-
-    val firstVisibleItemIndex by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex
-        }
-    }
-
-    val firstVisibleItemOffset by remember {
-        derivedStateOf {
-            listState.firstVisibleItemScrollOffset
-        }
-    }
-
-    val lastVisibleItem by remember {
-        derivedStateOf {
-            listState.layoutInfo.visibleItemsInfo.lastOrNull()
-        }
-    }
-
-    val isLastItemVisible by remember {
-        derivedStateOf {
-            lastVisibleItem?.index == listState.layoutInfo.totalItemsCount - 1
-        }
-    }
-
-    val isLastItemCompletelyVisible by remember {
-        derivedStateOf {
-            val lastItem = lastVisibleItem
-            lastItem != null &&
-                    (lastItem.size + lastItem.offset) <= listState.layoutInfo.viewportEndOffset &&
-                    listState.layoutInfo.totalItemsCount > 0 &&
-                    lastItem.index == listState.layoutInfo.totalItemsCount - 1
-        }
-    }
-
-    LaunchedEffect(composiciones, listState, firstVisibleItemIndex, firstVisibleItemOffset) {
+    LaunchedEffect(composiciones) {
         totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
-
-        Log.i("PortafolioDistribucionActivos", "Número de composiciones: ${composiciones.size}")
-
-        if (composiciones.isNotEmpty()) {
-            // Verificar si se debe mostrar la flecha hacia arriba
-            isMostrarFlechaArriba = firstVisibleItemIndex > 0 || firstVisibleItemOffset > 0
-            Log.i("PortafolioDistribucionActivos", "isMostrarFlechaArriba: $isMostrarFlechaArriba")
-
-            // Verificar si se debe mostrar la flecha hacia abajo
-            isMostrarFlechaAbajo = !(isLastItemVisible && isLastItemCompletelyVisible)
-
-            // Debug para verificar el comportamiento al eliminar elementos
-            Log.i(
-                "PortafolioDistribucionActivos",
-                "isLastItemVisible: $isLastItemVisible, isLastItemCompletelyVisible: $isLastItemCompletelyVisible"
-            )
-            Log.i("PortafolioDistribucionActivos", "isMostrarFlechaAbajo: $isMostrarFlechaAbajo")
-        } else {
-            // Si no hay composiciones, no mostrar flechas
-            isMostrarFlechaArriba = false
-            isMostrarFlechaAbajo = false
-            Log.i("PortafolioDistribucionActivos", "No hay composiciones. Flechas ocultas.")
-        }
-
-        // Nueva verificación explícita después de un cambio en el tamaño de las composiciones
-        if (composiciones.size > 0) {
-            // Asegurarse de que las flechas se actualicen correctamente al eliminar o agregar elementos
-            val isLastCompositionVisible = lastVisibleItem?.index == composiciones.size - 1
-            val isFullyVisible = isLastCompositionVisible && isLastItemCompletelyVisible
-
-            if (isLastCompositionVisible && !isFullyVisible) {
-                isMostrarFlechaAbajo = true
-            } else {
-                isMostrarFlechaAbajo = false
-            }
-            Log.i("PortafolioDistribucionActivos", "isFullyVisible: $isFullyVisible, isMostrarFlechaAbajo: $isMostrarFlechaAbajo")
-        }
     }
 
     /**
@@ -183,47 +103,29 @@ fun PortafolioDistribucionActivos(
             modifier = modifier
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             EncabezadoPortafolio(titulo = "Distribución de activos")
 
-            Box(modifier = Modifier.weight(1f, false)) {
-                if (isMostrarFlechaArriba) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowUp,
-                        contentDescription = "Desplazar arriba",
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .size(24.dp),
-                        tint = MaterialTheme.colorScheme.primary
+            Column(
+                modifier = Modifier
+                    .then(
+                        if (!isComposicionesValidas) Modifier.border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.error,
+                            shape = MaterialTheme.shapes.small
+                        ) else Modifier
                     )
-                }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = 400.dp)
-                        .padding(16.dp),
-                    state = listState
-                ) {
-                    items(composiciones) { composicion ->
-                        ComposicionItem(
-                            composicion = composicion,
-                            onEliminarComposicion = onEliminarComposicion,
-                            onPorcentajeCambiado = onPorcentajeCambiado
-                        )
-                        HorizontalDivider()
-                    }
-                }
-
-                if (isMostrarFlechaAbajo) {
-                    Icon(
-                        imageVector = Icons.Filled.KeyboardArrowDown,
-                        contentDescription = "Desplazar abajo",
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .size(24.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
+                composiciones.forEach { composicion ->
+                    ComposicionItem(
+                        composicion = composicion,
+                        onEliminarComposicion = onEliminarComposicion,
+                        onPorcentajeCambiado = onPorcentajeCambiado
                     )
+                    HorizontalDivider()
                 }
             }
 
