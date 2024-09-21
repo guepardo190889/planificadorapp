@@ -8,15 +8,22 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.BottomAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 /**
  * Composable que muestra la barra inferior de navegación
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BarraNavegacionInferior(
     modifier: Modifier = Modifier,
@@ -39,38 +46,56 @@ fun BarraNavegacionInferior(
                 }
             ) {
                 if (onAtrasClick != null) {
-                    FloatingActionButton(
-                        onClick = onAtrasClick,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text("Atrás") } },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Atrás")
+                        FloatingActionButton(
+                            onClick = onAtrasClick,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Atrás")
+                        }
                     }
                 }
 
                 if (onSiguienteClick != null) {
-                    FloatingActionButton(
-                        onClick = onSiguienteClick,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text("Siguiente") } },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Default.ArrowForward,
-                            contentDescription = "Siguiente"
-                        )
+                        FloatingActionButton(
+                            onClick = onSiguienteClick,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Default.ArrowForward,
+                                contentDescription = "Siguiente"
+                            )
+                        }
                     }
                 }
 
                 if (onTransaccionClick != null) {
-                    FloatingActionButton(
-                        onClick = onTransaccionClick,
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text(text = if (isTransaccionGuardar == true) "Guardar" else "Actualizar") } },
+                        state = rememberTooltipState()
                     ) {
-                        Icon(
-                            Icons.Default.Done,
-                            contentDescription = if (isTransaccionGuardar == true) "Guardar" else "Actualizar"
-                        )
+                        FloatingActionButton(
+                            onClick = onTransaccionClick,
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        ) {
+                            Icon(
+                                Icons.Default.Done,
+                                contentDescription = if (isTransaccionGuardar == true) "Guardar" else "Actualizar"
+                            )
+                        }
                     }
                 }
             }

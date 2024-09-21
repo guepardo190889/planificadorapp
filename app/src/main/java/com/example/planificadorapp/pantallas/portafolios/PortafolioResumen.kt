@@ -42,7 +42,8 @@ fun ResumenPortafolio(
         Column(
             modifier = modifier
                 .padding(paddingValues)
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
         ) {
             EncabezadoPortafolio(
                 titulo = "Resumen"
@@ -69,7 +70,7 @@ fun ResumenPortafolio(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(vertical = 8.dp)
             ) {
                 items(composiciones) { composicion ->
                     ResumenComposicion(composicion)
