@@ -90,12 +90,9 @@ fun PortafolioDistribucionActivos(
     Scaffold(bottomBar = {
         BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
             validarComposiciones()
-
-            if (isComposicionesValidas) {
-                onSiguienteClick()
-            }
+            if (isComposicionesValidas) onSiguienteClick()
         })
-    }, content = { paddingValues ->
+    }) { paddingValues ->
         Column(
             modifier = modifier
                 .padding(paddingValues)
@@ -117,7 +114,7 @@ fun PortafolioDistribucionActivos(
                         ) else Modifier
                     )
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
+                    .padding(vertical = 8.dp)
             ) {
                 composiciones.forEach { composicion ->
                     ComposicionItem(
@@ -129,25 +126,22 @@ fun PortafolioDistribucionActivos(
                 }
             }
 
-            Column(
-                modifier = modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+            if (!isComposicionesValidas) {
+                Text(
+                    text = mensajeErrorComposiciones,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(top = 4.dp)
+                )
+            }
+
+            SeccionPorcentajeTotalDistribucionActivos(totalPorcentaje)
+
+            Button(
+                onClick = { mostrarDialogoActivos = true },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
-                if (!isComposicionesValidas) {
-                    Text(
-                        text = mensajeErrorComposiciones,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 4.dp)
-                    )
-                }
-
-                SeccionPorcentajeTotalDistribucionActivos(totalPorcentaje)
-
-                Button(modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = { mostrarDialogoActivos = true }) {
-                    Text("Agregar activo")
-                }
+                Text("Agregar activo")
             }
 
             if (mostrarDialogoActivos) {
@@ -155,7 +149,7 @@ fun PortafolioDistribucionActivos(
                     composiciones.any { it.activo == activo }
                 }
 
-                SeleccionarActivoDialogo(activosDisponibles,
+                SeleccionarActivoDialogo(activos = activosDisponibles,
                     onActivoSeleccionado = { activoSeleccionado ->
                         onAgregarComposicion(GuardarComposicionModel(activoSeleccionado))
                         mostrarDialogoActivos = false
@@ -163,12 +157,9 @@ fun PortafolioDistribucionActivos(
                     onDismissRequest = { mostrarDialogoActivos = false })
             }
         }
-    })
+    }
 }
 
-/**
- * Composable que muestra un activo con su porcentaje y opciones para eliminarlo
- */
 @Composable
 fun ComposicionItem(
     composicion: GuardarComposicionModel,
@@ -192,9 +183,7 @@ fun ComposicionItem(
                 modifier = Modifier.weight(1f)
             )
 
-            IconButton(onClick = {
-                onEliminarComposicion(composicion)
-            }) {
+            IconButton(onClick = { onEliminarComposicion(composicion) }) {
                 Icon(Icons.Default.Delete, contentDescription = "Eliminar Activo")
             }
         }
@@ -203,48 +192,42 @@ fun ComposicionItem(
             modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Slider(
-                modifier = Modifier.fillMaxWidth(0.7f), value = posicionSlider, onValueChange = {
+                value = posicionSlider, onValueChange = {
                     posicionSlider = it
                     porcentajeTexto = it.toInt().toString()
                     onPorcentajeCambiado(composicion, it.toInt())
-                }, valueRange = 0f..100f
+                }, valueRange = 0f..100f, modifier = Modifier.fillMaxWidth(0.7f)
             )
             Spacer(modifier = Modifier.width(8.dp))
 
             OutlinedTextField(
-                modifier = Modifier
-                    .width(56.dp)
-                    .height(46.dp),
-                value = posicionSlider.toInt().toString(),
+                value = porcentajeTexto,
                 onValueChange = { nuevoTexto ->
-                    if (nuevoTexto.isEmpty()) {
-                        porcentajeTexto = "0"
-                    } else if (nuevoTexto.length == 2 && nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
-                        porcentajeTexto = nuevoTexto[0].toString()
-                    } else if (nuevoTexto.length <= 3) {
-                        porcentajeTexto = nuevoTexto
-                    }
+                    porcentajeTexto = nuevoTexto.filter { it.isDigit() }.ifEmpty { "0" }
 
                     val nuevoPorcentaje = porcentajeTexto.toIntOrNull() ?: 0
-
                     if (nuevoPorcentaje in 0..100) {
                         posicionSlider = nuevoPorcentaje.toFloat()
                         onPorcentajeCambiado(composicion, nuevoPorcentaje)
                     }
                 },
+                modifier = Modifier
+                    .width(56.dp)
+                    .height(46.dp),
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodySmall,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
             )
-            Text(modifier = Modifier.padding(2.dp), text = "%")
+            Text(
+                text = "%",
+                modifier = Modifier.padding(2.dp),
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
     HorizontalDivider()
 }
 
-/**
- * Composable que muestra el total de porcentaje de distribución de activos de un portafolio
- */
 @Composable
 fun SeccionPorcentajeTotalDistribucionActivos(totalPorcentaje: Int) {
     Row(

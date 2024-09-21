@@ -51,54 +51,44 @@ fun PortafolioAsignacionCuentasConActivos(
 ) {
     var mostrarDialogoComposicionesSinCuentas by remember { mutableStateOf(false) }
 
-    /**
-     * Valida si al menos una composición no tiene cuentas asociadas
-     */
-    fun alMenosUnaComposicionNoTieneCuentasAsociadas(): Boolean {
-        return composiciones.any { it.cuentas.isEmpty() }
-    }
+    Scaffold(bottomBar = {
+        BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
+            if (composiciones.any { it.cuentas.isEmpty() }) {
+                mostrarDialogoComposicionesSinCuentas = true
+            } else {
+                onSiguienteClick()
+            }
+        })
+    }, content = { paddingValues ->
+        Column(
+            modifier = modifier
+                .padding(paddingValues)
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+        ) {
+            EncabezadoPortafolio(
+                titulo = "Asociación de Cuentas",
+                descripcion = "Cuentas asociadas a los activos"
+            )
 
-    Scaffold(
-        bottomBar = {
-            BarraNavegacionInferior(onAtrasClick = onAtrasClick, onSiguienteClick = {
-                if (alMenosUnaComposicionNoTieneCuentasAsociadas()) {
-                    mostrarDialogoComposicionesSinCuentas = true
-                } else {
-                    onSiguienteClick()
-                }
-            })
-        },
-        content = { paddingValues ->
-            Column(
-                modifier = modifier
-                    .padding(paddingValues)
-                    .padding(horizontal = 16.dp)
+            LazyColumn(
+                modifier = Modifier
                     .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             ) {
-                EncabezadoPortafolio(
-                    titulo = "Asociación de Cuentas",
-                    descripcion = "Cuentas asociadas a los activos"
-                )
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                ) {
-                    items(composiciones) { composicion ->
-                        ComposicionItem(composicion = composicion,
-                            cuentas = cuentas,
-                            onAgregarCuenta = { cuentaSeleccionada ->
-                                onAsignarCuenta(composicion, cuentaSeleccionada)
-                            },
-                            onEliminarCuenta = { cuentaSeleccionada ->
-                                onDesasignarCuenta(composicion, cuentaSeleccionada)
-                            })
-                        HorizontalDivider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = MaterialTheme.colorScheme.outlineVariant
-                        )
-                    }
+                items(composiciones) { composicion ->
+                    ComposicionItem(composicion = composicion,
+                        cuentas = cuentas,
+                        onAgregarCuenta = { cuentaSeleccionada ->
+                            onAsignarCuenta(composicion, cuentaSeleccionada)
+                        },
+                        onEliminarCuenta = { cuentaSeleccionada ->
+                            onDesasignarCuenta(composicion, cuentaSeleccionada)
+                        })
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant
+                    )
                 }
             }
 
@@ -107,7 +97,8 @@ fun PortafolioAsignacionCuentasConActivos(
                     onDismissRequest = { mostrarDialogoComposicionesSinCuentas = false },
                     onConfirmar = { onSiguienteClick() })
             }
-        })
+        }
+    })
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -140,7 +131,7 @@ fun ComposicionItem(
 
             TooltipBox(
                 positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                tooltip = { PlainTooltip { Text("Asociar una cuenta al activo") } },
+                tooltip = { PlainTooltip { Text("Asociar cuenta") } },
                 state = rememberTooltipState()
             ) {
                 IconButton(onClick = { isMostrarDialogoCuentas = true }) {
@@ -150,7 +141,7 @@ fun ComposicionItem(
         }
 
         Text(
-            text = if (composicion.cuentas.isEmpty()) "Sin cuentas" else "Cuentas:",
+            text = if (composicion.cuentas.isEmpty()) "Sin cuentas asociadas" else "Cuentas:",
             style = MaterialTheme.typography.bodySmall,
             modifier = Modifier.padding(vertical = 2.dp)
         )
