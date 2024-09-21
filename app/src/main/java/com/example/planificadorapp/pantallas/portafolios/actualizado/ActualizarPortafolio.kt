@@ -291,7 +291,7 @@ fun ActualizarPortafolio(
                             onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_TRES
                             },
-                            onTransaccopmClick = {
+                            onTransaccionClick = {
                                 val portafolioPorActualizar = crearModeloActualizado()
 
                                 Log.i(

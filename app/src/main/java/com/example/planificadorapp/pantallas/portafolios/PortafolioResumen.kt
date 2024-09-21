@@ -5,18 +5,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.TextoConEtiqueta
+import com.example.planificadorapp.composables.TextoEtiquetado
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 
@@ -29,59 +33,70 @@ fun ResumenPortafolio(
     nombre: String,
     descripcion: String,
     composiciones: List<GuardarComposicionModel>,
-    isTransaccionGuardar:Boolean? = true,
+    isTransaccionGuardar: Boolean? = true,
     onAtrasClick: () -> Unit,
-    onTransaccopmClick: () -> Unit,
+    onTransaccionClick: () -> Unit,
 ) {
     Scaffold(bottomBar = {
         BarraNavegacionInferior(
             isTransaccionGuardar = isTransaccionGuardar,
-            onAtrasClick = onAtrasClick, onTransaccionClick = onTransaccopmClick
+            onAtrasClick = onAtrasClick,
+            onTransaccionClick = onTransaccionClick
         )
-    }, content = { paddingValues ->
+    }) { paddingValues ->
         Column(
             modifier = modifier
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             EncabezadoPortafolio(
                 titulo = "Resumen"
             )
 
+            // Sección de información general
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Generales",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
-            Spacer(modifier = Modifier.padding(vertical = 4.dp))
-            TextoConEtiqueta(etiqueta = "Nombre: ", texto = nombre, "large", "medium")
-            TextoConEtiqueta(etiqueta = "Descripción: ", texto = descripcion, "large", "medium")
+            TextoEtiquetado(
+                etiqueta = "Nombre",
+                texto = nombre,
+                estiloEtiqueta = MaterialTheme.typography.bodyMedium,
+                estiloTexto = MaterialTheme.typography.bodyLarge
+            )
+            TextoEtiquetado(
+                etiqueta = "Descripción",
+                texto = descripcion,
+                estiloEtiqueta = MaterialTheme.typography.bodyMedium,
+                estiloTexto = MaterialTheme.typography.bodyLarge
+            )
             HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
+                modifier = Modifier.padding(vertical = 16.dp),
                 color = MaterialTheme.colorScheme.outline
             )
 
+            // Sección de distribuciones
             Text(
                 text = "Distribución",
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 8.dp)
             )
+
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(composiciones) { composicion ->
                     ResumenComposicion(composicion)
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        color = MaterialTheme.colorScheme.outline
-                    )
                 }
             }
         }
-    })
+    }
 }
 
 /**
@@ -90,47 +105,54 @@ fun ResumenPortafolio(
 @Composable
 fun ResumenComposicion(composicion: GuardarComposicionModel) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = composicion.activo.nombre,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.Left
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "${composicion.porcentaje.toInt()}%",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                textAlign = TextAlign.End
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary
             )
         }
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
+
         Text(
-            text = "Cuentas:", style = MaterialTheme.typography.titleSmall
+            text = "Cuentas:",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurface
         )
 
         if (composicion.cuentas.isNotEmpty()) {
-            composicion.cuentas.forEach { cuenta ->
-                Text(
-                    text = cuenta.nombre,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                composicion.cuentas.forEach { cuenta ->
+                    Text(
+                        text = cuenta.nombre,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
             }
         } else {
             Text(
                 text = "No hay cuentas asociadas",
                 style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.padding(vertical = 4.dp)
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(start = 16.dp)
             )
         }
+
+        Divider(color = MaterialTheme.colorScheme.outlineVariant)
     }
 }

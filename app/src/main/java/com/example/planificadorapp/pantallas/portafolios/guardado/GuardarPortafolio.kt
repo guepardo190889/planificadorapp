@@ -208,7 +208,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                         onAtrasClick = {
                             pasoActual = PasoWizard.PASO_TRES
                         },
-                        onTransaccopmClick = {
+                        onTransaccionClick = {
                             val portafolioPorGuardar = crearModeloGuardado()
 
                             Log.i(
