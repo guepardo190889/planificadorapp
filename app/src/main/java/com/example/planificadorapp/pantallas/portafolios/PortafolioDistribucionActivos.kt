@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -104,7 +103,10 @@ fun PortafolioDistribucionActivos(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            EncabezadoPortafolio(titulo = "Distribución de activos", descripcion = "Porcentaje de activos dentro del portafolio")
+            EncabezadoPortafolio(
+                titulo = "Distribución de activos",
+                descripcion = "Porcentaje de los activos dentro del portafolio"
+            )
 
             Column(
                 modifier = Modifier
@@ -116,7 +118,7 @@ fun PortafolioDistribucionActivos(
                         ) else Modifier
                     )
                     .fillMaxWidth()
-                    .padding(16.dp)
+                    .padding(vertical = 4.dp)
             ) {
                 composiciones.forEach { composicion ->
                     ComposicionItem(
@@ -141,7 +143,7 @@ fun PortafolioDistribucionActivos(
                         text = mensajeErrorComposiciones,
                         color = MaterialTheme.colorScheme.error,
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 4.dp)
                     )
                 }
 
@@ -179,18 +181,36 @@ fun ComposicionItem(
     onPorcentajeCambiado: (GuardarComposicionModel, Int) -> Unit,
 ) {
     var posicionSlider by remember { mutableFloatStateOf(composicion.porcentaje) }
+    var porcentajeTexto by remember { mutableStateOf(posicionSlider.toInt().toString()) }
 
-    ListItem(headlineContent = {
-        Text(
-            text = composicion.activo.nombre, style = MaterialTheme.typography.bodyLarge
-        )
-    }, supportingContent = {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = composicion.activo.nombre,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f)
+            )
+
+            IconButton(onClick = {
+                onEliminarComposicion(composicion)
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Eliminar Activo")
+            }
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
         ) {
             Slider(
                 modifier = Modifier.fillMaxWidth(0.7f), value = posicionSlider, onValueChange = {
                     posicionSlider = it
+                    porcentajeTexto = it.toInt().toString()
                     onPorcentajeCambiado(composicion, it.toInt())
                 }, valueRange = 0f..100f
             )
@@ -201,11 +221,24 @@ fun ComposicionItem(
                     .width(56.dp)
                     .height(46.dp),
                 value = posicionSlider.toInt().toString(),
-                onValueChange = {
-                    val nuevoPorcentaje =
-                        it.toIntOrNull()?.coerceIn(0, 100) ?: posicionSlider.toInt()
-                    posicionSlider = nuevoPorcentaje.toFloat()
-                    onPorcentajeCambiado(composicion, nuevoPorcentaje)
+                onValueChange = { nuevoTexto ->
+                    // Si el texto actual es "0" y el usuario ingresa un número diferente, reemplazar el "0"
+                    if(nuevoTexto.isEmpty()){
+                        porcentajeTexto = "0"
+                    }
+                    else if (nuevoTexto.length == 2 && nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
+                        porcentajeTexto = nuevoTexto[0].toString()
+                    }
+                    else if(nuevoTexto.length <= 3){
+                        porcentajeTexto = nuevoTexto
+                    }
+
+                    val nuevoPorcentaje = porcentajeTexto.toIntOrNull() ?: 0
+
+                    if (nuevoPorcentaje in 0..100) {
+                        posicionSlider = nuevoPorcentaje.toFloat()
+                        onPorcentajeCambiado(composicion, nuevoPorcentaje)
+                    }
                 },
                 singleLine = true,
                 textStyle = MaterialTheme.typography.bodySmall,
@@ -213,13 +246,7 @@ fun ComposicionItem(
             )
             Text(modifier = Modifier.padding(2.dp), text = "%")
         }
-    }, trailingContent = {
-        IconButton(onClick = {
-            onEliminarComposicion(composicion)
-        }) {
-            Icon(Icons.Default.Delete, contentDescription = "Eliminar Activo")
-        }
-    })
+    }
     HorizontalDivider()
 }
 

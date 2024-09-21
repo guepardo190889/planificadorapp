@@ -72,7 +72,7 @@ fun PortafolioAsignacionCuentasConActivos(
             Column(
                 modifier = modifier
                     .padding(paddingValues)
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             ) {
                 EncabezadoPortafolio(
@@ -86,7 +86,7 @@ fun PortafolioAsignacionCuentasConActivos(
                         .padding(vertical = 8.dp)
                 ) {
                     items(composiciones) { composicion ->
-                        ComposicionCard(composicion = composicion,
+                        ComposicionItem(composicion = composicion,
                             cuentas = cuentas,
                             onAgregarCuenta = { cuentaSeleccionada ->
                                 onAsignarCuenta(composicion, cuentaSeleccionada)
@@ -112,7 +112,7 @@ fun PortafolioAsignacionCuentasConActivos(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ComposicionCard(
+fun ComposicionItem(
     composicion: GuardarComposicionModel,
     cuentas: List<CuentaModel>,
     onAgregarCuenta: (CuentaModel) -> Unit,
