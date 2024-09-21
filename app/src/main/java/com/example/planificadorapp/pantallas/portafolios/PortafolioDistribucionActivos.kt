@@ -1,6 +1,5 @@
 package com.example.planificadorapp.pantallas.portafolios
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -135,10 +134,6 @@ fun PortafolioDistribucionActivos(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (!isComposicionesValidas) {
-                    Log.i(
-                        "PortafolioDistribucionActivos",
-                        "mensajeErrorComposiciones: $mensajeErrorComposiciones"
-                    )
                     Text(
                         text = mensajeErrorComposiciones,
                         color = MaterialTheme.colorScheme.error,
@@ -222,14 +217,11 @@ fun ComposicionItem(
                     .height(46.dp),
                 value = posicionSlider.toInt().toString(),
                 onValueChange = { nuevoTexto ->
-                    // Si el texto actual es "0" y el usuario ingresa un número diferente, reemplazar el "0"
-                    if(nuevoTexto.isEmpty()){
+                    if (nuevoTexto.isEmpty()) {
                         porcentajeTexto = "0"
-                    }
-                    else if (nuevoTexto.length == 2 && nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
+                    } else if (nuevoTexto.length == 2 && nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
                         porcentajeTexto = nuevoTexto[0].toString()
-                    }
-                    else if(nuevoTexto.length <= 3){
+                    } else if (nuevoTexto.length <= 3) {
                         porcentajeTexto = nuevoTexto
                     }
 
