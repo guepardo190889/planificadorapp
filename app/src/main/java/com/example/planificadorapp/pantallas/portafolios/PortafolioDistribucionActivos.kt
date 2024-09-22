@@ -203,9 +203,31 @@ fun ComposicionItem(
             OutlinedTextField(
                 value = porcentajeTexto,
                 onValueChange = { nuevoTexto ->
-                    porcentajeTexto = nuevoTexto.filter { it.isDigit() }.ifEmpty { "0" }
+                    //Cuando se borra el único número
+                    if (nuevoTexto.isEmpty()) {
+                        porcentajeTexto = "0"
+                    }
+                    else if(nuevoTexto.length == 1){
+                        porcentajeTexto = nuevoTexto
+                    }
+                    else if (nuevoTexto.length == 2) {
+                        //primer número con cursor a la izquierda (ejemplo: 01)
+                        if(nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())){
+                            porcentajeTexto = nuevoTexto[0].toString()
+                        }
+                        //primer número con cursor a la derecha (ejemplo: 02)
+                        else if(nuevoTexto[0] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())){
+                            porcentajeTexto = nuevoTexto[1].toString()
+                        }
+                        else {
+                            porcentajeTexto = nuevoTexto
+                        }
+                    } else if (nuevoTexto.length == 3) {
+                        porcentajeTexto = nuevoTexto
+                    }
 
                     val nuevoPorcentaje = porcentajeTexto.toIntOrNull() ?: 0
+
                     if (nuevoPorcentaje in 0..100) {
                         posicionSlider = nuevoPorcentaje.toFloat()
                         onPorcentajeCambiado(composicion, nuevoPorcentaje)
