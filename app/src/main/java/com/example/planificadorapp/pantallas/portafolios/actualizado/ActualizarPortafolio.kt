@@ -124,22 +124,6 @@ fun ActualizarPortafolio(
                             }
 
                             isDatosCargados = true
-
-//                            //TODO Implementar método que me traiga toda las cuentas NO AGRUPADORAS (o a menos que esta lista la manipule manualmente para solo poder seleccionar lo permitido)
-//                            //Buscar todas las cuentas no asociadas a ninguna composición (TODO Revisar cómo se deben mostrar estas cuentas para que el usuario las elija ahora que hay cuentas agrupadoras)
-//                            cuentasRepository.buscarCuentas(
-//                                excluirCuentasAsociadas = true,
-//                                incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-//                            ) { cuentasNoAsociadasEncontradas ->
-//                                cuentasDisponiblesParaAsociar =
-//                                    cuentasNoAsociadasEncontradas ?: emptyList()
-//                                Log.i(
-//                                    "ActualizarPortafolio",
-//                                    "Cuentas no asociadas encontradas: $cuentasDisponiblesParaAsociar"
-//                                )
-//
-//                                isDatosCargados = true
-//                            }
                         }
                     }
                 }
@@ -243,8 +227,7 @@ fun ActualizarPortafolio(
                             }
                         }
 
-                        PortafolioAsignacionCuentasConActivos(
-                            modifier = modifier,
+                        PortafolioAsignacionCuentasConActivos(modifier = modifier,
                             composiciones = composiciones,
                             cuentas = cuentas,
                             onAsignarCuenta = { composicion, cuentaSeleccionada ->
@@ -278,8 +261,7 @@ fun ActualizarPortafolio(
                             },
                             onSiguienteClick = {
                                 pasoActual = PasoWizard.PASO_RESUMEN
-                            }
-                        )
+                            })
                     }
 
                     PasoWizard.PASO_RESUMEN -> {
@@ -299,10 +281,13 @@ fun ActualizarPortafolio(
                                     "Actualizando portafolio... $portafolioPorActualizar"
                                 )
 
-                                portafoliosRepository.guardarPortafolio(portafolioPorActualizar) { portafolioActualizado ->
+                                portafoliosRepository.actualizarPortafolio(
+                                    idPortafolio = idPortafolio,
+                                    portafolio = portafolioPorActualizar
+                                ) { portafolioActualizado ->
                                     Log.i(
-                                        "GuardarPortafolio",
-                                        "Portafolio guardado: $portafolioActualizado"
+                                        "ActualizarPortafolio",
+                                        "Portafolio actualizado: $portafolioActualizado"
                                     )
 
                                     if (portafolioActualizado != null) {
