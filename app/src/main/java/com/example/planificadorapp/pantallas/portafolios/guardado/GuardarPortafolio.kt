@@ -24,7 +24,7 @@ import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 import com.example.planificadorapp.pantallas.portafolios.PasoWizard
-import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
+import com.example.planificadorapp.pantallas.portafolios.PortafolioAsociacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
 import com.example.planificadorapp.pantallas.portafolios.ResumenPortafolio
@@ -161,11 +161,11 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                         }
                     }
 
-                    PortafolioAsignacionCuentasConActivos(
+                    PortafolioAsociacionCuentasConActivos(
                         modifier = modifier,
                         composiciones = composiciones,
                         cuentas = cuentasDisponiblesParaAsociar,
-                        onAsignarCuenta = { composicion, cuentaSeleccionada ->
+                        onAsociarCuenta = { composicion, cuentaSeleccionada ->
                             composiciones = composiciones.map {
                                 if (it == composicion) {
                                     it.copy(cuentas = it.cuentas + cuentaSeleccionada)
@@ -178,7 +178,7 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
                                 }
                             }
                         },
-                        onDesasignarCuenta = { composicion, cuentaSeleccionada ->
+                        onDesasociarCuenta = { composicion, cuentaSeleccionada ->
                             composiciones = composiciones.map {
                                 if (it == composicion) {
                                     it.copy(cuentas = it.cuentas - cuentaSeleccionada)

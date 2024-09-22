@@ -112,7 +112,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                 Log.i("CuentasScreen", "Activo encontrado: $resultadoCuentaExistente")
                 cuenta = resultadoCuentaExistente
                 nombre = resultadoCuentaExistente.nombre
-                descripcion = resultadoCuentaExistente.descripcion
+                descripcion = resultadoCuentaExistente.descripcion ?: ""
                 saldo = resultadoCuentaExistente.saldo
                 isCuentaAgrupadora = resultadoCuentaExistente.agrupadora
 

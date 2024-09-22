@@ -77,7 +77,7 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
                         Log.i("ActivosScreen", "Activo encontrado: $resultadoActivoExistente")
                         activo = resultadoActivoExistente
                         nombre = resultadoActivoExistente.nombre
-                        descripcion = resultadoActivoExistente.descripcion
+                        descripcion = resultadoActivoExistente.descripcion ?: ""
                         activoSeleccionado =
                             activosPadre.find { it.id == resultadoActivoExistente.padre?.id }
 

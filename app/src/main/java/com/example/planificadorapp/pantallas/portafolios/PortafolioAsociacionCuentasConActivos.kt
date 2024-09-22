@@ -40,12 +40,12 @@ import com.example.planificadorapp.modelos.cuentas.CuentaModel
  * Composable que representa la pantalla de asignación de cuentas a activos en un portafolio
  */
 @Composable
-fun PortafolioAsignacionCuentasConActivos(
+fun PortafolioAsociacionCuentasConActivos(
     modifier: Modifier = Modifier,
     composiciones: List<GuardarComposicionModel>,
     cuentas: List<CuentaModel>,
-    onAsignarCuenta: (GuardarComposicionModel, CuentaModel) -> Unit,
-    onDesasignarCuenta: (GuardarComposicionModel, CuentaModel) -> Unit,
+    onAsociarCuenta: (GuardarComposicionModel, CuentaModel) -> Unit,
+    onDesasociarCuenta: (GuardarComposicionModel, CuentaModel) -> Unit,
     onAtrasClick: () -> Unit,
     onSiguienteClick: () -> Unit
 ) {
@@ -80,10 +80,10 @@ fun PortafolioAsignacionCuentasConActivos(
                     ComposicionItem(composicion = composicion,
                         cuentas = cuentas,
                         onAgregarCuenta = { cuentaSeleccionada ->
-                            onAsignarCuenta(composicion, cuentaSeleccionada)
+                            onAsociarCuenta(composicion, cuentaSeleccionada)
                         },
                         onEliminarCuenta = { cuentaSeleccionada ->
-                            onDesasignarCuenta(composicion, cuentaSeleccionada)
+                            onDesasociarCuenta(composicion, cuentaSeleccionada)
                         })
                     HorizontalDivider(
                         modifier = Modifier.padding(vertical = 8.dp),

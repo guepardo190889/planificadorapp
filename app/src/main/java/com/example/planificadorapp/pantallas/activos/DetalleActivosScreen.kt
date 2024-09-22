@@ -70,7 +70,12 @@ fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idAct
                         Column(modifier.padding(16.dp)) {
                             TextoConEtiqueta("Activo principal: ", it.nombre, "large", "medium")
                             TextoConEtiqueta("Nombre: ", it.nombre, "large", "medium")
-                            TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
+                            TextoConEtiqueta(
+                                "Descripción: ",
+                                it.descripcion ?: "",
+                                "large",
+                                "medium"
+                            )
                         }
                     }
                 }

@@ -24,7 +24,7 @@ import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.portafolios.PortafolioGuardarRequestModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
 import com.example.planificadorapp.pantallas.portafolios.PasoWizard
-import com.example.planificadorapp.pantallas.portafolios.PortafolioAsignacionCuentasConActivos
+import com.example.planificadorapp.pantallas.portafolios.PortafolioAsociacionCuentasConActivos
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDatosGenerales
 import com.example.planificadorapp.pantallas.portafolios.PortafolioDistribucionActivos
 import com.example.planificadorapp.pantallas.portafolios.ResumenPortafolio
@@ -64,6 +64,7 @@ fun ActualizarPortafolio(
 
     //Paso Tres
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
+    var cuentasDisponiblesTemporalmente by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var cuentasDisponiblesParaAsociar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
     var isDatosCargados by remember { mutableStateOf(false) }
@@ -95,36 +96,31 @@ fun ActualizarPortafolio(
 
                 //Buscar todos los activos
                 activosRepository.buscarActivos(incluirSoloActivosPadre = false) { activosEncontrados ->
-                    Log.i("EditarPortafolio", "Activos encontrados: $activosEncontrados")
                     activos = activosEncontrados ?: emptyList()
 
+                    Log.i("ActualizarPortafolio", "Activos encontrados: ${activos.size}")
+
                     if (activos.isNotEmpty()) {
-                        //Buscar cuentas
-                        cuentasRepository.buscarCuentas(
-                            excluirCuentasAsociadas = false,
-                            incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-                        ) { cuentasEncontradas ->
-                            cuentas = cuentasEncontradas ?: emptyList()
-                            Log.i("EditarPortafolio", "Cuentas encontradas: $cuentasEncontradas")
+                        composiciones = portafolioEncontrado.composiciones.map { composicion ->
+                            val activo = ActivoModel(composicion.idActivo, composicion.nombreActivo)
+                            val cuentasComposicion = mutableListOf<CuentaModel>()
 
-                            if (cuentas.isNotEmpty()) {
-                                //Armar composiciones con activos y cuentas
-                                composiciones =
-                                    portafolioEncontrado.composiciones.map { composicion ->
-                                        val activo = activos.find { it.id == composicion.idActivo }
-                                        val cuentasPortafolio =
-                                            cuentas.filter { cuenta -> cuenta.id in composicion.cuentas.map { it.id } }
-
-                                        GuardarComposicionModel(
-                                            activo = activo!!,
-                                            porcentaje = composicion.porcentaje.toFloat(),
-                                            cuentas = cuentasPortafolio
-                                        )
-                                    }
+                            composicion.cuentas.forEach { cuenta ->
+                                cuentasComposicion.add(
+                                    CuentaModel(
+                                        id = cuenta.id, nombre = cuenta.nombre, saldo = cuenta.saldo
+                                    )
+                                )
                             }
 
-                            isDatosCargados = true
+                            GuardarComposicionModel(
+                                activo = activo,
+                                porcentaje = composicion.porcentaje.toFloat(),
+                                cuentas = cuentasComposicion
+                            )
                         }
+
+                        isDatosCargados = true
                     }
                 }
             }
@@ -143,7 +139,7 @@ fun ActualizarPortafolio(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Log.i("EditarPortafolio", "Paso actual: $pasoActual")
+            Log.i("ActualizarPortafolio", "Paso actual: $pasoActual")
 
             if (isDatosCargados) {
                 when (pasoActual) {
@@ -157,9 +153,16 @@ fun ActualizarPortafolio(
                         })
 
                     PasoWizard.PASO_DOS -> {
-                        LaunchedEffect(Unit) {
-                            activosRepository.buscarActivos(false) { result ->
-                                activos = result ?: emptyList()
+                        LaunchedEffect(pasoActual) {
+                            if (activos.isEmpty()) {
+                                activosRepository.buscarActivos(false) { result ->
+                                    activos = result ?: emptyList()
+
+                                    Log.i(
+                                        "ActualizarPortafolio",
+                                        "Activos encontrados (PASO_DOS): ${activos.size}"
+                                    )
+                                }
                             }
                         }
 
@@ -167,34 +170,10 @@ fun ActualizarPortafolio(
                             activos = activos,
                             composiciones = composiciones,
                             onAgregarComposicion = { nuevaComposicion ->
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Agregando nueva composición: $nuevaComposicion"
-                                )
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Composiciones actuales (agregar): $composiciones"
-                                )
                                 composiciones = composiciones + nuevaComposicion
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Composiciones actualizadas (agregar): $composiciones"
-                                )
                             },
                             onEliminarComposicion = { composicionAEliminar ->
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Eliminando composición: $composicionAEliminar"
-                                )
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Composiciones actuales (eliminar): $composiciones"
-                                )
-                                composiciones = composiciones.filter { it != composicionAEliminar }
-                                Log.i(
-                                    "ActualizarPortafolio",
-                                    "Composiciones actualizadas (eliminar): $composiciones"
-                                )
+                                composiciones = composiciones - composicionAEliminar
                             },
                             onPorcentajeCambiado = { composicion, nuevoPorcentaje ->
                                 composiciones = composiciones.map {
@@ -212,49 +191,66 @@ fun ActualizarPortafolio(
                     }
 
                     PasoWizard.PASO_TRES -> {
-                        LaunchedEffect(Unit) {
-                            cuentasRepository.buscarCuentas(
-                                excluirCuentasAsociadas = true,
-                                incluirSoloCuentasNoAgrupadorasSinAgrupar = false
-                            ) { cuentasEncontradas ->
-                                cuentas = cuentasEncontradas ?: emptyList()
+                        LaunchedEffect(pasoActual) {
+                            if (cuentas.isEmpty()) {
+                                cuentasRepository.buscarCuentas(
+                                    excluirCuentasAsociadas = true,
+                                    incluirSoloCuentasNoAgrupadorasSinAgrupar = false
+                                ) { cuentasEncontradas ->
+                                    cuentas = cuentasEncontradas ?: emptyList()
 
-                                cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
-                                    composiciones.none { composicion ->
-                                        composicion.cuentas.any { it.id == cuenta.id }
+                                    Log.i(
+                                        "ActualizarPortafolio",
+                                        "Cuentas encontradas (PASO_TRES): ${cuentas.size}"
+                                    )
+
+                                    cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
+                                        composiciones.none { composicion ->
+                                            composicion.cuentas.any { it.id == cuenta.id }
+                                        }
                                     }
                                 }
                             }
                         }
 
-                        PortafolioAsignacionCuentasConActivos(modifier = modifier,
+                        PortafolioAsociacionCuentasConActivos(modifier = modifier,
                             composiciones = composiciones,
-                            cuentas = cuentas,
-                            onAsignarCuenta = { composicion, cuentaSeleccionada ->
+                            cuentas = cuentasDisponiblesParaAsociar,
+                            onAsociarCuenta = { composicion, cuentaSeleccionada ->
                                 composiciones = composiciones.map {
                                     if (it == composicion) {
                                         it.copy(cuentas = it.cuentas + cuentaSeleccionada)
                                     } else it
                                 }
 
+                                cuentasDisponiblesTemporalmente =
+                                    cuentasDisponiblesTemporalmente - cuentaSeleccionada
+
                                 cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
                                     composiciones.none { composicion ->
                                         composicion.cuentas.any { it.id == cuenta.id }
                                     }
-                                }
+                                }.toMutableList().apply {
+                                    addAll(cuentasDisponiblesTemporalmente)
+                                }.toList()
                             },
-                            onDesasignarCuenta = { composicion, cuentaSeleccionada ->
+                            onDesasociarCuenta = { composicion, cuentaSeleccionada ->
                                 composiciones = composiciones.map {
                                     if (it == composicion) {
                                         it.copy(cuentas = it.cuentas - cuentaSeleccionada)
                                     } else it
                                 }
 
+                                cuentasDisponiblesTemporalmente =
+                                    cuentasDisponiblesTemporalmente + cuentaSeleccionada
+
                                 cuentasDisponiblesParaAsociar = cuentas.filter { cuenta ->
                                     composiciones.none { composicion ->
                                         composicion.cuentas.any { it.id == cuenta.id }
                                     }
-                                }
+                                }.toMutableList().apply {
+                                    addAll(cuentasDisponiblesTemporalmente)
+                                }.toList()
                             },
                             onAtrasClick = {
                                 pasoActual = PasoWizard.PASO_DOS

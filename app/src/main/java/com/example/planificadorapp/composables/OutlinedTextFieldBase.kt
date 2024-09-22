@@ -55,7 +55,7 @@ fun OutlinedTextFieldBase(
                 )
             }
 
-            Row (
+            Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {

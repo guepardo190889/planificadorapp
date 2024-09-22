@@ -104,7 +104,7 @@ fun DetalleCuentasScreen(
                             "large",
                             "medium"
                         )
-                        TextoConEtiqueta("Descripción: ", it.descripcion, "large", "medium")
+                        TextoConEtiqueta("Descripción: ", it.descripcion ?: "", "large", "medium")
                         TextoConEtiqueta(
                             "Fecha de actualización: ",
                             it.fechaActualizacion?.let { FormatoFecha.formatoLargo(it) } ?: "",

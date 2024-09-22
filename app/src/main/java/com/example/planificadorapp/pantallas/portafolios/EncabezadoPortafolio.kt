@@ -12,7 +12,11 @@ import androidx.compose.ui.unit.dp
  * Composable que muestra el encabezado de las diferentes pantallas de guardado o actualización de un portafolio
  */
 @Composable
-fun EncabezadoPortafolio(modifier: Modifier = Modifier, titulo: String, descripcion: String? = null) {
+fun EncabezadoPortafolio(
+    modifier: Modifier = Modifier,
+    titulo: String,
+    descripcion: String? = null
+) {
     Text(
         text = titulo,
         style = MaterialTheme.typography.headlineSmall,

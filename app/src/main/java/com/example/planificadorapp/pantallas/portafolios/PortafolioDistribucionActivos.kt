@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -117,11 +118,14 @@ fun PortafolioDistribucionActivos(
                     .padding(vertical = 8.dp)
             ) {
                 composiciones.forEach { composicion ->
-                    ComposicionItem(
-                        composicion = composicion,
-                        onEliminarComposicion = onEliminarComposicion,
-                        onPorcentajeCambiado = onPorcentajeCambiado
-                    )
+                    key("${composicion.activo.id}-${composicion.porcentaje}") {
+                        ComposicionItem(
+                            composicion = composicion,
+                            onEliminarComposicion = onEliminarComposicion,
+                            onPorcentajeCambiado = onPorcentajeCambiado
+                        )
+                    }
+
                     HorizontalDivider()
                 }
             }
@@ -206,20 +210,17 @@ fun ComposicionItem(
                     //Cuando se borra el único número
                     if (nuevoTexto.isEmpty()) {
                         porcentajeTexto = "0"
-                    }
-                    else if(nuevoTexto.length == 1){
+                    } else if (nuevoTexto.length == 1) {
                         porcentajeTexto = nuevoTexto
-                    }
-                    else if (nuevoTexto.length == 2) {
+                    } else if (nuevoTexto.length == 2) {
                         //primer número con cursor a la izquierda (ejemplo: 01)
-                        if(nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())){
+                        if (nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
                             porcentajeTexto = nuevoTexto[0].toString()
                         }
                         //primer número con cursor a la derecha (ejemplo: 02)
-                        else if(nuevoTexto[0] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())){
+                        else if (nuevoTexto[0] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
                             porcentajeTexto = nuevoTexto[1].toString()
-                        }
-                        else {
+                        } else {
                             porcentajeTexto = nuevoTexto
                         }
                     } else if (nuevoTexto.length == 3) {
