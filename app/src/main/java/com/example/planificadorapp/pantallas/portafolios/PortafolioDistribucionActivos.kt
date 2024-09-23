@@ -118,7 +118,7 @@ fun PortafolioDistribucionActivos(
                     .padding(vertical = 8.dp)
             ) {
                 composiciones.forEach { composicion ->
-                    key("${composicion.activo.id}-${composicion.porcentaje}") {
+                    key(composicion.activo.id) {
                         ComposicionItem(
                             composicion = composicion,
                             onEliminarComposicion = onEliminarComposicion,
