@@ -32,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -92,16 +93,27 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
                     .fillMaxWidth()
                     .padding(paddingValues)
             ) {
-                LazyColumn(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .weight(1f),
-                    state = scrollState
-                ) {
-                    items(portafolios) { portafolio ->
-                        PortafolioItem(modifier, navController, portafolio)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                if(portafolios.isEmpty()) {
+                    Text(
+                        modifier = modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = "Sin portafolios",
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+                else {
+                    LazyColumn(
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .weight(1f),
+                        state = scrollState
+                    ) {
+                        items(portafolios) { portafolio ->
+                            PortafolioItem(modifier, navController, portafolio)
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                        }
                     }
                 }
                 Row(

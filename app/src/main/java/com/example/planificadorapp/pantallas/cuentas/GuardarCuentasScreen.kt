@@ -1,17 +1,13 @@
 package com.example.planificadorapp.pantallas.cuentas
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -22,6 +18,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +26,19 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
+import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
@@ -69,6 +73,10 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
     var snackbarMessage by remember { mutableStateOf("") }
     var snackbarType by remember { mutableStateOf("") }
 
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     /**
      * Valida si un nombre es válido
      */
@@ -88,23 +96,11 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
     }
 
     /**
-     * Valida si al menos una cuenta disponible para agrupar están seleccionadas
-     */
-    fun validarCuentasNoAgrupadorasSinAgrupar(): Boolean {
-        return if (isCuentaAgrupadora) {
-            cuentasNoAgrupadorasSinAgrupar.any { it.seleccionada }
-        } else {
-            true
-        }
-    }
-
-    /**
      * Valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre()
         isSaldoValido = validarSaldo()
-        isCuentasNoAgrupadorasSinAgruparValido = validarCuentasNoAgrupadorasSinAgrupar()
         return isNombreValido && isSaldoValido && isCuentasNoAgrupadorasSinAgruparValido
     }
 
@@ -114,17 +110,13 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
     fun guardarCuenta() {
         var cuentasAgrupadas = emptyList<Long>()
         if (isCuentaAgrupadora) {
-            cuentasAgrupadas = cuentasNoAgrupadorasSinAgrupar.filter { it.seleccionada }
-                .map { it.id }
+            cuentasAgrupadas =
+                cuentasNoAgrupadorasSinAgrupar.filter { it.seleccionada }.map { it.id }
         }
 
         cuentasRepository.guardarCuenta(
             GuardarCuentaRequestModel(
-                nombre,
-                descripcion,
-                saldo,
-                isCuentaAgrupadora,
-                cuentasAgrupadas
+                nombre, descripcion, saldo, isCuentaAgrupadora, cuentasAgrupadas
             )
         ) { cuentaGuardada ->
             if (cuentaGuardada != null) {
@@ -145,166 +137,158 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
         }
     }
 
-    Scaffold(
-        modifier,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState) {
-                SnackBarConColor(
-                    snackbarHostState = snackbarHostState,
-                    tipo = snackbarType
-                )
-            }
-        },
-        bottomBar = {
-            BottomAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                content = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        FloatingActionButton(
-                            modifier = Modifier.padding(16.dp),
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            onClick = {
-                                if (validarPantalla()) {
-                                    guardarCuenta()
-                                }
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.Done,
-                                contentDescription = "Guardar Cuenta"
-                            )
-                        }
-                    }
-                }
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show() // Show the keyboard
+    }
+
+    Scaffold(modifier, snackbarHost = {
+        SnackbarHost(snackbarHostState) {
+            SnackBarConColor(
+                snackbarHostState = snackbarHostState, tipo = snackbarType
             )
-        },
-        content = { paddingValues ->
-            Column(
-                modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
+        }
+    }, bottomBar = {
+        BarraNavegacionInferior(isTransaccionGuardar = true, onTransaccionClick = {
+            if (validarPantalla()) {
+                guardarCuenta()
+            }
+        })
+    }, content = { paddingValues ->
+        Column(
+            modifier
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Text(
+                    text = "¿Es una cuenta agrupadora?"
+                )
+
+                Spacer(modifier.padding(8.dp))
+
+                Text(text = "Si", color = MaterialTheme.colorScheme.onSurface)
+                RadioButton(selected = isCuentaAgrupadora, colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.primary
+                ), onClick = {
+                    isCuentaAgrupadora = !isCuentaAgrupadora
+                    cuentasRepository.buscarCuentas(
+                        excluirCuentasAsociadas = false,
+                        incluirSoloCuentasNoAgrupadorasSinAgrupar = true
+                    ) { cuentasEncontradas ->
+                        cuentasNoAgrupadorasSinAgrupar = cuentasEncontradas ?: emptyList()
+                        Log.i(
+                            "GuardarCuentasScreen",
+                            "Cuentas agrupadoras sin agrupar cargadas: ${cuentasNoAgrupadorasSinAgrupar.size}"
+                        )
+                    }
+                })
+
+                Text(text = "No", color = MaterialTheme.colorScheme.onSurface)
+                RadioButton(selected = !isCuentaAgrupadora, colors = RadioButtonDefaults.colors(
+                    selectedColor = MaterialTheme.colorScheme.primary
+                ), onClick = {
+                    isCuentaAgrupadora = !isCuentaAgrupadora
+                })
+            }
+
+            OutlinedTextField(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                value = nombre,
+                onValueChange = {
+                    isNombreValido = validarNombre()
+
+                    if (it.length <= 32) {
+                        nombre = it
+                    }
+                },
+                label = { Text("Nombre") },
+                isError = !isNombreValido,
+                singleLine = false,
+                maxLines = 2,
+                textStyle = MaterialTheme.typography.bodyLarge,
+                supportingText = {
+                    if (!isNombreValido) {
+                        Text(
+                            text = "El nombre es requerido", color = MaterialTheme.colorScheme.error
+                        )
+                    }
                     Text(
-                        text = "¿Es una cuenta agrupadora?"
+                        text = "${nombre.length}/32",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
                     )
+                },
+                colors = OutlinedTextFieldDefaults.colors(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                })
+            )
 
-                    Spacer(modifier.padding(8.dp))
+            if (!isCuentaAgrupadora) {
+                DineroTextField(modifier = modifier,
+                    etiqueta = "Saldo",
+                    mensajeError = "El saldo es requerido",
+                    saldoInicial = saldo,
+                    isSaldoValido = isSaldoValido,
+                    onSaldoChange = {
+                        saldo = it
+                    },
+                    onNextAction = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
+            }
 
-                    Text(text = "Si", color = MaterialTheme.colorScheme.onSurface)
-                    RadioButton(
-                        selected = isCuentaAgrupadora,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.colorScheme.primary
-                        ),
-                        onClick = {
-                            isCuentaAgrupadora = !isCuentaAgrupadora
-                            cuentasRepository.buscarCuentas(
-                                excluirCuentasAsociadas = false,
-                                incluirSoloCuentasNoAgrupadorasSinAgrupar = true
-                            ) { cuentasEncontradas ->
-                                cuentasNoAgrupadorasSinAgrupar = cuentasEncontradas ?: emptyList()
-                                Log.i(
-                                    "GuardarCuentasScreen",
-                                    "Cuentas agrupadoras sin agrupar cargadas: ${cuentasNoAgrupadorasSinAgrupar.size}"
-                                )
-                            }
-                        }
+            OutlinedTextField(value = descripcion,
+                onValueChange = {
+                    if (it.length <= 128) {
+                        descripcion = it
+                    }
+                },
+                label = { Text("Descripción") },
+                modifier = modifier.fillMaxWidth(),
+                singleLine = false,
+                maxLines = 3,
+                textStyle = MaterialTheme.typography.bodyLarge,
+                supportingText = {
+                    Text(
+                        text = "${descripcion.length}/128",
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.End
                     )
+                },
+                colors = OutlinedTextFieldDefaults.colors(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(onNext = {
+                    focusManager.clearFocus()
+                })
+            )
 
-                    Text(text = "No", color = MaterialTheme.colorScheme.onSurface)
-                    RadioButton(
-                        selected = !isCuentaAgrupadora,
-                        colors = RadioButtonDefaults.colors(
-                            selectedColor = MaterialTheme.colorScheme.primary
-                        ),
-                        onClick = {
-                            isCuentaAgrupadora = !isCuentaAgrupadora
-                        }
+            if (isCuentaAgrupadora) {
+                if (cuentasNoAgrupadorasSinAgrupar.isEmpty()) {
+                    Text(
+                        modifier = modifier
+                            .padding(16.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = "Sin cuentas disponibles para agrupar",
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                }
-
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = {
-                        isNombreValido = validarNombre()
-
-                        if (it.length <= 32) {
-                            nombre = it
-                        }
-                    },
-                    label = { Text("Nombre") },
-                    isError = !isNombreValido,
-                    modifier = modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 2,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        if (!isNombreValido) {
-                            Text(
-                                text = "El nombre es requerido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                        Text(
-                            text = "${nombre.length}/32",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
-
-                if (!isCuentaAgrupadora) {
-                    DineroTextField(
-                        modifier = modifier,
-                        etiqueta = "Saldo",
-                        mensajeError = "El saldo es requerido",
-                        saldoInicial = saldo,
-                        isSaldoValido = isSaldoValido,
-                        onSaldoChange = {
-                            saldo = it
-                        }
-                    )
-                }
-
-                OutlinedTextField(
-                    value = descripcion,
-                    onValueChange = {
-                        if (it.length <= 128) {
-                            descripcion = it
-                        }
-                    },
-                    label = { Text("Descripción") },
-                    modifier = modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 3,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        Text(
-                            text = "${descripcion.length}/128",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
-
-                if (isCuentaAgrupadora) {
+                } else {
                     Text(
                         text = "Selecciona las cuenta que deseas agrupar: "
                     )
-                    CuentasListConCheckbox(
-                        modifier,
+                    CuentasListConCheckbox(modifier,
                         cuentasNoAgrupadorasSinAgrupar,
                         onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
                             isCuentasNoAgrupadorasSinAgruparValido = true
@@ -317,8 +301,7 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                                         cuenta
                                     }
                                 }
-                        }
-                    )
+                        })
 
                     if (!isCuentasNoAgrupadorasSinAgruparValido) {
                         Text(
@@ -331,5 +314,5 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
                 }
             }
         }
-    )
+    })
 }

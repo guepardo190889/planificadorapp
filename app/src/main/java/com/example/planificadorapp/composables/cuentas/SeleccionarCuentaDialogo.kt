@@ -26,28 +26,34 @@ fun SeleccionarCuentaDialogo(
     onCuentaSeleccionada: (CuentaModel) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismissRequest,
-        confirmButton = {
-            TextButton(onClick = onDismissRequest) {
-                Text(
-                    text = "Cerrar",
-                    color = MaterialTheme.colorScheme.primary,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        },
-        text = {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "Selecciona una Cuenta",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+    AlertDialog(onDismissRequest = onDismissRequest, confirmButton = {
+        TextButton(onClick = onDismissRequest) {
+            Text(
+                text = "Cerrar",
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
+    }, text = {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Selecciona una Cuenta",
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
 
+            if (cuentas.isEmpty()) {
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    text = "Sin cuentas",
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            } else {
                 cuentas.forEachIndexed { indice, cuenta ->
                     val colorTexto = if (cuenta.isAgrupadora) {
                         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
@@ -55,16 +61,14 @@ fun SeleccionarCuentaDialogo(
                         MaterialTheme.colorScheme.onSurface
                     }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = if (cuenta.isHija) 16.dp else 0.dp)
-                            .clickable(enabled = !cuenta.isAgrupadora) {
-                                onCuentaSeleccionada(cuenta)
-                            }
-                            .padding(vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    Row(modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = if (cuenta.isHija) 16.dp else 0.dp)
+                        .clickable(enabled = !cuenta.isAgrupadora) {
+                            onCuentaSeleccionada(cuenta)
+                        }
+                        .padding(vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = cuenta.nombre,
                             color = colorTexto,
@@ -83,5 +87,5 @@ fun SeleccionarCuentaDialogo(
                 }
             }
         }
-    )
+    })
 }

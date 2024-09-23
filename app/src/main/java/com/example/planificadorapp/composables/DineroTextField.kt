@@ -2,6 +2,7 @@ package com.example.planificadorapp.composables
 
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -15,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.example.planificadorapp.utilerias.FormatoMonto
@@ -34,10 +37,12 @@ fun DineroTextField(
     mensajeError: String,
     saldoInicial: BigDecimal?,
     isSaldoValido: Boolean,
-    onSaldoChange: (BigDecimal) -> Unit
+    onSaldoChange: (BigDecimal) -> Unit,
+    onNextAction: (() -> Unit)? = null
 ) {
     var isCapturaEntera by remember { mutableStateOf(true) }
     var monto by remember { mutableStateOf(saldoInicial ?: BigDecimal.ZERO) }
+    val focusManager = LocalFocusManager.current
 
     // Actualizar 'monto' si 'saldoInicial' cambia
     LaunchedEffect(saldoInicial) {
@@ -50,12 +55,6 @@ fun DineroTextField(
     }
 
     OutlinedTextField(
-        value = FormatoMonto.formatoSinSimbolo(monto),
-        onValueChange = { /* Ignoramos el cambio de valor aquí */ },
-        label = { Text(etiqueta) },
-        leadingIcon = { Text("$") },
-        isError = !isSaldoValido,
-        textStyle = MaterialTheme.typography.bodyLarge,
         modifier = modifier
             .fillMaxWidth()
             .onKeyEvent { event ->
@@ -70,7 +69,12 @@ fun DineroTextField(
 
                 true
             },
-        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+        value = FormatoMonto.formatoSinSimbolo(monto),
+        onValueChange = { /* Ignoramos el cambio de valor aquí */ },
+        label = { Text(etiqueta) },
+        leadingIcon = { Text("$") },
+        isError = !isSaldoValido,
+        textStyle = MaterialTheme.typography.bodyLarge,
         supportingText = {
             if (!isSaldoValido) {
                 Text(
@@ -82,7 +86,20 @@ fun DineroTextField(
                 )
             }
         },
-        colors = OutlinedTextFieldDefaults.colors()
+        colors = OutlinedTextFieldDefaults.colors(),
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Number,
+            imeAction = if (onNextAction != null) ImeAction.Next else ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(onDone = {
+            if (onNextAction == null) {
+                focusManager.clearFocus()
+            }
+        }, onNext = {
+            if (onNextAction != null) {
+                onNextAction()
+            }
+        })
     )
 }
 

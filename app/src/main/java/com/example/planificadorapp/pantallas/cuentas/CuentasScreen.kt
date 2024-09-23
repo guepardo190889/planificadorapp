@@ -1,11 +1,6 @@
 package com.example.planificadorapp.pantallas.cuentas
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,9 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -39,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
+import com.example.planificadorapp.composables.FloatingActionButtonGuardar
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
@@ -70,20 +63,9 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
     }
 
     Scaffold(modifier = modifier.fillMaxSize(), floatingActionButton = {
-        AnimatedVisibility(
-            visible = isFabVisible,
-            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-        ) {
-            FloatingActionButton(
-                onClick = { navController.navigate("cuentas/guardar") },
-                modifier = Modifier.padding(16.dp),
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Guardar Cuenta")
-            }
-        }
+        FloatingActionButtonGuardar(isVisible = isFabVisible,
+            tooltip = "Guardar una nueva cuenta",
+            onClick = { navController.navigate("cuentas/guardar") })
     }, content = { paddingValues ->
         Column(
             modifier
