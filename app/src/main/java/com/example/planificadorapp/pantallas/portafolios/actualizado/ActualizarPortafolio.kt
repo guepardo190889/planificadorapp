@@ -174,6 +174,8 @@ fun ActualizarPortafolio(
                             },
                             onEliminarComposicion = { composicionAEliminar ->
                                 composiciones = composiciones - composicionAEliminar
+
+                                cuentasDisponiblesTemporalmente = cuentasDisponiblesTemporalmente + composicionAEliminar.cuentas
                             },
                             onPorcentajeCambiado = { composicion, nuevoPorcentaje ->
                                 composiciones = composiciones.map {
@@ -208,7 +210,9 @@ fun ActualizarPortafolio(
                                         composiciones.none { composicion ->
                                             composicion.cuentas.any { it.id == cuenta.id }
                                         }
-                                    }
+                                    }.toMutableList().apply {
+                                        addAll(cuentasDisponiblesTemporalmente)
+                                    }.toList()
                                 }
                             }
                         }
