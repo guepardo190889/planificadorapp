@@ -14,7 +14,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,13 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DineroTextField
-import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
+import com.example.planificadorapp.composables.snackbar.SnackBarBase
+import com.example.planificadorapp.composables.snackbar.SnackBarManager
+import com.example.planificadorapp.composables.snackbar.SnackBarTipo
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 /**
@@ -50,8 +50,7 @@ import java.math.BigDecimal
  */
 @Composable
 fun GuardarCuentasScreen(
-    modifier: Modifier,
-    navController: NavController
+    modifier: Modifier, navController: NavController
 ) {
     val cuentasRepository = remember { CuentasRepository() }
 
@@ -71,8 +70,9 @@ fun GuardarCuentasScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf("") }
-    var snackbarType by remember { mutableStateOf("") }
+    val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
+    //var snackbarMessage by remember { mutableStateOf("") }
+    //var snackbarType by remember { mutableStateOf("") }
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -121,34 +121,24 @@ fun GuardarCuentasScreen(
             )
         ) { cuentaGuardada ->
             if (cuentaGuardada != null) {
-                snackbarMessage = "Cuenta guardada exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al guardar la cuenta"
-                snackbarType = "error"
-            }
-
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
-
-                if (cuentaGuardada != null) {
+                snackBarManager.mostrar("Cuenta guardada exitosamente", SnackBarTipo.SUCCESS) {
                     navController.navigate("cuentas")
                 }
+            } else {
+                snackBarManager.mostrar("Error al guardar la cuenta", SnackBarTipo.ERROR)
             }
         }
     }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        keyboardController?.show() // Show the keyboard
+        keyboardController?.show()
     }
 
     Scaffold(modifier, snackbarHost = {
-        SnackbarHost(snackbarHostState) {
-            SnackBarConColor(
-                snackbarHostState = snackbarHostState, tipo = snackbarType
-            )
-        }
+        SnackBarBase(
+            snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+        )
     }, bottomBar = {
         BarraNavegacionInferior(isTransaccionGuardar = true, onTransaccionClick = {
             if (validarPantalla()) {
@@ -215,7 +205,8 @@ fun GuardarCuentasScreen(
                 supportingText = {
                     if (!isNombreValido) {
                         Text(
-                            text = "El nombre es requerido", color = MaterialTheme.colorScheme.error
+                            text = "El nombre es requerido",
+                            color = MaterialTheme.colorScheme.error
                         )
                     }
                     Text(
