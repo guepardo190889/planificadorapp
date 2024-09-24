@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +69,8 @@ fun DetalleCuentasScreen(
     }
 
     Scaffold(modifier = modifier.fillMaxSize(), floatingActionButton = {
-        FloatingActionButtonActualizar(isVisible = isFabVisible,
+        FloatingActionButtonActualizar(
+            isVisible = isFabVisible,
             tooltip = "Actualizar la cuenta",
             onClick = {
                 navController.navigate("cuentas/editar/${idCuenta}")
@@ -80,19 +83,32 @@ fun DetalleCuentasScreen(
                 .verticalScroll(scrollState)
         ) {
             cuenta?.let {
+                val backgroundColor = if (isCuentaAgrupadora) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.surface
+                }
+
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
                     elevation = CardDefaults.cardElevation(4.dp),
                     colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
+                        containerColor = backgroundColor,
                         contentColor = MaterialTheme.colorScheme.onSurface
                     )
                 ) {
                     Column(
                         modifier = modifier.padding(16.dp)
                     ) {
+                        if (isCuentaAgrupadora) {
+                            AssistChip(onClick = { },
+                                label = { Text("Agrupadora") },
+                                colors = AssistChipDefaults.assistChipColors(),
+                                modifier = Modifier.padding(bottom = 8.dp)
+                            )
+                        }
                         if (it.padre != null) {
                             TextoConEtiqueta(
                                 "Cuenta Agrupadora: ", it.padre.nombre, "large", "medium"

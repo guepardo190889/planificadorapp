@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -32,14 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DineroTextField
+import com.example.planificadorapp.composables.OutlinedTextFieldBase
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
@@ -77,7 +71,8 @@ fun GuardarCuentasScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
 
-    val focusRequester = remember { FocusRequester() }
+    val nombreFocusRequester = remember { FocusRequester() }
+    val descripcionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -141,7 +136,7 @@ fun GuardarCuentasScreen(
     }
 
     LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+        nombreFocusRequester.requestFocus()
         keyboardController?.show()
     }
 
@@ -198,11 +193,13 @@ fun GuardarCuentasScreen(
                     })
                 }
 
-                OutlinedTextField(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
+                OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
                     value = nombre,
+                    label = "Nombre",
+                    maxLength = 32,
+                    isError = !isNombreValido,
+                    errorMessage = "El nombre es requerido",
+                    focusRequester = nombreFocusRequester,
                     onValueChange = {
                         isNombreValido = validarNombre()
 
@@ -210,33 +207,9 @@ fun GuardarCuentasScreen(
                             nombre = it
                         }
                     },
-                    label = { Text("Nombre") },
-                    isError = !isNombreValido,
-                    singleLine = false,
-                    maxLines = 2,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        if (!isNombreValido) {
-                            Text(
-                                text = "El nombre es requerido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                        Text(
-                            text = "${nombre.length}/32",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
+                    onNextAction = {
                         focusManager.moveFocus(FocusDirection.Down)
                     })
-                )
 
                 if (!isCuentaAgrupadora) {
                     DineroTextField(modifier = modifier,
@@ -252,33 +225,18 @@ fun GuardarCuentasScreen(
                         })
                 }
 
-                OutlinedTextField(value = descripcion,
+                OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
+                    value = descripcion,
+                    label = "Descripción",
+                    maxLength = 128,
+                    singleLine = false,
+                    maxLines = 3,
+                    focusRequester = descripcionFocusRequester,
                     onValueChange = {
                         if (it.length <= 128) {
                             descripcion = it
                         }
-                    },
-                    label = { Text("Descripción") },
-                    modifier = modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 3,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        Text(
-                            text = "${descripcion.length}/128",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors(),
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(onNext = {
-                        focusManager.clearFocus()
                     })
-                )
 
                 if (isCuentaAgrupadora) {
                     if (cuentasNoAgrupadorasSinAgrupar.isEmpty()) {

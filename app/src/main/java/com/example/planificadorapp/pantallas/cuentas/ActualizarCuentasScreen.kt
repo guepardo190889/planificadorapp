@@ -1,21 +1,18 @@
 package com.example.planificadorapp.pantallas.cuentas
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,13 +28,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DineroTextField
-import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.TextoConEtiqueta
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
+import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
+import com.example.planificadorapp.composables.snackbar.SnackBarBase
+import com.example.planificadorapp.composables.snackbar.SnackBarManager
+import com.example.planificadorapp.composables.snackbar.SnackBarTipo
 import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
 /**
@@ -51,11 +50,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
     var cuentasNoAgrupadorasSinAgrupar by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var cuentasMezcladas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
 
-    var cuenta by remember {
-        mutableStateOf<CuentaModel?>(
-            null
-        )
-    }
+    var cuenta by remember { mutableStateOf<CuentaModel?>(null) }
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
@@ -68,8 +63,9 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf("") }
-    var snackbarType by remember { mutableStateOf("") }
+    val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
+
+    var isActualizando by remember { mutableStateOf(false) }
 
     /**
      * Valida si un nombre es válido
@@ -155,165 +151,156 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
      * Actualiza la cuenta en la base de datos
      */
     fun actualizarCuenta() {
+        isActualizando = true
+
         var cuentasParaAgrupar = emptyList<Long>()
         if (isCuentaAgrupadora) {
-            cuentasParaAgrupar = cuentasMezcladas.filter { it.seleccionada }
-                .map { it.id }
+            cuentasParaAgrupar = cuentasMezcladas.filter { it.seleccionada }.map { it.id }
         }
 
         cuentasRepository.actualizarCuenta(
             idCuenta, ActualizarCuentaRequestModel(nombre, descripcion, saldo, cuentasParaAgrupar)
-        ) {
-            if (it != null) {
-                snackbarMessage = "Cuenta actualizada exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al actualizar la cuenta"
-            }
-
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
-
-                if (it != null) {
+        ) { cuentaActualizada ->
+            if (cuentaActualizada != null) {
+                snackBarManager.mostrar("Cuenta actualizada exitosamente", SnackBarTipo.SUCCESS) {
+                    isActualizando = false
                     navController.navigate("cuentas")
+                }
+            } else {
+                snackBarManager.mostrar("Error al actualizar la cuenta", SnackBarTipo.SUCCESS) {
+                    isActualizando = false
                 }
             }
         }
     }
 
     Scaffold(modifier, snackbarHost = {
-        SnackbarHost(snackbarHostState) {
-            SnackBarConColor(
-                snackbarHostState = snackbarHostState, tipo = snackbarType
-            )
-        }
+        SnackBarBase(
+            snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+        )
     }, bottomBar = {
-        BottomAppBar(modifier = Modifier.fillMaxWidth(), content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FloatingActionButton(modifier = Modifier.padding(16.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    onClick = {
-                        if (validarPantalla()) {
-                            actualizarCuenta()
-                        }
-                    }) {
-                    Icon(
-                        Icons.Default.Done, contentDescription = "Actualizar Cuenta"
-                    )
-                }
+        BarraNavegacionInferior(isTransaccionGuardar = false, onTransaccionClick = {
+            if (validarPantalla()) {
+                actualizarCuenta()
             }
         })
     }, content = { paddingValues ->
-        Column(
-            modifier
-                .padding(paddingValues)
-                .padding(16.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            TextoConEtiqueta(
-                etiqueta = "¿Es Cuenta Agrupadora?: ",
-                texto = if (isCuentaAgrupadora) "Si" else "No",
-                styleLabel = "medium",
-                styleBody = "medium"
-            )
+            Column(
+                modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = "¿Es Cuenta Agrupadora?: ${if (isCuentaAgrupadora) "Si" else "No"}",
+                    style = MaterialTheme.typography.titleMedium
+                )
 
-            OutlinedTextField(
-                value = nombre,
-                onValueChange = {
-                    isNombreValido = validarNombre()
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = {
+                        isNombreValido = validarNombre()
 
-                    if (it.length <= 32) {
-                        nombre = it
-                    }
-                },
-                label = { Text("Nombre") },
-                isError = !isNombreValido,
-                modifier = modifier.fillMaxWidth(),
-                singleLine = false,
-                maxLines = 2,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                supportingText = {
-                    if (!isNombreValido) {
+                        if (it.length <= 32) {
+                            nombre = it
+                        }
+                    },
+                    label = { Text("Nombre") },
+                    isError = !isNombreValido,
+                    modifier = modifier.fillMaxWidth(),
+                    singleLine = false,
+                    maxLines = 2,
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    supportingText = {
+                        if (!isNombreValido) {
+                            Text(
+                                text = "El nombre es requerido",
+                                color = MaterialTheme.colorScheme.error
+                            )
+                        }
                         Text(
-                            text = "El nombre es requerido",
-                            color = MaterialTheme.colorScheme.error
+                            text = "${nombre.length}/32",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors()
+                )
+
+                if (!isCuentaAgrupadora) {
+                    DineroTextField(modifier = modifier,
+                        saldoInicial = saldo,
+                        etiqueta = "Saldo",
+                        mensajeError = "El saldo es requerido",
+                        isSaldoValido = isSaldoValido,
+                        onSaldoChange = {
+                            saldo = it
+                        })
+                }
+
+                OutlinedTextField(value = descripcion,
+                    onValueChange = {
+                        if (it.length <= 128) {
+                            descripcion = it
+                        }
+                    },
+                    label = { Text("Descripción") },
+                    modifier = modifier.fillMaxWidth(),
+                    singleLine = false,
+                    maxLines = 3,
+                    textStyle = MaterialTheme.typography.bodyLarge,
+                    supportingText = {
+                        Text(
+                            text = "${descripcion.length}/128",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.End
+                        )
+                    },
+                    colors = OutlinedTextFieldDefaults.colors()
+                )
+
+                if (isCuentaAgrupadora) {
+                    Text(
+                        text = "Cuentas Agrupadas: "
+                    )
+
+                    CuentasListConCheckbox(modifier,
+                        cuentasMezcladas,
+                        onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
+                            isCuentasMezcladasValido = true
+                            cuentasMezcladas = cuentasMezcladas.map { cuenta ->
+                                if (cuenta.id == cuentaSeleccionada.id) {
+                                    cuenta.copy(seleccionada = isSeleccionada)
+                                } else {
+                                    cuenta
+                                }
+                            }
+                        })
+
+                    if (!isCuentasMezcladasValido) {
+                        Text(
+                            text = "Debes seleccionar al menos una cuenta para agrupar",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(top = 8.dp)
                         )
                     }
-                    Text(
-                        text = "${nombre.length}/32",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors()
-            )
-
-            if (!isCuentaAgrupadora) {
-                DineroTextField(modifier = modifier,
-                    saldoInicial = saldo,
-                    etiqueta = "Saldo",
-                    mensajeError = "El saldo es requerido",
-                    isSaldoValido = isSaldoValido,
-                    onSaldoChange = {
-                        saldo = it
-                    })
+                }
             }
 
-            OutlinedTextField(
-                value = descripcion,
-                onValueChange = {
-                    if (it.length <= 128) {
-                        descripcion = it
-                    }
-                },
-                label = { Text("Descripción") },
-                modifier = modifier.fillMaxWidth(),
-                singleLine = false,
-                maxLines = 3,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                supportingText = {
-                    Text(
-                        text = "${descripcion.length}/128",
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                },
-                colors = OutlinedTextFieldDefaults.colors()
-            )
-
-            if (isCuentaAgrupadora) {
-                Text(
-                    text = "Cuentas Agrupadas: "
-                )
-
-                CuentasListConCheckbox(
-                    modifier,
-                    cuentasMezcladas,
-                    onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
-                        isCuentasMezcladasValido = true
-                        cuentasMezcladas = cuentasMezcladas.map { cuenta ->
-                            if (cuenta.id == cuentaSeleccionada.id) {
-                                cuenta.copy(seleccionada = isSeleccionada)
-                            } else {
-                                cuenta
-                            }
-                        }
-                    }
-                )
-
-                if (!isCuentasMezcladasValido) {
-                    Text(
-                        text = "Debes seleccionar al menos una cuenta para agrupar",
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 8.dp)
-                    )
+            // Si está guardando, mostramos un indicador de carga que bloquea toda la pantalla
+            if (isActualizando) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable(enabled = false) {}, contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
                 }
             }
         }
