@@ -49,7 +49,10 @@ import java.math.BigDecimal
  * Composable que representa la pantalla de guardado de una cuenta
  */
 @Composable
-fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
+fun GuardarCuentasScreen(
+    modifier: Modifier,
+    navController: NavController
+) {
     val cuentasRepository = remember { CuentasRepository() }
 
     var cuentasNoAgrupadorasSinAgrupar by remember {
@@ -57,13 +60,11 @@ fun GuardarCuentasScreen(modifier: Modifier, navController: NavController) {
             emptyList()
         )
     }
-
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var saldo by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
 
     var isCuentaAgrupadora by remember { mutableStateOf(false) }
-
     var isNombreValido by remember { mutableStateOf(true) }
     var isSaldoValido by remember { mutableStateOf(true) }
     var isCuentasNoAgrupadorasSinAgruparValido by remember { mutableStateOf(true) }

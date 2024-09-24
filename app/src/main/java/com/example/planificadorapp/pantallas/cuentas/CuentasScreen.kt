@@ -42,7 +42,10 @@ import java.math.BigDecimal
  * Composable que representa la pantalla de cuentas
  */
 @Composable
-fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
+fun Cuentas(
+    modifier: Modifier = Modifier,
+    navController: NavController
+) {
     val cuentaRepository = CuentasRepository()
     var cuentas by remember { mutableStateOf<List<CuentaModel>>(emptyList()) }
     var totalSaldos by remember { mutableStateOf(BigDecimal.ZERO) }
@@ -78,6 +81,7 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                         .padding(16.dp)
                         .align(Alignment.CenterHorizontally),
                     text = "Sin cuentas",
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             } else {
@@ -90,22 +94,24 @@ fun Cuentas(modifier: Modifier = Modifier, navController: NavController) {
                 ) {
                     items(cuentas) { cuenta ->
                         CuentaItem(modifier, navController, cuenta)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
+
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "Total: ${FormatoMonto.formato(totalSaldos)}",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 }
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "Total: ${FormatoMonto.formato(totalSaldos)}",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
             }
         }
     })
@@ -122,34 +128,37 @@ fun CuentaItem(
 
     ListItem(modifier = modifier
         .padding(start = paddingStart)
-        .clickable { navController.navigate("cuentas/detalle/${cuenta.id}") },
-        headlineContent = {
-            Text(
-                text = cuenta.nombre,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
+        .clickable {
+            navController.navigate("cuentas/detalle/${cuenta.id}")
+        }, headlineContent = {
+        Text(
+            text = cuenta.nombre, style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
+            ), color = MaterialTheme.colorScheme.onSurface
+        )
+    }, supportingContent = {
+        Text(
+            text = ("Última actualización: " + cuenta.fechaActualizacion?.let {
+                FormatoFecha.formato(
+                    it
                 )
-            )
-        },
-        supportingContent = {
-            Text(text = cuenta.fechaActualizacion?.let { FormatoFecha.formato(it) } ?: "",
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-        },
-        leadingContent = {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_account_balance_24),
-                contentDescription = "Icono de Cuenta",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-        trailingContent = {
-            Text(
-                text = FormatoMonto.formato(cuenta.saldo),
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
-                )
-            )
-        })
+            }) ?: "",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }, leadingContent = {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_account_balance_24),
+            contentDescription = "Icono de Cuenta",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }, trailingContent = {
+        Text(
+            text = FormatoMonto.formato(cuenta.saldo),
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = if (cuenta.agrupadora) FontWeight.Bold else FontWeight.Normal
+            ),
+            color = MaterialTheme.colorScheme.onSurface
+        )
+    })
 }
