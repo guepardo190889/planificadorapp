@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -24,11 +22,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DineroTextField
-import com.example.planificadorapp.composables.TextoConEtiqueta
+import com.example.planificadorapp.composables.OutlinedTextFieldBase
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
@@ -59,11 +60,15 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
 
     var isNombreValido by remember { mutableStateOf(true) }
     var isSaldoValido by remember { mutableStateOf(true) }
-    var isCuentasMezcladasValido by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
+
+    val nombreFocusRequester = remember { FocusRequester() }
+    val descripcionFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var isActualizando by remember { mutableStateOf(false) }
 
@@ -82,24 +87,12 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
     }
 
     /**
-     * Valida si al menos una cuenta disponible para agrupar están seleccionadas
-     */
-    fun validarCuentasMezcladas(): Boolean {
-        return if (isCuentaAgrupadora) {
-            cuentasMezcladas.any { it.seleccionada }
-        } else {
-            true
-        }
-    }
-
-    /**
      * Valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre()
         isSaldoValido = validarSaldo()
-        isCuentasMezcladasValido = validarCuentasMezcladas()
-        return isNombreValido && isSaldoValido && isCuentasMezcladasValido
+        return isNombreValido && isSaldoValido
     }
 
     LaunchedEffect(Unit) {
@@ -143,6 +136,9 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                         }
                     }
                 }
+
+                nombreFocusRequester.requestFocus()
+                keyboardController?.show()
             }
         }
     }
@@ -198,8 +194,13 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                     style = MaterialTheme.typography.titleMedium
                 )
 
-                OutlinedTextField(
+                OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
                     value = nombre,
+                    label = "Nombre",
+                    maxLength = 32,
+                    isError = !isNombreValido,
+                    errorMessage = "El nombre es requerido",
+                    focusRequester = nombreFocusRequester,
                     onValueChange = {
                         isNombreValido = validarNombre()
 
@@ -207,28 +208,9 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                             nombre = it
                         }
                     },
-                    label = { Text("Nombre") },
-                    isError = !isNombreValido,
-                    modifier = modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 2,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        if (!isNombreValido) {
-                            Text(
-                                text = "El nombre es requerido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                        Text(
-                            text = "${nombre.length}/32",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
+                    onNextAction = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
 
                 if (!isCuentaAgrupadora) {
                     DineroTextField(modifier = modifier,
@@ -241,53 +223,44 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                         })
                 }
 
-                OutlinedTextField(value = descripcion,
+                OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
+                    value = descripcion,
+                    label = "Descripción",
+                    maxLength = 128,
+                    singleLine = false,
+                    maxLines = 3,
+                    focusRequester = descripcionFocusRequester,
                     onValueChange = {
                         if (it.length <= 128) {
                             descripcion = it
                         }
-                    },
-                    label = { Text("Descripción") },
-                    modifier = modifier.fillMaxWidth(),
-                    singleLine = false,
-                    maxLines = 3,
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    supportingText = {
-                        Text(
-                            text = "${descripcion.length}/128",
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
+                    })
 
                 if (isCuentaAgrupadora) {
-                    Text(
-                        text = "Cuentas Agrupadas: "
-                    )
-
-                    CuentasListConCheckbox(modifier,
-                        cuentasMezcladas,
-                        onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
-                            isCuentasMezcladasValido = true
-                            cuentasMezcladas = cuentasMezcladas.map { cuenta ->
-                                if (cuenta.id == cuentaSeleccionada.id) {
-                                    cuenta.copy(seleccionada = isSeleccionada)
-                                } else {
-                                    cuenta
-                                }
-                            }
-                        })
-
-                    if (!isCuentasMezcladasValido) {
+                    if (cuentasMezcladas.isEmpty()) {
                         Text(
-                            text = "Debes seleccionar al menos una cuenta para agrupar",
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(top = 8.dp)
+                            modifier = modifier
+                                .padding(16.dp)
+                                .align(Alignment.CenterHorizontally),
+                            text = "Sin cuentas disponibles para agrupar",
+                            color = MaterialTheme.colorScheme.onBackground
                         )
+                    } else {
+                        Text(
+                            text = "Cuentas Agrupadas: "
+                        )
+
+                        CuentasListConCheckbox(modifier,
+                            cuentasMezcladas,
+                            onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
+                                cuentasMezcladas = cuentasMezcladas.map { cuenta ->
+                                    if (cuenta.id == cuentaSeleccionada.id) {
+                                        cuenta.copy(seleccionada = isSeleccionada)
+                                    } else {
+                                        cuenta
+                                    }
+                                }
+                            })
                     }
                 }
             }

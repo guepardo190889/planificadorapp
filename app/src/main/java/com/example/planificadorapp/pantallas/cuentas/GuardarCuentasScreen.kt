@@ -65,7 +65,6 @@ fun GuardarCuentasScreen(
     var isCuentaAgrupadora by remember { mutableStateOf(false) }
     var isNombreValido by remember { mutableStateOf(true) }
     var isSaldoValido by remember { mutableStateOf(true) }
-    var isCuentasNoAgrupadorasSinAgruparValido by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -102,7 +101,7 @@ fun GuardarCuentasScreen(
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre()
         isSaldoValido = validarSaldo()
-        return isNombreValido && isSaldoValido && isCuentasNoAgrupadorasSinAgruparValido
+        return isNombreValido && isSaldoValido
     }
 
     /**
@@ -236,7 +235,8 @@ fun GuardarCuentasScreen(
                         if (it.length <= 128) {
                             descripcion = it
                         }
-                    })
+                    }
+                )
 
                 if (isCuentaAgrupadora) {
                     if (cuentasNoAgrupadorasSinAgrupar.isEmpty()) {
@@ -249,13 +249,11 @@ fun GuardarCuentasScreen(
                         )
                     } else {
                         Text(
-                            text = "Selecciona las cuenta que deseas agrupar: "
+                            text = "Selecciona las cuentas que deseas agrupar: "
                         )
                         CuentasListConCheckbox(modifier,
                             cuentasNoAgrupadorasSinAgrupar,
                             onCuentaChequeada = { cuentaSeleccionada, isSeleccionada ->
-                                isCuentasNoAgrupadorasSinAgruparValido = true
-
                                 cuentasNoAgrupadorasSinAgrupar =
                                     cuentasNoAgrupadorasSinAgrupar.map { cuenta ->
                                         if (cuenta.id == cuentaSeleccionada.id) {
@@ -264,16 +262,8 @@ fun GuardarCuentasScreen(
                                             cuenta
                                         }
                                     }
-                            })
-
-                        if (!isCuentasNoAgrupadorasSinAgruparValido) {
-                            Text(
-                                text = "Debes seleccionar al menos una cuenta para agrupar",
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(top = 8.dp)
-                            )
-                        }
+                            }
+                        )
                     }
                 }
             }

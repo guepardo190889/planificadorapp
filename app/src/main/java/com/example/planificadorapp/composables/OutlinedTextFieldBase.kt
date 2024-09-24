@@ -85,10 +85,13 @@ fun OutlinedTextFieldBase(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween
+                modifier =
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
             ) {
                 supportingText?.let {
                     Text(
+                        modifier = Modifier.weight(1f),
                         text = it,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
