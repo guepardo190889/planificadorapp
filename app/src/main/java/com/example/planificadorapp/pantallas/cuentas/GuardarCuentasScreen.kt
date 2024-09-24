@@ -235,8 +235,7 @@ fun GuardarCuentasScreen(
                         if (it.length <= 128) {
                             descripcion = it
                         }
-                    }
-                )
+                    })
 
                 if (isCuentaAgrupadora) {
                     if (cuentasNoAgrupadorasSinAgrupar.isEmpty()) {
@@ -262,8 +261,7 @@ fun GuardarCuentasScreen(
                                             cuenta
                                         }
                                     }
-                            }
-                        )
+                            })
                     }
                 }
             }

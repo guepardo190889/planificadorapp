@@ -67,6 +67,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
 
     val nombreFocusRequester = remember { FocusRequester() }
     val descripcionFocusRequester = remember { FocusRequester() }
+    val dineroFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -91,7 +92,11 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
      */
     fun validarPantalla(): Boolean {
         isNombreValido = validarNombre()
-        isSaldoValido = validarSaldo()
+
+        if (!isCuentaAgrupadora) {
+            isSaldoValido = validarSaldo()
+        }
+
         return isNombreValido && isSaldoValido
     }
 
@@ -126,8 +131,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                                 "Cuentas agrupadas: ${cuentasAgrupadas.size}"
                             )
 
-                            cuentasMezcladas += cuentasAgrupadas
-                            cuentasMezcladas += cuentasNoAgrupadorasSinAgrupar
+                            cuentasMezcladas += cuentasAgrupadas + cuentasNoAgrupadorasSinAgrupar
 
                             Log.i(
                                 "ActualizarCuentasScreen",
@@ -218,8 +222,12 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                         etiqueta = "Saldo",
                         mensajeError = "El saldo es requerido",
                         isSaldoValido = isSaldoValido,
+                        focusRequester = dineroFocusRequester,
                         onSaldoChange = {
                             saldo = it
+                        },
+                        onNextAction = {
+                            focusManager.moveFocus(FocusDirection.Down)
                         })
                 }
 

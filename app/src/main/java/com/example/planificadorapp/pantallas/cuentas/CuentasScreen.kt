@@ -138,7 +138,7 @@ fun CuentaItem(
         )
     }, supportingContent = {
         Text(
-            text = ("Última actualización: " + cuenta.fechaActualizacion?.let {
+            text = ("Actualización: " + cuenta.fechaActualizacion?.let {
                 FormatoFecha.formato(
                     it
                 )

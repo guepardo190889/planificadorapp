@@ -1,8 +1,7 @@
 package com.example.planificadorapp.composables.cuentas
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
@@ -19,11 +18,11 @@ import com.example.planificadorapp.utilerias.FormatoMonto
 fun CuentasListSimple(
     modifier: Modifier = Modifier, cuentas: List<CuentaModel>
 ) {
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        items(cuentas) { cuenta ->
+        cuentas.forEach { cuenta ->
             CuentaItemSimple(modifier, cuenta)
             HorizontalDivider(color = MaterialTheme.colorScheme.outline)
         }

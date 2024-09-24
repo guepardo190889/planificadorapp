@@ -1,5 +1,6 @@
 package com.example.planificadorapp.composables
 
+import android.util.Log
 import android.view.KeyEvent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
@@ -15,6 +16,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
@@ -37,6 +40,7 @@ fun DineroTextField(
     mensajeError: String,
     saldoInicial: BigDecimal?,
     isSaldoValido: Boolean,
+    focusRequester: FocusRequester? = null,
     onSaldoChange: (BigDecimal) -> Unit,
     onNextAction: (() -> Unit)? = null
 ) {
@@ -57,13 +61,19 @@ fun DineroTextField(
     OutlinedTextField(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (focusRequester != null) Modifier.focusRequester(focusRequester)
+                else Modifier
+            )
             .onKeyEvent { event ->
+                Log.i("DineroTextField", "KeyCode: ${event.nativeKeyEvent.keyCode}")
+
                 monto = calcularMonto(event.nativeKeyEvent.keyCode, monto, isCapturaEntera)
 
                 onSaldoChange(monto)
 
                 // Cambiar el estado de captura según la tecla presionada
-                if (event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_PERIOD) {
+                if (event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_PERIOD || event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_DOT) {
                     isCapturaEntera = false
                 }
 
@@ -88,7 +98,7 @@ fun DineroTextField(
         },
         colors = OutlinedTextFieldDefaults.colors(),
         keyboardOptions = KeyboardOptions.Default.copy(
-            keyboardType = KeyboardType.Number,
+            keyboardType = KeyboardType.Decimal,
             imeAction = if (onNextAction != null) ImeAction.Next else ImeAction.Done
         ),
         keyboardActions = KeyboardActions(onDone = {
