@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
-import com.example.planificadorapp.composables.FloatingActionButtonGuardar
+import com.example.planificadorapp.composables.fab.FloatingActionButtonGuardar
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha

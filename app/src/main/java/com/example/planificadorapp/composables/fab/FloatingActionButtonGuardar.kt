@@ -1,4 +1,4 @@
-package com.example.planificadorapp.composables
+package com.example.planificadorapp.composables.fab
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
