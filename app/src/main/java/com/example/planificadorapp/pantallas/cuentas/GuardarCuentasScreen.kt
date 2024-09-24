@@ -71,8 +71,6 @@ fun GuardarCuentasScreen(
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
-    //var snackbarMessage by remember { mutableStateOf("") }
-    //var snackbarType by remember { mutableStateOf("") }
 
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
