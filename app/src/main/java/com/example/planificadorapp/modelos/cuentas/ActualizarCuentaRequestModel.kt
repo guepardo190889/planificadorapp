@@ -8,6 +8,6 @@ import java.math.BigDecimal
 data class ActualizarCuentaRequestModel(
     var nombre: String,
     var descripcion: String,
-    var saldo: BigDecimal = BigDecimal.ZERO,
+    var saldo: BigDecimal? = null,
     var idsCuentasAgrupadas: List<Long> = emptyList()
 )

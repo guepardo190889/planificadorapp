@@ -166,9 +166,17 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
             cuentasParaAgrupar = cuentasMezcladas.filter { it.seleccionada }.map { it.id }
         }
 
+        val saldoActualizar = if (isCuentaAgrupadora) null else {
+            if (saldo.isNotEmpty()) {
+                BigDecimal(saldo.replace(",", ""))
+            } else {
+                BigDecimal.ZERO
+            }
+        }
+
         cuentasRepository.actualizarCuenta(
             idCuenta, ActualizarCuentaRequestModel(
-                nombre, descripcion, BigDecimal(saldo.replace(",", "")), cuentasParaAgrupar
+                nombre, descripcion, saldoActualizar, cuentasParaAgrupar
             )
         ) { cuentaActualizada ->
             if (cuentaActualizada != null) {
@@ -177,7 +185,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                     navController.navigate("cuentas")
                 }
             } else {
-                snackBarManager.mostrar("Error al actualizar la cuenta", SnackBarTipo.SUCCESS) {
+                snackBarManager.mostrar("Error al actualizar la cuenta", SnackBarTipo.ERROR) {
                     isActualizando = false
                 }
             }

@@ -90,7 +90,11 @@ fun GuardarCuentasScreen(
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
             try {
-                BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
+                if (saldo.isNotEmpty()) {
+                    BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
+                } else {
+                    true
+                }
             } catch (e: NumberFormatException) {
                 false
             }
@@ -120,11 +124,19 @@ fun GuardarCuentasScreen(
                 cuentasNoAgrupadorasSinAgrupar.filter { it.seleccionada }.map { it.id }
         }
 
+        val saldoGuardar = if (isCuentaAgrupadora) null else {
+            if (saldo.isNotEmpty()) {
+                BigDecimal(saldo.replace(",", ""))
+            } else {
+                BigDecimal.ZERO
+            }
+        }
+
         cuentasRepository.guardarCuenta(
             GuardarCuentaRequestModel(
                 nombre,
                 descripcion,
-                BigDecimal(saldo.replace(",", "")),
+                saldoGuardar,
                 isCuentaAgrupadora,
                 cuentasAgrupadas
             )
