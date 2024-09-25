@@ -60,7 +60,7 @@ fun TransaccionMovimientosScreen(
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
     var movimiento by remember { mutableStateOf<MovimientoModel?>(null) }
 
-    var monto by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
+    var monto by remember { mutableStateOf(BigDecimal.ZERO.toString()) }
     var concepto by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var fecha by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
@@ -91,7 +91,7 @@ fun TransaccionMovimientosScreen(
                         )
 
                         movimiento = resultadoMovimiento
-                        monto = resultadoMovimiento.monto
+                        monto = resultadoMovimiento.monto.toString()
                         concepto = resultadoMovimiento.concepto ?: ""
                         descripcion = resultadoMovimiento.descripcion ?: ""
                         fecha = resultadoMovimiento.fecha
@@ -110,7 +110,11 @@ fun TransaccionMovimientosScreen(
      * Valida si el monto es válido
      */
     fun validarMonto(): Boolean {
-        return monto > BigDecimal.ZERO
+        return try {
+            BigDecimal(monto) >= BigDecimal.ZERO
+        } catch (e: NumberFormatException) {
+            false
+        }
     }
 
     /**
@@ -256,7 +260,7 @@ fun TransaccionMovimientosScreen(
             DineroTextField(modifier = modifier,
                 etiqueta = "Monto",
                 mensajeError = "El monto es requerido",
-                saldoInicial = monto,
+                monto = monto,
                 isSaldoValido = isMontoValido,
                 onSaldoChange = {
                     monto = it

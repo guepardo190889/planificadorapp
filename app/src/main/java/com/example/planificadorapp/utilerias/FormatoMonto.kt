@@ -1,8 +1,6 @@
 package com.example.planificadorapp.utilerias
 
 import java.math.BigDecimal
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -10,14 +8,6 @@ import java.util.Locale
  * Objeto que contiene funciones para formatear montos
  */
 object FormatoMonto {
-
-    /**
-     * Formatea un monto en Bigdecimal al formato #,##0.00
-     */
-    fun formatoBigDecimal(monto: BigDecimal): String {
-        val decimalFormat = DecimalFormat("#,##0.00")
-        return decimalFormat.format(monto)
-    }
 
     /**
      * Formatea un monto en formato de moneda para México
@@ -40,22 +30,22 @@ object FormatoMonto {
     }
 
     /**
-     * Formatea un monto en formato de moneda para México sin el símbolo de moneda a la izquierda
+     * Agrega separadores de miles a un número
      */
-    fun formatoSinSimbolo(cantidad: BigDecimal): String {
-        val symbols = DecimalFormatSymbols(Locale("es", "MX"))
-        symbols.decimalSeparator = '.'
-        symbols.groupingSeparator = ','
+    fun agregarSeparadoresMiles(numero: String): String {
+        // Divide el número en parte entera y decimal
+        val partes = numero.split(".")
+        val parteEntera = partes[0]
 
-        val formato = DecimalFormat("#,##0.00", symbols)
-        return formato.format(cantidad)
-    }
+        // Formatear la parte entera con comas
+        val parteEnteraConComas = parteEntera.reversed().chunked(3).joinToString(",").reversed()
 
-    /**
-     * Convierte un monto formateado a Double
-     */
-    fun convertirADouble(monto: String): Double {
-        return monto.replace("$", "").replace(",", "").replace(" ", "").toDouble()
+        // Si existe una parte decimal, agregarla al final
+        return if (partes.size > 1) {
+            "$parteEnteraConComas.${partes[1]}"
+        } else {
+            parteEnteraConComas
+        }
     }
 }
 

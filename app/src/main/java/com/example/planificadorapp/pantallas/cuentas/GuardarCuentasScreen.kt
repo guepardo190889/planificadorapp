@@ -42,6 +42,7 @@ import com.example.planificadorapp.composables.snackbar.SnackBarTipo
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
+import com.example.planificadorapp.utilerias.FormatoMonto
 import java.math.BigDecimal
 
 /**
@@ -60,7 +61,7 @@ fun GuardarCuentasScreen(
     }
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
-    var saldo by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
+    var saldo by remember { mutableStateOf("") }
 
     var isCuentaAgrupadora by remember { mutableStateOf(false) }
     var isNombreValido by remember { mutableStateOf(true) }
@@ -89,7 +90,11 @@ fun GuardarCuentasScreen(
      */
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
-            saldo >= BigDecimal.ZERO
+            try {
+                BigDecimal(saldo) >= BigDecimal.ZERO
+            } catch (e: NumberFormatException) {
+                false
+            }
         } else {
             true
         }
@@ -118,7 +123,7 @@ fun GuardarCuentasScreen(
 
         cuentasRepository.guardarCuenta(
             GuardarCuentaRequestModel(
-                nombre, descripcion, saldo, isCuentaAgrupadora, cuentasAgrupadas
+                nombre, descripcion, BigDecimal(saldo), isCuentaAgrupadora, cuentasAgrupadas
             )
         ) { cuentaGuardada ->
             if (cuentaGuardada != null) {
@@ -214,7 +219,7 @@ fun GuardarCuentasScreen(
                     DineroTextField(modifier = modifier,
                         etiqueta = "Saldo",
                         mensajeError = "El saldo debe ser positivo",
-                        saldoInicial = saldo,
+                        monto = saldo,
                         isSaldoValido = isSaldoValido,
                         onSaldoChange = {
                             saldo = it

@@ -55,7 +55,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
 
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
-    var saldo by remember { mutableStateOf<BigDecimal>(BigDecimal.ZERO) }
+    var saldo by remember { mutableStateOf(BigDecimal.ZERO.toString()) }
     var isCuentaAgrupadora by remember { mutableStateOf(false) }
 
     var isNombreValido by remember { mutableStateOf(true) }
@@ -84,7 +84,15 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
      * Valida si el saldo es válido
      */
     fun validarSaldo(): Boolean {
-        return saldo > BigDecimal.ZERO
+        return if (!isCuentaAgrupadora) {
+            try {
+                BigDecimal(saldo) >= BigDecimal.ZERO
+            } catch (e: NumberFormatException) {
+                false
+            }
+        } else {
+            true
+        }
     }
 
     /**
@@ -107,7 +115,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                 cuenta = resultadoCuentaExistente
                 nombre = resultadoCuentaExistente.nombre
                 descripcion = resultadoCuentaExistente.descripcion ?: ""
-                saldo = resultadoCuentaExistente.saldo
+                saldo = resultadoCuentaExistente.saldo.toString()
                 isCuentaAgrupadora = resultadoCuentaExistente.agrupadora
 
                 if (isCuentaAgrupadora) {
@@ -159,7 +167,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
         }
 
         cuentasRepository.actualizarCuenta(
-            idCuenta, ActualizarCuentaRequestModel(nombre, descripcion, saldo, cuentasParaAgrupar)
+            idCuenta, ActualizarCuentaRequestModel(nombre, descripcion, BigDecimal(saldo), cuentasParaAgrupar)
         ) { cuentaActualizada ->
             if (cuentaActualizada != null) {
                 snackBarManager.mostrar("Cuenta actualizada exitosamente", SnackBarTipo.SUCCESS) {
@@ -218,7 +226,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
 
                 if (!isCuentaAgrupadora) {
                     DineroTextField(modifier = modifier,
-                        saldoInicial = saldo,
+                        monto = saldo,
                         etiqueta = "Saldo",
                         mensajeError = "El saldo es requerido",
                         isSaldoValido = isSaldoValido,

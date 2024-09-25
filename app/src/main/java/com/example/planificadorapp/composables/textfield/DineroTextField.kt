@@ -1,7 +1,5 @@
 package com.example.planificadorapp.composables.textfield
 
-import android.util.Log
-import android.view.KeyEvent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -10,7 +8,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,14 +15,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import com.example.planificadorapp.utilerias.FormatoMonto
-import java.math.BigDecimal
-import java.math.RoundingMode
 
 const val MAX_ENTEROS = 9
 const val MAX_DECIMALES = 2
@@ -38,24 +34,43 @@ fun DineroTextField(
     modifier: Modifier,
     etiqueta: String,
     mensajeError: String? = null,
-    saldoInicial: BigDecimal? = BigDecimal.ZERO,
+    monto: String = "",
     isSaldoValido: Boolean = true,
     focusRequester: FocusRequester? = null,
-    onSaldoChange: (BigDecimal) -> Unit,
+    onSaldoChange: (String) -> Unit,
     onNextAction: (() -> Unit)? = null
 ) {
-    var isCapturaEntera by remember { mutableStateOf(true) }
-    var monto by remember { mutableStateOf(saldoInicial ?: BigDecimal.ZERO) }
     val focusManager = LocalFocusManager.current
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(monto)) }
 
-    // Actualizar 'monto' si 'saldoInicial' cambia
-    LaunchedEffect(saldoInicial) {
-        saldoInicial?.let {
-            monto = it
+    /**
+     * Valida si un texto es válido para el saldo monetario
+     */
+    fun isTextoValido(texto: String): Boolean {
+        var contadorEnteros = 0
+        var contadorDecimales = 0
+        var contadorPuntos = 0
+        var isConPunto = false
 
-            // Determinar si la captura es entera o decimal
-            isCapturaEntera = monto.remainder(BigDecimal.ONE) == BigDecimal.ZERO
+        for (caracter in texto) {
+            if (caracter == '.') {
+                contadorPuntos++
+                isConPunto = true
+            } else if (caracter.isDigit()) {
+                if (isConPunto) {
+                    contadorDecimales++
+                } else {
+                    contadorEnteros++
+                }
+            } else {
+                return false // Caracter no permitido
+            }
+
+            if (contadorEnteros > MAX_ENTEROS || contadorPuntos > 1 || contadorDecimales > MAX_DECIMALES) {
+                return false
+            }
         }
+        return true
     }
 
     OutlinedTextField(
@@ -64,24 +79,26 @@ fun DineroTextField(
             .then(
                 if (focusRequester != null) Modifier.focusRequester(focusRequester)
                 else Modifier
-            )
-            .onKeyEvent { event ->
-                Log.i("DineroTextField", "KeyCode: ${event.nativeKeyEvent.keyCode}")
+            ),
+        value = textFieldValue,
+        onValueChange = { newValue ->
+            val textoSinComas = newValue.text.replace(",", "")
 
-                monto = calcularMonto(event.nativeKeyEvent.keyCode, monto, isCapturaEntera)
-
-                onSaldoChange(monto)
-
-                // Cambiar el estado de captura según la tecla presionada
-                if (event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_PERIOD || event.nativeKeyEvent.keyCode == KeyEvent.KEYCODE_NUMPAD_DOT) {
-                    isCapturaEntera = false
-                }
-
-                true
-            },
-        value = FormatoMonto.formatoSinSimbolo(monto),
-        onValueChange = { /* Ignoramos el cambio de valor aquí */ },
+            if (isTextoValido(textoSinComas)) {
+                val textoFormateado = FormatoMonto.agregarSeparadoresMiles(textoSinComas)
+                textFieldValue = TextFieldValue(
+                    text = textoFormateado,
+                    selection = TextRange(textoFormateado.length)  // Mueve el cursor al final
+                )
+                onSaldoChange(textoFormateado)
+            } else {
+                // Mantener el cursor al final si el texto no es válido
+                textFieldValue =
+                    textFieldValue.copy(selection = TextRange(textFieldValue.text.length))
+            }
+        },
         label = { Text(etiqueta) },
+        placeholder = { Text("0.00") },
         leadingIcon = { Text("$") },
         isError = !isSaldoValido,
         textStyle = MaterialTheme.typography.bodyLarge,
@@ -111,41 +128,4 @@ fun DineroTextField(
             }
         })
     )
-}
-
-/**
- * Calcula el monto a partir de la tecla presionada
- */
-private fun calcularMonto(keyCode: Int, monto: BigDecimal, isCapturaEntera: Boolean): BigDecimal {
-    val montoString: String
-    val partes = monto.setScale(2, RoundingMode.DOWN).toPlainString().split(".")
-    val enteros = partes[0]
-    val decimales = partes[1].trimEnd('0')
-
-    when (keyCode) {
-        in KeyEvent.KEYCODE_0..KeyEvent.KEYCODE_9 -> {
-            val numeroPresionado = keyCode - KeyEvent.KEYCODE_0
-            montoString = if (isCapturaEntera) {
-                if (enteros.length < MAX_ENTEROS) enteros + numeroPresionado else enteros
-            } else {
-                if (decimales.length < MAX_DECIMALES) "$enteros.$decimales$numeroPresionado" else "$enteros.$decimales"
-            }
-            return BigDecimal(montoString)
-        }
-
-        KeyEvent.KEYCODE_DEL -> {
-            montoString = if (isCapturaEntera) {
-                enteros.dropLast(1).ifEmpty { "0" }
-            } else {
-                when {
-                    decimales.isEmpty() -> enteros.dropLast(1).ifEmpty { "0" }
-                    decimales.length == 1 -> enteros
-                    else -> "$enteros.${decimales.dropLast(1)}"
-                }
-            }
-            return BigDecimal(montoString.ifEmpty { "0" })
-        }
-
-        else -> return monto
-    }
 }
