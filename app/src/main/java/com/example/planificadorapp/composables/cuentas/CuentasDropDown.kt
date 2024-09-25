@@ -34,14 +34,18 @@ fun CuentasDropDown(
     onCuentaSeleccionada: (CuentaModel) -> Unit
 ) {
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
-    var cuentaSeleccionadaDropdown = cuentaSeleccionada
+    var cuentaSeleccionadaDropdown by remember { mutableStateOf(cuentaSeleccionada) }
 
-    ExposedDropdownMenuBox(expanded = isDesplegadoDropdown, onExpandedChange = {
-        if (isHabilitado) {
-            isDesplegadoDropdown = !isDesplegadoDropdown
+    ExposedDropdownMenuBox(
+        expanded = isDesplegadoDropdown,
+        onExpandedChange = {
+            if (isHabilitado) {
+                isDesplegadoDropdown = !isDesplegadoDropdown
+            }
         }
-    }) {
-        OutlinedTextField(value = cuentaSeleccionadaDropdown?.nombre ?: "",
+    ) {
+        OutlinedTextField(
+            value = cuentaSeleccionadaDropdown?.nombre ?: "",
             onValueChange = { },
             modifier = modifier
                 .menuAnchor()
@@ -72,6 +76,8 @@ fun CuentasDropDown(
                 } else {
                     MaterialTheme.colorScheme.onSurface
                 }
+
+
 
                 DropdownMenuItem(modifier = modifier
                     .padding(start = paddingStart)

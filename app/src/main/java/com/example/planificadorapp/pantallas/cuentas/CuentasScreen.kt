@@ -76,6 +76,7 @@ fun Cuentas(
             modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
+                .padding(16.dp)
         ) {
             if (cuentas.isEmpty()) {
                 Text(
