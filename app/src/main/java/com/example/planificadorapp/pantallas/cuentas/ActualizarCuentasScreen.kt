@@ -28,13 +28,13 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.composables.textfield.DineroTextField
-import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
 import com.example.planificadorapp.composables.snackbar.SnackBarManager
 import com.example.planificadorapp.composables.snackbar.SnackBarTipo
+import com.example.planificadorapp.composables.textfield.DineroTextField
+import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.repositorios.CuentasRepository
@@ -86,7 +86,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
             try {
-                BigDecimal(saldo) >= BigDecimal.ZERO
+                BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
             } catch (e: NumberFormatException) {
                 false
             }
@@ -167,7 +167,9 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
         }
 
         cuentasRepository.actualizarCuenta(
-            idCuenta, ActualizarCuentaRequestModel(nombre, descripcion, BigDecimal(saldo), cuentasParaAgrupar)
+            idCuenta, ActualizarCuentaRequestModel(
+                nombre, descripcion, BigDecimal(saldo.replace(",", "")), cuentasParaAgrupar
+            )
         ) { cuentaActualizada ->
             if (cuentaActualizada != null) {
                 snackBarManager.mostrar("Cuenta actualizada exitosamente", SnackBarTipo.SUCCESS) {

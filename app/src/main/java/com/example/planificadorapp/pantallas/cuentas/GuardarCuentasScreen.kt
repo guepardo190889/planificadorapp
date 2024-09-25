@@ -32,17 +32,16 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.composables.textfield.DineroTextField
-import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
 import com.example.planificadorapp.composables.snackbar.SnackBarManager
 import com.example.planificadorapp.composables.snackbar.SnackBarTipo
+import com.example.planificadorapp.composables.textfield.DineroTextField
+import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
-import com.example.planificadorapp.utilerias.FormatoMonto
 import java.math.BigDecimal
 
 /**
@@ -91,7 +90,7 @@ fun GuardarCuentasScreen(
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
             try {
-                BigDecimal(saldo) >= BigDecimal.ZERO
+                BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
             } catch (e: NumberFormatException) {
                 false
             }
@@ -123,7 +122,11 @@ fun GuardarCuentasScreen(
 
         cuentasRepository.guardarCuenta(
             GuardarCuentaRequestModel(
-                nombre, descripcion, BigDecimal(saldo), isCuentaAgrupadora, cuentasAgrupadas
+                nombre,
+                descripcion,
+                BigDecimal(saldo.replace(",", "")),
+                isCuentaAgrupadora,
+                cuentasAgrupadas
             )
         ) { cuentaGuardada ->
             if (cuentaGuardada != null) {
