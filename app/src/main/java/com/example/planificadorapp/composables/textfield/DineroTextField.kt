@@ -37,9 +37,9 @@ const val MAX_DECIMALES = 2
 fun DineroTextField(
     modifier: Modifier,
     etiqueta: String,
-    mensajeError: String,
-    saldoInicial: BigDecimal?,
-    isSaldoValido: Boolean,
+    mensajeError: String? = null,
+    saldoInicial: BigDecimal? = BigDecimal.ZERO,
+    isSaldoValido: Boolean = true,
     focusRequester: FocusRequester? = null,
     onSaldoChange: (BigDecimal) -> Unit,
     onNextAction: (() -> Unit)? = null
@@ -86,7 +86,7 @@ fun DineroTextField(
         isError = !isSaldoValido,
         textStyle = MaterialTheme.typography.bodyLarge,
         supportingText = {
-            if (!isSaldoValido) {
+            if (!isSaldoValido && mensajeError != null) {
                 Text(
                     text = mensajeError,
                     style = MaterialTheme.typography.bodySmall,

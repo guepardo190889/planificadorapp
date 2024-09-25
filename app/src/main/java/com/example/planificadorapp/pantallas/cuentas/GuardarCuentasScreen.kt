@@ -89,7 +89,7 @@ fun GuardarCuentasScreen(
      */
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
-            saldo > BigDecimal.ZERO
+            saldo >= BigDecimal.ZERO
         } else {
             true
         }
@@ -213,7 +213,7 @@ fun GuardarCuentasScreen(
                 if (!isCuentaAgrupadora) {
                     DineroTextField(modifier = modifier,
                         etiqueta = "Saldo",
-                        mensajeError = "El saldo es requerido",
+                        mensajeError = "El saldo debe ser positivo",
                         saldoInicial = saldo,
                         isSaldoValido = isSaldoValido,
                         onSaldoChange = {
