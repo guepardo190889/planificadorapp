@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DatePickerInput
-import com.example.planificadorapp.composables.DineroTextField
+import com.example.planificadorapp.composables.textfield.DineroTextField
 import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.modelos.cuentas.CuentaModel

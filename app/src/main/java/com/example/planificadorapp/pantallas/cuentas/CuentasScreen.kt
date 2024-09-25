@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -93,9 +94,16 @@ fun Cuentas(
                         .weight(1f),
                     state = scrollState
                 ) {
-                    items(cuentas) { cuenta ->
+                    itemsIndexed(cuentas) { indice, cuenta ->
                         CuentaItem(modifier, navController, cuenta)
-                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+
+                        // Añadir separador entre grupos de cuentas
+                        val isUltimoElemento = indice == cuentas.size - 1
+                        val isProximoPadre = !isUltimoElemento && cuentas[indice + 1].padre == null
+
+                        if (isUltimoElemento || isProximoPadre) {
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
                     }
 
                     item {

@@ -1,4 +1,4 @@
-package com.example.planificadorapp.composables
+package com.example.planificadorapp.composables.textfield
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

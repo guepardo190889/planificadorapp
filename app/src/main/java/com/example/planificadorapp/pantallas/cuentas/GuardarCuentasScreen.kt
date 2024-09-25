@@ -32,8 +32,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.composables.DineroTextField
-import com.example.planificadorapp.composables.OutlinedTextFieldBase
+import com.example.planificadorapp.composables.textfield.DineroTextField
+import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.composables.cuentas.CuentasListConCheckbox
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
