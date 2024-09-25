@@ -41,7 +41,14 @@ fun DineroTextField(
     onNextAction: (() -> Unit)? = null
 ) {
     val focusManager = LocalFocusManager.current
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(monto)) }
+    var textFieldValue by remember(monto) {
+        val formattedMonto = if (monto.isNotEmpty() && monto != "0.00") {
+            FormatoMonto.agregarSeparadoresMiles(monto.replace(",", ""))
+        } else {
+            monto
+        }
+        mutableStateOf(TextFieldValue(formattedMonto, TextRange(formattedMonto.length)))
+    }
 
     /**
      * Valida si un texto es válido para el saldo monetario
@@ -126,6 +133,6 @@ fun DineroTextField(
             if (onNextAction != null) {
                 onNextAction()
             }
-        })
+        }),
     )
 }
