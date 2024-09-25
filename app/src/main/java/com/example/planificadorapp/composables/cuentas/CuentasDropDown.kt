@@ -36,16 +36,12 @@ fun CuentasDropDown(
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
     var cuentaSeleccionadaDropdown by remember { mutableStateOf(cuentaSeleccionada) }
 
-    ExposedDropdownMenuBox(
-        expanded = isDesplegadoDropdown,
-        onExpandedChange = {
-            if (isHabilitado) {
-                isDesplegadoDropdown = !isDesplegadoDropdown
-            }
+    ExposedDropdownMenuBox(expanded = isDesplegadoDropdown, onExpandedChange = {
+        if (isHabilitado) {
+            isDesplegadoDropdown = !isDesplegadoDropdown
         }
-    ) {
-        OutlinedTextField(
-            value = cuentaSeleccionadaDropdown?.nombre ?: "",
+    }) {
+        OutlinedTextField(value = cuentaSeleccionadaDropdown?.nombre ?: "",
             onValueChange = { },
             modifier = modifier
                 .menuAnchor()
@@ -70,23 +66,23 @@ fun CuentasDropDown(
                 val isCuentaSeleccionable =
                     if (cuenta.agrupadora) isCuentaAgrupadoraSeleccionable else true
 
-                // Ajustar el estilo y color de las cuentas agrupadoras si no son seleccionables
-                val colorTexto = if (cuenta.agrupadora && !isCuentaAgrupadoraSeleccionable) {
-                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f) // Color gris para deshabilitar
-                } else {
-                    MaterialTheme.colorScheme.onSurface
+                // Ajustar el color de texto para cuentas agrupadoras no seleccionables
+                val colorTexto = when {
+                    cuenta.agrupadora && !isCuentaSeleccionable -> MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.4f
+                    )
+
+                    cuenta.agrupadora -> MaterialTheme.colorScheme.onSurface
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
                 }
 
-
-
-                DropdownMenuItem(modifier = modifier
+                DropdownMenuItem(modifier = Modifier
                     .padding(start = paddingStart)
                     .fillMaxWidth(),
                     text = {
                         Text(
-                            cuenta.nombre, style = MaterialTheme.typography.bodyMedium.copy(
-                                color = if (cuenta.agrupadora) colorTexto else MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                            cuenta.nombre,
+                            style = MaterialTheme.typography.bodyMedium.copy(color = colorTexto)
                         )
                     },
                     enabled = isCuentaSeleccionable,
