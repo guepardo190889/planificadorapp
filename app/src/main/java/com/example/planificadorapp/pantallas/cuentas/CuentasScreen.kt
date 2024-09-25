@@ -59,7 +59,8 @@ fun Cuentas(
         ) { cuentasEncontradas ->
             cuentasEncontradas?.let {
                 cuentas = it
-                totalSaldos = it.sumOf { cuenta -> cuenta.saldo }
+                totalSaldos = it.filter { cuenta -> !cuenta.agrupadora } // Filtrar cuentas que no sean agrupadoras
+                    .sumOf { cuenta -> cuenta.saldo }  // Sumar solo los saldos de las cuentas no agrupadoras
                 Log.i("CuentasScreen", "Cuentas encontradas: ${it.size}")
             }
         }
