@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +36,10 @@ fun CuentasDropDown(
 ) {
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
     var cuentaSeleccionadaDropdown by remember { mutableStateOf(cuentaSeleccionada) }
+
+    LaunchedEffect (cuentaSeleccionada, cuentas) {
+        cuentaSeleccionadaDropdown = cuentas.find { it.id == cuentaSeleccionada?.id }
+    }
 
     ExposedDropdownMenuBox(expanded = isDesplegadoDropdown, onExpandedChange = {
         if (isHabilitado) {

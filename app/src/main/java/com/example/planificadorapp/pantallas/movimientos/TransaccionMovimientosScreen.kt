@@ -171,7 +171,7 @@ fun TransaccionMovimientosScreen(
             excluirCuentasAsociadas = false, incluirSoloCuentasNoAgrupadorasSinAgrupar = false
         ) { resultadoCuentas ->
             cuentas = resultadoCuentas ?: emptyList()
-            Log.i("TransaccionMovimientosScreen", "Cuentas cargadas: $resultadoCuentas")
+            Log.i("TransaccionMovimientosScreen", "Cuentas cargadas: ${cuentas.size}")
 
             if (idMovimiento != 0L) {
                 movimientosRepository.buscarMovimientoPorId(idMovimiento) { resultadoMovimiento ->
@@ -206,7 +206,7 @@ fun TransaccionMovimientosScreen(
             snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
         )
     }, bottomBar = {
-        BarraNavegacionInferior(isTransaccionGuardar = true, onTransaccionClick = {
+        BarraNavegacionInferior(isTransaccionGuardar = isTransaccionGuardar, onTransaccionClick = {
             if (validarPantalla()) {
                 if (validarPantalla()) {
                     transaccionarMovimiento()

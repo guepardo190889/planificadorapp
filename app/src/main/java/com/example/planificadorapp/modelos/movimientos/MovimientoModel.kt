@@ -14,6 +14,7 @@ data class MovimientoModel(
     val monto: BigDecimal,
     val fecha: LocalDate,
     val idCuenta: Long = 0,
+    val nombreCuenta: String,
     val tipo: TipoMovimiento
 
 )
