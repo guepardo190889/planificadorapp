@@ -26,7 +26,7 @@ fun OutlinedTextFieldBase(
     modifier: Modifier = Modifier,
     value: String,
     label: String,
-    maxLength: Int,
+    maxLength: Int = 8,
     singleLine: Boolean = true,
     maxLines: Int = 1,
     isError: Boolean? = null,

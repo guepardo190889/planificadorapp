@@ -49,7 +49,10 @@ fun CuentasDropDown(
             enabled = isHabilitado,
             readOnly = true,
             label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
-            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            colors = ExposedDropdownMenuDefaults.textFieldColors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surface
+            ),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDesplegadoDropdown)
             })

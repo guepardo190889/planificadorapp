@@ -215,7 +215,6 @@ fun GuardarCuentasScreen(
                 OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
                     value = nombre,
                     label = "Nombre",
-                    maxLength = 32,
                     isError = !isNombreValido,
                     errorMessage = "El nombre es requerido",
                     focusRequester = nombreFocusRequester,
@@ -233,7 +232,6 @@ fun GuardarCuentasScreen(
                 if (!isCuentaAgrupadora) {
                     DineroTextField(modifier = modifier,
                         etiqueta = "Saldo",
-                        mensajeError = "El saldo debe ser positivo",
                         monto = saldo,
                         isSaldoValido = isSaldoValido,
                         onSaldoChange = {

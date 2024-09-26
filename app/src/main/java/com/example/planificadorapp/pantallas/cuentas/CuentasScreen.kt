@@ -91,7 +91,6 @@ fun Cuentas(
                 LazyColumn(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
                         .weight(1f),
                     state = scrollState
                 ) {

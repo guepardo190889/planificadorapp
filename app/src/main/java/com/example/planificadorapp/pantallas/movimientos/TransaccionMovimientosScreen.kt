@@ -1,23 +1,20 @@
 package com.example.planificadorapp.pantallas.movimientos
 
 import android.util.Log
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,20 +26,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DatePickerInput
-import com.example.planificadorapp.composables.textfield.DineroTextField
-import com.example.planificadorapp.composables.SnackBarConColor
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
+import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
+import com.example.planificadorapp.composables.snackbar.SnackBarBase
+import com.example.planificadorapp.composables.snackbar.SnackBarManager
+import com.example.planificadorapp.composables.snackbar.SnackBarTipo
+import com.example.planificadorapp.composables.textfield.DineroTextField
+import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.movimientos.MovimientoModel
 import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
-import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -60,20 +63,108 @@ fun TransaccionMovimientosScreen(
     var cuentaSeleccionada by remember { mutableStateOf<CuentaModel?>(null) }
     var movimiento by remember { mutableStateOf<MovimientoModel?>(null) }
 
-    var monto by remember { mutableStateOf(BigDecimal.ZERO.toString()) }
+    var monto by remember { mutableStateOf("") }
     var concepto by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var fecha by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
     var tipoMovimientoSeleccionado by remember { mutableStateOf(TipoMovimiento.CARGO) }
 
+    var isTransaccionGuardar by remember { mutableStateOf(true) }
     var descripcionBoton by remember { mutableStateOf("Guardar") }
 
     var isMontoValido by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf("") }
-    var snackbarType by remember { mutableStateOf("") }
+    val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
+
+    val conceptoFocusRequester = remember { FocusRequester() }
+    val descripcionFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var isTransaccionando by remember { mutableStateOf(false) }
+
+    /**
+     * Valida si el monto es válido
+     */
+    fun validarMonto(): Boolean {
+        return try {
+            if (monto.isNotEmpty()) {
+                BigDecimal(monto.replace(",", "")) >= BigDecimal.ZERO
+            } else {
+                true
+            }
+        } catch (e: NumberFormatException) {
+            false
+        }
+    }
+
+    /**
+     * Valida la pantalla actual
+     */
+    fun validarPantalla(): Boolean {
+        isMontoValido = validarMonto()
+        return isMontoValido
+    }
+
+    /**
+     * Guarda o actualiza el movimiento
+     */
+    fun transaccionarMovimiento() {
+        isTransaccionando = true
+
+        val montoTransaccion = if (monto.isNotEmpty()) {
+            BigDecimal(monto.replace(",", ""))
+        } else {
+            BigDecimal.ZERO
+        }
+
+        val transaccionModel = TransaccionMovimientoRequestModel(
+            montoTransaccion,
+            concepto,
+            descripcion,
+            fecha!!,
+            cuentaSeleccionada!!.id,
+            tipoMovimientoSeleccionado.name
+        )
+
+        if (isTransaccionGuardar) {
+            movimientosRepository.guardarMovimiento(transaccionModel) { movimientoGuardado ->
+                if (movimientoGuardado != null) {
+                    snackBarManager.mostrar(
+                        "Movimiento guardado exitosamente", SnackBarTipo.SUCCESS
+                    ) {
+                        isTransaccionando = false
+                        navController.navigate("movimientos")
+                    }
+                } else {
+                    snackBarManager.mostrar("Error al guardar el movimiento", SnackBarTipo.ERROR) {
+                        isTransaccionando = false
+                    }
+                }
+            }
+        } else {
+            movimientosRepository.actualizarMovimiento(
+                idMovimiento, transaccionModel
+            ) { movimientoActualizado ->
+                if (movimientoActualizado != null) {
+                    snackBarManager.mostrar(
+                        "Movimiento actualizado exitosamente", SnackBarTipo.SUCCESS
+                    ) {
+                        isTransaccionando = false
+                        navController.navigate("movimientos")
+                    }
+                } else {
+                    snackBarManager.mostrar(
+                        "Error al actualizar el movimiento", SnackBarTipo.ERROR
+                    ) {
+                        isTransaccionando = false
+                    }
+                }
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         cuentasRepository.buscarCuentas(
@@ -101,224 +192,139 @@ fun TransaccionMovimientosScreen(
                     }
                 }
 
+                isTransaccionGuardar = false
                 descripcionBoton = "Actualizar"
+
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.show()
             }
         }
     }
 
-    /**
-     * Valida si el monto es válido
-     */
-    fun validarMonto(): Boolean {
-        return try {
-            BigDecimal(monto) >= BigDecimal.ZERO
-        } catch (e: NumberFormatException) {
-            false
-        }
-    }
-
-    /**
-     * Valida la pantalla actual
-     */
-    fun validarPantalla(): Boolean {
-        isMontoValido = validarMonto()
-        return isMontoValido
-    }
-
-    /**
-     * Guarda el movimiento en la base de datos
-     */
-    fun guardarMovimiento() {
-        movimientosRepository.guardarMovimiento(
-            TransaccionMovimientoRequestModel(
-                monto.toDouble(),
-                concepto,
-                descripcion,
-                fecha!!,
-                cuentaSeleccionada!!.id,
-                tipoMovimientoSeleccionado.name
-            )
-        ) { movimientoGuardado ->
-            if (movimientoGuardado != null) {
-                snackbarMessage = "Movimiento guardado exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al guardar el movimiento"
-            }
-
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
-
-                if (movimientoGuardado != null) {
-                    navController.navigate("movimientos")
-                }
-            }
-        }
-    }
-
-    /**
-     * Actualiza el movimiento en la base de datos
-     */
-    fun actualizarMovimiento() {
-        movimientosRepository.actualizarMovimiento(
-            idMovimiento, TransaccionMovimientoRequestModel(
-                monto.toDouble(),
-                concepto,
-                descripcion,
-                fecha!!,
-                cuentaSeleccionada!!.id,
-                tipoMovimientoSeleccionado.name
-            )
-        ) { movimientoActualizado ->
-            if (movimientoActualizado != null) {
-                snackbarMessage = "Movimiento actualizado exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al actualizar el movimiento"
-            }
-
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
-
-                if (movimientoActualizado != null) {
-                    navController.navigate("movimientos")
-                }
-            }
-        }
-    }
-
-    Scaffold(modifier, snackbarHost = {
-        SnackbarHost(snackbarHostState) {
-            SnackBarConColor(
-                snackbarHostState = snackbarHostState, tipo = snackbarType
-            )
-        }
+    Scaffold(modifier = modifier.fillMaxWidth(), snackbarHost = {
+        SnackBarBase(
+            snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+        )
     }, bottomBar = {
-        BottomAppBar(modifier = Modifier.fillMaxWidth(), content = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FloatingActionButton(modifier = Modifier.padding(16.dp),
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                    onClick = {
-                        if (validarPantalla()) {
-                            if (idMovimiento == 0L) {
-                                guardarMovimiento()
-                            } else {
-                                actualizarMovimiento()
-                            }
-                        }
-                    }) {
-                    Icon(
-                        Icons.Default.Done, contentDescription = descripcionBoton
-                    )
+        BarraNavegacionInferior(isTransaccionGuardar = true, onTransaccionClick = {
+            if (validarPantalla()) {
+                if (validarPantalla()) {
+                    transaccionarMovimiento()
                 }
             }
         })
     }, content = { paddingValues ->
-        Column(
-            modifier
-                .padding(paddingValues)
-                .padding(16.dp)
+        Box(
+            modifier = Modifier.fillMaxWidth()
         ) {
-
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
+            Column(
+                modifier
+                    .padding(paddingValues)
+                    .padding(16.dp)
             ) {
-                TipoMovimiento.entries.forEach { tipo ->
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        RadioButton(selected = tipo == tipoMovimientoSeleccionado,
-                            colors = RadioButtonDefaults.colors(
-                                selectedColor = MaterialTheme.colorScheme.primary
-                            ),
-                            onClick = {
-                                tipoMovimientoSeleccionado = tipo
-                            })
-                        Text(text = tipo.name, color = MaterialTheme.colorScheme.onSurface)
-                    }
-                }
+                TipoMovimientoRadioButtonGroup(
+                    tipoMovimientoSeleccionado,
+                    onSelect = { tipoMovimientoSeleccionado = it })
+
+                CuentasDropDown(modifier = modifier,
+                    etiqueta = "Selecciona una Cuenta",
+                    isHabilitado = true,
+                    isCuentaAgrupadoraSeleccionable = false,
+                    cuentaSeleccionada,
+                    cuentas,
+                    onCuentaSeleccionada = {
+                        cuentaSeleccionada = it
+                    })
+
+                DineroTextField(modifier = modifier.fillMaxWidth(),
+                    etiqueta = "Monto",
+                    monto = monto,
+                    isSaldoValido = isMontoValido,
+                    onSaldoChange = {
+                        monto = it
+                    },
+                    onNextAction = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
+
+                DatePickerInput(modifier,
+                    etiqueta = "Fecha",
+                    fecha = fecha,
+                    onFechaSeleccionada = { fechaSeleccionada ->
+                        fecha = fechaSeleccionada
+                        focusManager.moveFocus(FocusDirection.Down)
+                    },
+                    onDismiss = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
+
+                OutlinedTextFieldBase(modifier = Modifier.fillMaxWidth(),
+                    value = concepto,
+                    label = "Concepto",
+                    maxLength = 64,
+                    singleLine = false,
+                    maxLines = 2,
+                    focusRequester = conceptoFocusRequester,
+                    onValueChange = {
+                        concepto = it
+                    },
+                    onNextAction = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
+
+                OutlinedTextFieldBase(modifier = Modifier.fillMaxWidth(),
+                    value = descripcion,
+                    label = "Descripción",
+                    maxLength = 256,
+                    singleLine = false,
+                    maxLines = 3,
+                    focusRequester = descripcionFocusRequester,
+                    onValueChange = {
+                        descripcion = it
+                    })
             }
 
-            CuentasDropDown(modifier = modifier,
-                etiqueta = "Selecciona una Cuenta",
-                isHabilitado = true,
-                isCuentaAgrupadoraSeleccionable = false,
-                cuentaSeleccionada,
-                cuentas,
-                onCuentaSeleccionada = {
-                    cuentaSeleccionada = it
-                })
-
-            DineroTextField(modifier = modifier,
-                etiqueta = "Monto",
-                mensajeError = "El monto es requerido",
-                monto = monto,
-                isSaldoValido = isMontoValido,
-                onSaldoChange = {
-                    monto = it
-                })
-
-            DatePickerInput(modifier,
-                etiqueta = "Fecha",
-                fecha = fecha,
-                onFechaSeleccionada = { fechaSeleccionada ->
-                    fecha = fechaSeleccionada
-                },
-                onDismiss = {
-
-                })
-
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(),
-                value = concepto,
-                onValueChange = {
-                    if (it.length <= 64) {
-                        concepto = it
-                    }
-                },
-                label = { Text("Concepto", color = MaterialTheme.colorScheme.onSurface) },
-                singleLine = false,
-                maxLines = 2,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                colors = OutlinedTextFieldDefaults.colors(),
-                supportingText = {
-                    Text(
-                        text = "${concepto.length}/64",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                })
-
-            OutlinedTextField(modifier = Modifier.fillMaxWidth(),
-                value = descripcion,
-                onValueChange = {
-                    if (it.length <= 256) {
-                        descripcion = it
-                    }
-                },
-                label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
-                singleLine = false,
-                maxLines = 3,
-                textStyle = MaterialTheme.typography.bodyLarge,
-                colors = OutlinedTextFieldDefaults.colors(),
-                supportingText = {
-                    Text(
-                        text = "${descripcion.length}/256",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.End
-                    )
-                })
+            // Si está guardando, mostramos un indicador de carga que bloquea toda la pantalla
+            if (isTransaccionando) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable(enabled = false) {}, contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
         }
     })
+}
+
+/**
+ * Composable que representa un grupo de botones de tipo de movimiento
+ */
+@Composable
+fun TipoMovimientoRadioButtonGroup(
+    tipoSeleccionado: TipoMovimiento, onSelect: (TipoMovimiento) -> Unit
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        TipoMovimiento.entries.forEach { tipo ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = tipo == tipoSeleccionado,
+                    onClick = { onSelect(tipo) },
+                    colors = RadioButtonDefaults.colors(
+                        selectedColor = MaterialTheme.colorScheme.primary
+                    )
+                )
+                Text(
+                    text = tipo.name, color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
 }

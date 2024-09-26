@@ -107,6 +107,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     }, content = { paddingValues ->
         Column(
             modifier
+                .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
@@ -150,13 +151,13 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                         .padding(16.dp)
                         .align(Alignment.CenterHorizontally),
                     text = "Sin movimientos",
+                    style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             } else {
                 LazyColumn(
                     modifier = modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
                         .weight(1f),
                     state = scrollState
                 ) {
