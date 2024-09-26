@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +46,6 @@ fun DatePickerInput(
     onDismiss: (() -> Unit)? = null
 ) {
     var isMostrarDatePicker by remember { mutableStateOf(false) }
-    var isFocado by remember { mutableStateOf(false) }
 
     // Estado del DatePicker
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = fecha?.let {
@@ -68,12 +66,6 @@ fun DatePickerInput(
         onDismiss?.invoke()
     }
 
-    LaunchedEffect(isFocado) {
-        if (isFocado) {
-            isMostrarDatePicker = true
-        }
-    }
-
     Box(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(
             modifier = Modifier
@@ -85,7 +77,7 @@ fun DatePickerInput(
                 )
                 .onFocusChanged { focusState ->
                     if (focusState.isFocused) {
-                        isFocado = true
+                        isMostrarDatePicker = true
                     }
                 },
             value = fecha?.let { FormatoFecha.formatoCortoISO8601(it) } ?: "yyyy-MM-dd",

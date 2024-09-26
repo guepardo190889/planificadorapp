@@ -57,7 +57,6 @@ class CuentasRepository {
         cuenta: ActualizarCuentaRequestModel,
         callback: (CuentaModel?) -> Unit
     ) {
-
         val call = apiService.actualizarCuenta(id, cuenta)
         call.enqueue(object :
             Callback<CuentaModel> {
