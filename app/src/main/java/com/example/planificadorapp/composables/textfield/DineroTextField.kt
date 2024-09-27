@@ -36,6 +36,7 @@ fun DineroTextField(
     mensajeError: String? = null,
     monto: String = "",
     isError: Boolean = false,
+    isNegativo:Boolean = false,
     focusRequester: FocusRequester? = null,
     onSaldoChange: (String) -> Unit,
     onNextAction: (() -> Unit)? = null
@@ -106,7 +107,7 @@ fun DineroTextField(
         },
         label = { Text(etiqueta) },
         placeholder = { Text("0.00") },
-        leadingIcon = { Text("$") },
+        leadingIcon = { Text(if (isNegativo) "$ -" else "$") },
         isError = isError,
         textStyle = MaterialTheme.typography.bodyLarge,
         supportingText = {

@@ -68,6 +68,7 @@ fun TransaccionMovimientosScreen(
     var descripcion by remember { mutableStateOf("") }
     var fecha by remember { mutableStateOf<LocalDate?>(LocalDate.now()) }
     var tipoMovimientoSeleccionado by remember { mutableStateOf(TipoMovimiento.CARGO) }
+    var isMontoNegativo by remember { mutableStateOf(true) }
 
     var isTransaccionGuardar by remember { mutableStateOf(true) }
     var descripcionBoton by remember { mutableStateOf("Guardar") }
@@ -196,6 +197,10 @@ fun TransaccionMovimientosScreen(
                         fecha = resultadoMovimiento.fecha
                         tipoMovimientoSeleccionado = resultadoMovimiento.tipo
 
+                        if (TipoMovimiento.CARGO == resultadoMovimiento.tipo) {
+                            isMontoNegativo = true
+                        }
+
                         cuentaSeleccionada = cuentas.find { it.id == resultadoMovimiento.idCuenta }
                     }
                 }
@@ -226,8 +231,13 @@ fun TransaccionMovimientosScreen(
                     .padding(16.dp)
             ) {
                 TipoMovimientoRadioButtonGroup(
-                    tipoMovimientoSeleccionado,
-                    onSelect = { tipoMovimientoSeleccionado = it })
+                    isHabilitado = isTransaccionGuardar,
+                    tipoSeleccionado = tipoMovimientoSeleccionado,
+                    onSelect = {
+                        tipoMovimientoSeleccionado = it
+                        isMontoNegativo = TipoMovimiento.CARGO == it
+                    }
+                )
 
                 CuentasDropDown(modifier = modifier,
                     etiqueta = "Selecciona una Cuenta",
@@ -247,6 +257,7 @@ fun TransaccionMovimientosScreen(
                     mensajeError = "El monto es requerido",
                     monto = monto,
                     isError = !isMontoValido,
+                    isNegativo = isMontoNegativo,
                     onSaldoChange = {
                         monto = it
                     },
@@ -311,7 +322,9 @@ fun TransaccionMovimientosScreen(
  */
 @Composable
 fun TipoMovimientoRadioButtonGroup(
-    tipoSeleccionado: TipoMovimiento, onSelect: (TipoMovimiento) -> Unit
+    tipoSeleccionado: TipoMovimiento,
+    isHabilitado: Boolean,
+    onSelect: (TipoMovimiento) -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -322,6 +335,7 @@ fun TipoMovimientoRadioButtonGroup(
             .forEach { tipo ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(
+                        enabled = isHabilitado,
                         selected = tipo == tipoSeleccionado,
                         onClick = { onSelect(tipo) },
                         colors = RadioButtonDefaults.colors(
