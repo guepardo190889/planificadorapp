@@ -223,7 +223,7 @@ fun GuardarCuentasScreen(
                     maxLength = 32,
                     onValueChange = {
                         isNombreValido = validarNombre()
-                            nombre = it
+                        nombre = it
                     },
                     onNextAction = {
                         focusManager.moveFocus(FocusDirection.Down)

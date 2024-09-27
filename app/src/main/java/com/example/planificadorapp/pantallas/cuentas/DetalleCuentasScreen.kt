@@ -103,7 +103,8 @@ fun DetalleCuentasScreen(
                         modifier = modifier.padding(16.dp)
                     ) {
                         if (isCuentaAgrupadora) {
-                            AssistChip(onClick = { },
+                            AssistChip(
+                                onClick = { },
                                 label = { Text("Agrupadora") },
                                 colors = AssistChipDefaults.assistChipColors(),
                                 modifier = Modifier.padding(bottom = 8.dp)

@@ -37,7 +37,7 @@ fun CuentasDropDown(
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
     var cuentaSeleccionadaDropdown by remember { mutableStateOf(cuentaSeleccionada) }
 
-    LaunchedEffect (cuentaSeleccionada, cuentas) {
+    LaunchedEffect(cuentaSeleccionada, cuentas) {
         cuentaSeleccionadaDropdown = cuentas.find { it.id == cuentaSeleccionada?.id }
     }
 

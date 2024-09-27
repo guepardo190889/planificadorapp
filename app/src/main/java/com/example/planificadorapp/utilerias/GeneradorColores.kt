@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 /**
  * Generador de colores suaves para gráficos, basado en la paleta actual del tema.
  */
-fun GeneradorColor(n: Int, baseColors: List<Color>): List<Color> {
+fun generarColoresDesdeColoresBase(n: Int, baseColors: List<Color>): List<Color> {
     val coloresGenerados = mutableListOf<Color>()
 
     // Si el número de colores necesarios es menor o igual a los colores base, usamos solo esos.

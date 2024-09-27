@@ -24,7 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.planificadorapp.utilerias.FormatoMonto
-import com.example.planificadorapp.utilerias.GeneradorColor
+import com.example.planificadorapp.utilerias.generarColoresDesdeColoresBase
 import kotlin.math.cos
 import kotlin.math.sin
 
@@ -48,7 +48,7 @@ fun GraficaPastelCanvas(
     )
 
     // Generar colores suaves utilizando el generador y la lista de colores base
-    val colores = GeneradorColor(datos.size, baseColors)
+    val colores = generarColoresDesdeColoresBase(datos.size, baseColors)
 
     Column(
         modifier = modifier

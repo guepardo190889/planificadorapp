@@ -118,8 +118,8 @@ fun PortafolioItem(
     modifier: Modifier, navController: NavController, portafolio: PortafolioModel
 ) {
     ListItem(modifier = modifier.clickable {
-            navController.navigate("portafolios/detalle/${portafolio.id}")
-        }, headlineContent = {
+        navController.navigate("portafolios/detalle/${portafolio.id}")
+    }, headlineContent = {
         Text(
             text = portafolio.nombre,
             style = MaterialTheme.typography.bodyLarge,

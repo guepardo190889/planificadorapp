@@ -104,8 +104,8 @@ fun GuardarPortafolio(modifier: Modifier = Modifier, navController: NavControlle
         Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = modifier
-                    .padding(paddingValues)
                     .fillMaxSize()
+                    .padding(paddingValues)
             ) {
                 Log.i("GuardarPortafolio", "Paso actual: $pasoActual")
 

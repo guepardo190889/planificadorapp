@@ -204,8 +204,8 @@ fun MovimientoItem(
     modifier: Modifier = Modifier, navController: NavController, movimiento: MovimientoModel
 ) {
     ListItem(modifier = modifier.clickable {
-            navController.navigate("movimientos/detalle/${movimiento.id}")
-        }, headlineContent = {
+        navController.navigate("movimientos/detalle/${movimiento.id}")
+    }, headlineContent = {
         Text(movimiento.concepto ?: "", color = MaterialTheme.colorScheme.onSurface)
     }, supportingContent = {
         Text(

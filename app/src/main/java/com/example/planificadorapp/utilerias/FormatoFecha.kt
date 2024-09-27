@@ -37,14 +37,6 @@ object FormatoFecha {
     }
 
     /**
-     * Formatea una fecha en formato de cadena con el patrón yyyy-MM-dd hh:mm:ss
-     */
-    fun formatoCortoConHora(fecha: LocalDateTime): String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss", Locale("es", "MX"))
-        return fecha.format(formatter)
-    }
-
-    /**
      * Convierte LocalDate a milisegundos
      */
     fun convertirLocalDateAMilisegundos(fecha: LocalDate): Long {

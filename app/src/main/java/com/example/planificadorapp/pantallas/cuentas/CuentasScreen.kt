@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
@@ -61,8 +60,9 @@ fun Cuentas(
         ) { cuentasEncontradas ->
             cuentasEncontradas?.let {
                 cuentas = it
-                totalSaldos = it.filter { cuenta -> !cuenta.agrupadora } // Filtrar cuentas que no sean agrupadoras
-                    .sumOf { cuenta -> cuenta.saldo }  // Sumar solo los saldos de las cuentas no agrupadoras
+                totalSaldos =
+                    it.filter { cuenta -> !cuenta.agrupadora } // Filtrar cuentas que no sean agrupadoras
+                        .sumOf { cuenta -> cuenta.saldo }  // Sumar solo los saldos de las cuentas no agrupadoras
                 Log.i("CuentasScreen", "Cuentas encontradas: ${it.size}")
             }
         }

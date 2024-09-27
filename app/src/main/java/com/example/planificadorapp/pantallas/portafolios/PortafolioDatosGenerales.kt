@@ -2,9 +2,7 @@ package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -62,7 +60,10 @@ fun PortafolioDatosGenerales(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
-            EncabezadoPortafolio(titulo = "Generales", descripcion = "Datos generales del portafolio")
+            EncabezadoPortafolio(
+                titulo = "Generales",
+                descripcion = "Datos generales del portafolio"
+            )
 
             OutlinedTextFieldBase(modifier = Modifier.fillMaxWidth(),
                 value = nombre,

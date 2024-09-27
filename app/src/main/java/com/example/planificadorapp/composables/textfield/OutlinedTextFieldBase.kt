@@ -39,12 +39,13 @@ fun OutlinedTextFieldBase(
     val focusManager = LocalFocusManager.current
 
     Column(modifier = modifier.fillMaxWidth()) {
-        OutlinedTextField(modifier = Modifier
-            .fillMaxWidth()
-            .then(
-                if (focusRequester != null) Modifier.focusRequester(focusRequester)
-                else Modifier
-            ),
+        OutlinedTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(
+                    if (focusRequester != null) Modifier.focusRequester(focusRequester)
+                    else Modifier
+                ),
             value = value,
             onValueChange = { if (it.length <= maxLength) onValueChange(it) },
             label = { Text(label) },
