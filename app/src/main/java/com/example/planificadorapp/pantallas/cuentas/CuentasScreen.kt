@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import com.example.planificadorapp.R
 import com.example.planificadorapp.composables.fab.FloatingActionButtonGuardar
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
@@ -70,7 +71,7 @@ fun Cuentas(
     Scaffold(modifier = modifier.fillMaxSize(), floatingActionButton = {
         FloatingActionButtonGuardar(isVisible = isFabVisible,
             tooltip = "Guardar una nueva cuenta",
-            onClick = { navController.navigate("cuentas/guardar") })
+            onClick = { navController.navigate(Ruta.CUENTAS_GUARDAR.ruta) })
     }, content = { paddingValues ->
         Column(
             modifier

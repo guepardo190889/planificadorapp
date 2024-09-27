@@ -37,6 +37,7 @@ import com.example.planificadorapp.composables.textfield.DineroTextField
 import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.ActualizarCuentaRequestModel
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.CuentasRepository
 import java.math.BigDecimal
 
@@ -182,7 +183,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
             if (cuentaActualizada != null) {
                 snackBarManager.mostrar("Cuenta actualizada exitosamente", SnackBarTipo.SUCCESS) {
                     isActualizando = false
-                    navController.navigate("cuentas")
+                    navController.navigate(Ruta.CUENTAS.ruta)
                 }
             } else {
                 snackBarManager.mostrar("Error al actualizar la cuenta", SnackBarTipo.ERROR) {

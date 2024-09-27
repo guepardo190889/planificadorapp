@@ -41,53 +41,56 @@ fun BarraNavegacionInferior(
             containerColor = Color.Transparent, contentColor = MaterialTheme.colorScheme.onSurface
         ) {
             if (onAtrasClick != null) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { PlainTooltip { Text("Atrás") } },
-                    state = rememberTooltipState()
-                ) {
-                    NavigationBarItem(icon = {
+                NavigationBarItem(icon = {
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text("Atrás") } },
+                        state = rememberTooltipState()
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Atrás"
                         )
-                    }, label = { Text("Atrás") }, selected = false, onClick = { onAtrasClick() })
-                }
+                    }
+                }, label = {
+                    Text("Atrás")
+
+                }, selected = false, onClick = { onAtrasClick() })
             }
 
             if (onSiguienteClick != null) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { PlainTooltip { Text("Adelante") } },
-                    state = rememberTooltipState()
-                ) {
-                    NavigationBarItem(icon = {
+                NavigationBarItem(icon = {
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text("Adelante") } },
+                        state = rememberTooltipState()
+                    ) {
                         Icon(
                             Icons.AutoMirrored.Default.ArrowForward,
                             contentDescription = "Adelante"
                         )
-                    },
-                        label = { Text("Adelante") },
-                        selected = false,
-                        onClick = { onSiguienteClick() })
-                }
+                    }
+                }, label = {
+
+                    Text("Adelante")
+                }, selected = false, onClick = { onSiguienteClick() })
             }
 
             if (onTransaccionClick != null) {
-                TooltipBox(
-                    positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
-                    tooltip = { PlainTooltip { Text(if (isTransaccionGuardar == true) "Guardar" else "Actualizar") } },
-                    state = rememberTooltipState()
-                ) {
-                    NavigationBarItem(icon = {
+                NavigationBarItem(icon = {
+                    TooltipBox(
+                        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+                        tooltip = { PlainTooltip { Text(if (isTransaccionGuardar == true) "Guardar" else "Actualizar") } },
+                        state = rememberTooltipState()
+                    ) {
                         Icon(
                             Icons.Default.Done,
                             contentDescription = if (isTransaccionGuardar == true) "Guardar" else "Actualizar"
                         )
-                    },
-                        label = { Text(if (isTransaccionGuardar == true) "Guardar" else "Actualizar") },
-                        selected = false,
-                        onClick = { onTransaccionClick() })
-                }
+                    }
+                }, label = {
+
+                    Text(if (isTransaccionGuardar == true) "Guardar" else "Actualizar")
+                }, selected = false, onClick = { onTransaccionClick() })
             }
         }
     }

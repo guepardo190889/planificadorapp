@@ -23,6 +23,7 @@ import com.example.planificadorapp.modelos.movimientos.MovimientoModel
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
 import com.example.planificadorapp.utilerias.FormatoMonto
+import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 
 /**
  * Composable que representa la pantalla de detalle de un movimiento
@@ -34,17 +35,23 @@ fun DetalleMovimientosScreen(
     val movimientoRepository = MovimientosRepository()
 
     var movimiento by remember { mutableStateOf<MovimientoModel?>(null) }
+    var isFabVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(idMovimiento) {
         movimientoRepository.buscarMovimientoPorId(idMovimiento) { movimientoEncontrado ->
             movimiento = movimientoEncontrado
+            isFabVisible =
+                TipoMovimiento.CARGO == movimiento?.tipo || TipoMovimiento.ABONO == movimiento?.tipo
         }
     }
 
     Scaffold(modifier.fillMaxSize(), floatingActionButton = {
-        FloatingActionButtonActualizar(tooltip = "Actualizar el movimiento", onClick = {
-            navController.navigate("movimientos/editar/${movimiento?.id}")
-        })
+        FloatingActionButtonActualizar(
+            tooltip = "Actualizar el movimiento",
+            isVisible = isFabVisible,
+            onClick = {
+                navController.navigate("movimientos/editar/${movimiento?.id}")
+            })
     }, content = { paddingValues ->
         movimiento?.let {
             Column(

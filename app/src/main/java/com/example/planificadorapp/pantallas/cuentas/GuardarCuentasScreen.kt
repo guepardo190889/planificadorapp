@@ -41,6 +41,7 @@ import com.example.planificadorapp.composables.textfield.DineroTextField
 import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.cuentas.GuardarCuentaRequestModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.CuentasRepository
 import java.math.BigDecimal
 
@@ -144,7 +145,7 @@ fun GuardarCuentasScreen(
             if (cuentaGuardada != null) {
                 snackBarManager.mostrar("Cuenta guardada exitosamente", SnackBarTipo.SUCCESS) {
                     isGuardando = false
-                    navController.navigate("cuentas")
+                    navController.navigate(Ruta.CUENTAS.ruta)
                 }
             } else {
                 snackBarManager.mostrar("Error al guardar la cuenta", SnackBarTipo.ERROR) {
@@ -212,25 +213,25 @@ fun GuardarCuentasScreen(
                     })
                 }
 
-                OutlinedTextFieldBase(modifier = modifier.fillMaxWidth(),
+                OutlinedTextFieldBase(
+                    modifier = modifier.fillMaxWidth(),
                     value = nombre,
                     label = "Nombre",
                     isError = !isNombreValido,
                     errorMessage = "El nombre es requerido",
                     focusRequester = nombreFocusRequester,
+                    maxLength = 32,
                     onValueChange = {
                         isNombreValido = validarNombre()
-
-                        if (it.length <= 32) {
                             nombre = it
-                        }
                     },
                     onNextAction = {
                         focusManager.moveFocus(FocusDirection.Down)
                     })
 
                 if (!isCuentaAgrupadora) {
-                    DineroTextField(modifier = modifier,
+                    DineroTextField(
+                        modifier = modifier.fillMaxWidth(),
                         etiqueta = "Saldo",
                         monto = saldo,
                         isSaldoValido = isSaldoValido,

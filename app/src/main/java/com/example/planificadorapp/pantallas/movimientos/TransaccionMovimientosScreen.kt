@@ -43,6 +43,7 @@ import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.movimientos.MovimientoModel
 import com.example.planificadorapp.modelos.movimientos.TransaccionMovimientoRequestModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
@@ -136,7 +137,7 @@ fun TransaccionMovimientosScreen(
                         "Movimiento guardado exitosamente", SnackBarTipo.SUCCESS
                     ) {
                         isTransaccionando = false
-                        navController.navigate("movimientos")
+                        navController.navigate(Ruta.MOVIMIENTOS.ruta)
                     }
                 } else {
                     snackBarManager.mostrar("Error al guardar el movimiento", SnackBarTipo.ERROR) {
@@ -153,7 +154,7 @@ fun TransaccionMovimientosScreen(
                         "Movimiento actualizado exitosamente", SnackBarTipo.SUCCESS
                     ) {
                         isTransaccionando = false
-                        navController.navigate("movimientos")
+                        navController.navigate(Ruta.MOVIMIENTOS.ruta)
                     }
                 } else {
                     snackBarManager.mostrar(

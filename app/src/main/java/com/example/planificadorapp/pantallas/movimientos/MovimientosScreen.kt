@@ -43,6 +43,7 @@ import com.example.planificadorapp.composables.cuentas.CuentasDropDown
 import com.example.planificadorapp.composables.fab.FloatingActionButtonGuardar
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.movimientos.MovimientoModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.CuentasRepository
 import com.example.planificadorapp.repositorios.MovimientosRepository
 import com.example.planificadorapp.utilerias.FormatoFecha
@@ -50,69 +51,6 @@ import com.example.planificadorapp.utilerias.FormatoMonto
 import com.example.planificadorapp.utilerias.enumeradores.FiltroMovimiento
 import com.example.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import java.time.LocalDate
-
-/**
- * Composable que muestra los filtros de movimientos
- */
-@Composable
-fun FiltrosMovimientos(
-    modifier: Modifier,
-    filtroSeleccionado: FiltroMovimiento,
-    onFiltroSeleccionado: (FiltroMovimiento) -> Unit,
-    fechaInicio: LocalDate?,
-    onFechaInicioSeleccionada: (LocalDate?) -> Unit,
-    fechaFin: LocalDate?,
-    onFechaFinSeleccionada: (LocalDate?) -> Unit,
-    onAplicarClick: () -> Unit
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        RadioButtonGroup(filtroSeleccionado, onFiltroSeleccionado)
-
-        if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                DatePickerInput(modifier = Modifier.weight(1f),
-                    etiqueta = "Fecha Inicio",
-                    fecha = fechaInicio,
-                    onFechaSeleccionada = onFechaInicioSeleccionada,
-                    onDismiss = {})
-
-                Spacer(modifier = Modifier.width(16.dp))
-
-                DatePickerInput(modifier = Modifier.weight(1f),
-                    etiqueta = "Fecha Fin",
-                    fecha = fechaFin,
-                    onFechaSeleccionada = onFechaFinSeleccionada,
-                    onDismiss = {})
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.End
-        ) {
-            Button(
-                onClick = onAplicarClick, colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            ) {
-                Text(text = "Aplicar")
-            }
-        }
-    }
-}
 
 /**
  * Composable que representa la pantalla de movimientos
@@ -166,7 +104,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
     Scaffold(modifier = modifier.fillMaxWidth(), floatingActionButton = {
         FloatingActionButtonGuardar(isVisible = isFabVisible,
             tooltip = "Guardar un nuevo movimiento",
-            onClick = { navController.navigate("movimientos/guardar") })
+            onClick = { navController.navigate(Ruta.MOVIMIENTOS_GUARDAR.ruta) })
     }, content = { paddingValues ->
         Column(
             modifier
@@ -311,5 +249,68 @@ fun EncabezadoFiltros(isMostrarFiltros: Boolean, onClick: () -> Unit) {
             contentDescription = "Mostrar filtros",
             tint = MaterialTheme.colorScheme.onBackground
         )
+    }
+}
+
+/**
+ * Composable que muestra los filtros de movimientos
+ */
+@Composable
+fun FiltrosMovimientos(
+    modifier: Modifier,
+    filtroSeleccionado: FiltroMovimiento,
+    onFiltroSeleccionado: (FiltroMovimiento) -> Unit,
+    fechaInicio: LocalDate?,
+    onFechaInicioSeleccionada: (LocalDate?) -> Unit,
+    fechaFin: LocalDate?,
+    onFechaFinSeleccionada: (LocalDate?) -> Unit,
+    onAplicarClick: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        RadioButtonGroup(filtroSeleccionado, onFiltroSeleccionado)
+
+        if (FiltroMovimiento.POR_FECHA == filtroSeleccionado) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                DatePickerInput(modifier = Modifier.weight(1f),
+                    etiqueta = "Fecha Inicio",
+                    fecha = fechaInicio,
+                    onFechaSeleccionada = onFechaInicioSeleccionada,
+                    onDismiss = {})
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                DatePickerInput(modifier = Modifier.weight(1f),
+                    etiqueta = "Fecha Fin",
+                    fecha = fechaFin,
+                    onFechaSeleccionada = onFechaFinSeleccionada,
+                    onDismiss = {})
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            horizontalArrangement = Arrangement.End
+        ) {
+            Button(
+                onClick = onAplicarClick, colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            ) {
+                Text(text = "Aplicar")
+            }
+        }
     }
 }
