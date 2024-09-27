@@ -230,7 +230,7 @@ fun TransaccionMovimientosScreen(
 
                 CuentasDropDown(modifier = modifier,
                     etiqueta = "Selecciona una Cuenta",
-                    isHabilitado = true,
+                    isHabilitado = isTransaccionGuardar,
                     isCuentaAgrupadoraSeleccionable = false,
                     cuentas =cuentas,
                     isError = !isCuentaSeleccionadaValida,
