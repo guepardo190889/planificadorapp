@@ -1,21 +1,13 @@
 package com.example.planificadorapp.pantallas.activos
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -35,7 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.R
+import com.example.planificadorapp.composables.fab.FloatingActionButtonGuardar
 import com.example.planificadorapp.modelos.activos.ActivoModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.ActivosRepository
 
 /**
@@ -58,36 +52,32 @@ fun ActivosScreen(modifier: Modifier, navController: NavController) {
     }
 
     Scaffold(modifier = modifier.fillMaxWidth(), floatingActionButton = {
-        AnimatedVisibility(
-            visible = isFabVisible,
-            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-        ) {
-            FloatingActionButton(
-                modifier = Modifier.padding(16.dp),
-                onClick = { navController.navigate("activos/guardar") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Guardar Activo")
-            }
-        }
-    }, content = {
+        FloatingActionButtonGuardar(isVisible = isFabVisible,
+            tooltip = "Guardar un nuevo activo",
+            onClick = { navController.navigate(Ruta.ACTIVOS_GUARDAR.ruta) })
+    }, content = { paddingValues ->
         Column(
             modifier
                 .fillMaxWidth()
-                .padding(it)
+                .padding(paddingValues)
+                .padding(16.dp)
+                .padding(bottom = 56.dp)
         ) {
             LazyColumn(
                 modifier = modifier
                     .fillMaxWidth()
-                    .padding(16.dp)
-                    .weight(1f),
-                state = scrollState
+                    .weight(1f), state = scrollState
             ) {
-                items(activos) { activo ->
+                itemsIndexed(activos) { indice, activo ->
                     ActivoItem(modifier, navController, activo)
-                    HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+
+                    // Añadir separador entre grupos de cuentas
+                    val isUltimoElemento = indice == activos.size - 1
+                    val isProximoPadre = !isUltimoElemento && activos[indice + 1].padre == null
+
+                    if (isUltimoElemento || isProximoPadre) {
+                        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                    }
                 }
             }
         }
@@ -103,31 +93,31 @@ fun ActivoItem(
     navController: NavController,
     activo: ActivoModel,
 ) {
-    ListItem(
-        modifier = modifier.clickable {
+    val paddingStart = if (activo.isHijo) 16.dp else 0.dp
+
+    ListItem(modifier = modifier
+        .padding(start = paddingStart)
+        .clickable {
             navController.navigate("activos/detalle/${activo.id}")
-        },
-        headlineContent = {
-            Text(
-                text = activo.nombre,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge.copy(
-                    fontWeight = if (activo.padre == null) FontWeight.Bold else FontWeight.Normal
-                )
-            )
-        },
-        supportingContent = {
-            Text(
-                text = if (activo.padre == null) "Activo" else "Subactivo",
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        },
-        leadingContent = {
-            Icon(
-                painter = painterResource(id = R.drawable.outline_attach_money_24),
-                contentDescription = "Icono de Activo",
-                tint = MaterialTheme.colorScheme.primary
-            )
-        },
-    )
+        }, headlineContent = {
+        Text(
+            text = activo.nombre,
+            style = MaterialTheme.typography.bodyLarge.copy(
+                fontWeight = if (activo.isHijo) FontWeight.Normal else FontWeight.Bold
+            ),
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+    }, supportingContent = {
+        Text(
+            text = if (activo.padre == null) "Activo" else "Subactivo",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }, leadingContent = {
+        Icon(
+            painter = painterResource(id = R.drawable.outline_attach_money_24),
+            contentDescription = "Icono de Activo",
+            tint = MaterialTheme.colorScheme.primary
+        )
+    })
 }

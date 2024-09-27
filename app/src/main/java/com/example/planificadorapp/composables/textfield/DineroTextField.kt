@@ -35,7 +35,7 @@ fun DineroTextField(
     etiqueta: String,
     mensajeError: String? = null,
     monto: String = "",
-    isSaldoValido: Boolean = true,
+    isError: Boolean = false,
     focusRequester: FocusRequester? = null,
     onSaldoChange: (String) -> Unit,
     onNextAction: (() -> Unit)? = null
@@ -107,16 +107,16 @@ fun DineroTextField(
         label = { Text(etiqueta) },
         placeholder = { Text("0.00") },
         leadingIcon = { Text("$") },
-        isError = !isSaldoValido,
+        isError = isError,
         textStyle = MaterialTheme.typography.bodyLarge,
         supportingText = {
-            if (!isSaldoValido && mensajeError != null) {
+            if (isError && mensajeError != null) {
                 Text(
                     text = mensajeError,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.End
+                    textAlign = TextAlign.Start
                 )
             }
         },

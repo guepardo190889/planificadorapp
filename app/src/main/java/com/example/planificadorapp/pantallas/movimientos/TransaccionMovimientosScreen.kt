@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.DatePickerInput
@@ -74,6 +73,7 @@ fun TransaccionMovimientosScreen(
     var descripcionBoton by remember { mutableStateOf("Guardar") }
 
     var isMontoValido by remember { mutableStateOf(true) }
+    var isCuentaSeleccionadaValida by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -82,7 +82,6 @@ fun TransaccionMovimientosScreen(
     val conceptoFocusRequester = remember { FocusRequester() }
     val descripcionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     var isTransaccionando by remember { mutableStateOf(false) }
 
@@ -94,7 +93,7 @@ fun TransaccionMovimientosScreen(
             if (monto.isNotEmpty()) {
                 BigDecimal(monto.replace(",", "")) >= BigDecimal.ZERO
             } else {
-                true
+                false
             }
         } catch (e: NumberFormatException) {
             false
@@ -102,11 +101,19 @@ fun TransaccionMovimientosScreen(
     }
 
     /**
+     * Valida si la cuenta seleccionada es válida
+     */
+    fun validarCuentaSeleccionada():Boolean {
+        return cuentaSeleccionada != null
+    }
+
+    /**
      * Valida la pantalla actual
      */
     fun validarPantalla(): Boolean {
         isMontoValido = validarMonto()
-        return isMontoValido
+        isCuentaSeleccionadaValida = validarCuentaSeleccionada()
+        return isMontoValido && isCuentaSeleccionadaValida
     }
 
     /**
@@ -195,9 +202,6 @@ fun TransaccionMovimientosScreen(
 
                 isTransaccionGuardar = false
                 descripcionBoton = "Actualizar"
-
-                focusManager.moveFocus(FocusDirection.Down)
-                keyboardController?.show()
             }
         }
     }
@@ -209,9 +213,7 @@ fun TransaccionMovimientosScreen(
     }, bottomBar = {
         BarraNavegacionInferior(isTransaccionGuardar = isTransaccionGuardar, onTransaccionClick = {
             if (validarPantalla()) {
-                if (validarPantalla()) {
-                    transaccionarMovimiento()
-                }
+                transaccionarMovimiento()
             }
         })
     }, content = { paddingValues ->
@@ -223,24 +225,27 @@ fun TransaccionMovimientosScreen(
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                TipoMovimientoRadioButtonGroup(
-                    tipoMovimientoSeleccionado,
+                TipoMovimientoRadioButtonGroup(tipoMovimientoSeleccionado,
                     onSelect = { tipoMovimientoSeleccionado = it })
 
                 CuentasDropDown(modifier = modifier,
                     etiqueta = "Selecciona una Cuenta",
                     isHabilitado = true,
                     isCuentaAgrupadoraSeleccionable = false,
-                    cuentaSeleccionada,
-                    cuentas,
+                    cuentas =cuentas,
+                    isError = !isCuentaSeleccionadaValida,
+                    mensajeError = "La cuenta es requerida",
+                    cuentaSeleccionada = cuentaSeleccionada,
                     onCuentaSeleccionada = {
+                        isCuentaSeleccionadaValida = true
                         cuentaSeleccionada = it
                     })
 
                 DineroTextField(modifier = modifier.fillMaxWidth(),
                     etiqueta = "Monto",
+                    mensajeError = "El monto es requerido",
                     monto = monto,
-                    isSaldoValido = isMontoValido,
+                    isError = !isMontoValido,
                     onSaldoChange = {
                         monto = it
                     },
@@ -312,20 +317,22 @@ fun TipoMovimientoRadioButtonGroup(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround
     ) {
-        TipoMovimiento.entries.forEach { tipo ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                RadioButton(
-                    selected = tipo == tipoSeleccionado,
-                    onClick = { onSelect(tipo) },
-                    colors = RadioButtonDefaults.colors(
-                        selectedColor = MaterialTheme.colorScheme.primary
+        TipoMovimiento.entries.filter { it == TipoMovimiento.CARGO || it == TipoMovimiento.ABONO }
+            .forEach { tipo ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = tipo == tipoSeleccionado,
+                        onClick = { onSelect(tipo) },
+                        colors = RadioButtonDefaults.colors(
+                            selectedColor = MaterialTheme.colorScheme.primary
+                        )
                     )
-                )
-                Text(
-                    text = tipo.name, color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                    Text(
+                        text = tipo.name,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        }
     }
 }

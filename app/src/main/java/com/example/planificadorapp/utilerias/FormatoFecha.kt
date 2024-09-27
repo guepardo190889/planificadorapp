@@ -56,7 +56,7 @@ object FormatoFecha {
      */
     fun formatoCorto(fecha: LocalDate): String {
         // Crear un DateTimeFormatter con el formato MM-dd-yyyy
-        val formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy")
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
 
         // Convertir el LocalDate a String
         return fecha.format(formatter)

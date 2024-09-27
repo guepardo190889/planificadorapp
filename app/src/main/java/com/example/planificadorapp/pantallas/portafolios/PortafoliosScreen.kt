@@ -69,6 +69,7 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
                 .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .padding(bottom = 56.dp)
         ) {
             if (portafolios.isEmpty()) {
                 Text(
@@ -83,7 +84,8 @@ fun Portafolios(modifier: Modifier, navController: NavController) {
                 LazyColumn(
                     modifier = modifier
                         .fillMaxWidth()
-                        .weight(1f), state = scrollState
+                        .weight(1f),
+                    state = scrollState
                 ) {
                     items(portafolios) { portafolio ->
                         PortafolioItem(modifier, navController, portafolio)

@@ -111,6 +111,7 @@ fun MovimientosScreen(modifier: Modifier, navController: NavController) {
                 .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .padding(bottom = 56.dp)
         ) {
             CuentasDropDown(modifier = modifier,
                 etiqueta = "Selecciona una Cuenta",

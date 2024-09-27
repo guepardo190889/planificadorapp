@@ -62,13 +62,13 @@ fun ResumenPortafolio(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
             TextoEtiquetado(
-                etiqueta = "Nombre",
+                etiqueta = "Nombre: ",
                 texto = nombre,
                 estiloEtiqueta = MaterialTheme.typography.bodyMedium,
                 estiloTexto = MaterialTheme.typography.bodyLarge
             )
             TextoEtiquetado(
-                etiqueta = "Descripción",
+                etiqueta = "Descripción: ",
                 texto = descripcion,
                 estiloEtiqueta = MaterialTheme.typography.bodyMedium,
                 estiloTexto = MaterialTheme.typography.bodyLarge

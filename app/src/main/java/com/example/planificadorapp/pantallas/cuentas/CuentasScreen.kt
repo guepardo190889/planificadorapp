@@ -78,6 +78,7 @@ fun Cuentas(
                 .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(16.dp)
+                .padding(bottom = 56.dp)
         ) {
             if (cuentas.isEmpty()) {
                 Text(

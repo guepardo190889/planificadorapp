@@ -58,6 +58,7 @@ fun DetalleMovimientosScreen(
                 modifier
                     .fillMaxWidth()
                     .padding(paddingValues)
+                    .padding(bottom = 56.dp)
             ) {
                 Card(
                     modifier

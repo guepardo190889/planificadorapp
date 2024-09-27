@@ -56,7 +56,10 @@ fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idAct
         },
         content = { paddingValues ->
             activo?.let {
-                Column(modifier.padding(paddingValues)) {
+                Column(modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .padding(bottom = 56.dp)){
                     Card(
                         modifier
                             .fillMaxWidth()

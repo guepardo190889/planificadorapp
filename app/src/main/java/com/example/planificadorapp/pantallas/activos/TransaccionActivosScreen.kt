@@ -31,12 +31,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
+import com.example.planificadorapp.composables.snackbar.SnackBarBase
+import com.example.planificadorapp.composables.snackbar.SnackBarManager
+import com.example.planificadorapp.composables.snackbar.SnackBarTipo
 import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.activos.TransaccionActivoRequestModel
+import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.ActivosRepository
 import kotlinx.coroutines.launch
 
@@ -50,6 +59,8 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
 
     var activosPadre by remember { mutableStateOf<List<ActivoModel>>(emptyList()) }
     var activo by remember { mutableStateOf<ActivoModel?>(null) }
+
+    var isTransaccionGuardar by remember { mutableStateOf(true) }
     var descripcionBoton by remember { mutableStateOf("Guardar") }
 
     var nombre by remember { mutableStateOf("") }
@@ -63,34 +74,14 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
 
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
-    var snackbarMessage by remember { mutableStateOf("") }
-    var snackbarType by remember { mutableStateOf("") }
+    val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
 
-    LaunchedEffect(Unit) {
-        activosRepository.buscarActivos(true) { resultadoActivosPadres ->
-            activosPadre = resultadoActivosPadres ?: emptyList()
-            Log.i("ActivosScreen", "Activos padre cargados: $resultadoActivosPadres")
+    val nombreFocusRequester = remember {FocusRequester()}
+    val descripcionFocusRequester = remember {FocusRequester()}
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-            if (activoId != 0L) {
-                activosRepository.buscarActivoPorId(activoId) { resultadoActivoExistente ->
-                    if (resultadoActivoExistente != null) {
-                        Log.i("ActivosScreen", "Activo encontrado: $resultadoActivoExistente")
-                        activo = resultadoActivoExistente
-                        nombre = resultadoActivoExistente.nombre
-                        descripcion = resultadoActivoExistente.descripcion ?: ""
-                        activoSeleccionado =
-                            activosPadre.find { it.id == resultadoActivoExistente.padre?.id }
-
-                        Log.i("ActivosScreen", "Activo padre encontrado: $activoSeleccionado")
-
-                        descripcionBoton = "Actualizar"
-                    }
-                }
-
-                activoPrincipalListaHabilitada = false
-            }
-        }
-    }
+    var isTransaccionando by remember { mutableStateOf(false) }
 
     /**
      * Valida si un nombre es válido
@@ -110,102 +101,104 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
     }
 
     /**
-     * Guarda el activo en la base de datos
+     * Guarda o actualiza el activo
      */
-    fun guardarActivo() {
-        activosRepository.guardarActivo(
+    fun transaccionarMovimiento() {
+        isTransaccionando = true
+
+        val transaccionModel =
             TransaccionActivoRequestModel(
                 nombre,
                 descripcion,
                 activoSeleccionado!!.id
             )
-        ) { activoGuardado ->
-            if (activoGuardado != null) {
-                snackbarMessage = "Activo guardado exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al guardar el activo"
-                snackbarType = "error"
-            }
 
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
-
+        if(isTransaccionGuardar){
+            activosRepository.guardarActivo(
+                transaccionModel
+            ) { activoGuardado ->
                 if (activoGuardado != null) {
-                    navController.navigate("activos")
+                    snackBarManager.mostrar(
+                        "Activo guardado exitosamente", SnackBarTipo.SUCCESS
+                    ) {
+                        isTransaccionando = false
+                        navController.navigate(Ruta.ACTIVOS.ruta)
+                    }
+                } else {
+                    snackBarManager.mostrar("Error al guardar el activo", SnackBarTipo.ERROR) {
+                        isTransaccionando = false
+                    }
+                }
+            }
+        }
+        else {
+            activosRepository.actualizarActivo(
+                activoId,
+                transaccionModel
+            ) { activoActualizado ->
+                if (activoActualizado != null) {
+                    snackBarManager.mostrar(
+                        "Activo actualizado exitosamente", SnackBarTipo.SUCCESS
+                    ) {
+                        isTransaccionando = false
+                        navController.navigate(Ruta.ACTIVOS.ruta)
+                    }
+                } else {
+                    snackBarManager.mostrar("Error al actualizar el activo", SnackBarTipo.ERROR) {
+                        isTransaccionando = false
+                    }
                 }
             }
         }
     }
 
-    /**
-     * Actualiza el activo en la base de datos
-     */
-    fun actualizarActivo() {
-        activosRepository.actualizarActivo(
-            activoId,
-            TransaccionActivoRequestModel(nombre, descripcion, activoSeleccionado!!.id)
-        ) {
-            if (it != null) {
-                snackbarMessage = "Activo actualizado exitosamente"
-                snackbarType = "success"
-            } else {
-                snackbarMessage = "Error al actualizar el activo"
-                snackbarType = "error"
-            }
+    LaunchedEffect(Unit) {
+        activosRepository.buscarActivos(true) { resultadoActivosPadres ->
+            activosPadre = resultadoActivosPadres ?: emptyList()
+            Log.i("ActivosScreen", "Activos padre cargados: $resultadoActivosPadres")
 
-            coroutineScope.launch {
-                snackbarHostState.showSnackbar(snackbarMessage)
+            if (activoId != 0L) {
+                activosRepository.buscarActivoPorId(activoId) { resultadoActivoExistente ->
+                    if (resultadoActivoExistente != null) {
+                        Log.i("ActivosScreen", "Activo encontrado: $resultadoActivoExistente")
 
-                if (it != null) {
-                    navController.navigate("activos")
+                        activo = resultadoActivoExistente
+                        nombre = resultadoActivoExistente.nombre
+                        descripcion = resultadoActivoExistente.descripcion ?: ""
+                        activoSeleccionado =
+                            activosPadre.find { it.id == resultadoActivoExistente.padre?.id }
+
+                        Log.i("ActivosScreen", "Activo padre encontrado: $activoSeleccionado")
+                    }
                 }
+
+                isTransaccionGuardar = false
+                descripcionBoton = "Actualizar"
+
+                focusManager.moveFocus(FocusDirection.Down)
+                keyboardController?.show()
+
+                activoPrincipalListaHabilitada = false
             }
         }
     }
 
     Scaffold(
-        modifier,
+        modifier = modifier
+            .fillMaxWidth(),
         snackbarHost = {
-            SnackbarHost(snackbarHostState) {
-                SnackBarConColor(
-                    snackbarHostState = snackbarHostState,
-                    tipo = snackbarType
-                )
-            }
+            SnackBarBase(
+                snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+            )
         },
         bottomBar = {
-            BottomAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                content = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        FloatingActionButton(
-                            modifier = Modifier.padding(16.dp),
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary,
-                            onClick = {
-                                if (validarPantalla()) {
-                                    if (activoId == 0L) {
-                                        guardarActivo()
-                                    } else {
-                                        actualizarActivo()
-                                    }
-                                }
-                            }
-                        ) {
-                            Icon(
-                                Icons.Default.Done,
-                                contentDescription = descripcionBoton
-                            )
-                        }
+            BarraNavegacionInferior(isTransaccionGuardar = isTransaccionGuardar, onTransaccionClick = {
+                if (validarPantalla()) {
+                    if (validarPantalla()) {
+                        transaccionarMovimiento()
                     }
                 }
-            )
+            })
         },
         content = { paddingValues ->
             Column(

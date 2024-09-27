@@ -80,6 +80,7 @@ fun DetalleCuentasScreen(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
+                .padding(bottom = 56.dp)
                 .verticalScroll(scrollState)
         ) {
             cuenta?.let {

@@ -239,7 +239,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                     DineroTextField(modifier = modifier,
                         monto = saldo,
                         etiqueta = "Saldo",
-                        isSaldoValido = isSaldoValido,
+                        isError = isSaldoValido,
                         focusRequester = dineroFocusRequester,
                         onSaldoChange = {
                             saldo = it

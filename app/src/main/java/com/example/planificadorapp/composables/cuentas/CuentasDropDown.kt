@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 
@@ -30,8 +31,10 @@ fun CuentasDropDown(
     etiqueta: String,
     isHabilitado: Boolean,
     isCuentaAgrupadoraSeleccionable: Boolean,
-    cuentaSeleccionada: CuentaModel?,
     cuentas: List<CuentaModel>,
+    isError:Boolean=false,
+    mensajeError:String="",
+    cuentaSeleccionada: CuentaModel?,
     onCuentaSeleccionada: (CuentaModel) -> Unit
 ) {
     var isDesplegadoDropdown by remember { mutableStateOf(false) }
@@ -46,13 +49,15 @@ fun CuentasDropDown(
             isDesplegadoDropdown = !isDesplegadoDropdown
         }
     }) {
-        OutlinedTextField(value = cuentaSeleccionadaDropdown?.nombre ?: "",
+        OutlinedTextField(
+            value = cuentaSeleccionadaDropdown?.nombre ?: "",
             onValueChange = { },
             modifier = modifier
                 .menuAnchor()
                 .fillMaxWidth(),
             enabled = isHabilitado,
             readOnly = true,
+            isError = isError,
             label = { Text(etiqueta, color = MaterialTheme.colorScheme.onSurface) },
             colors = ExposedDropdownMenuDefaults.textFieldColors(
                 focusedContainerColor = MaterialTheme.colorScheme.surface,
@@ -60,6 +65,17 @@ fun CuentasDropDown(
             ),
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDesplegadoDropdown)
+            },
+            supportingText = {
+                if (isError) {
+                    Text(
+                        text = mensajeError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start
+                    )
+                }
             })
 
         ExposedDropdownMenu(

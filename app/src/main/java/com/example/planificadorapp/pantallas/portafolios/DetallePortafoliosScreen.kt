@@ -76,6 +76,7 @@ fun DetallePortafoliosScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(paddingValues)
+                .padding(bottom = 56.dp)
                 .verticalScroll(scrollState)
         ) {
             portafolio?.let { portafolio ->
@@ -127,7 +128,7 @@ fun DetallePortafoliosScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 8.dp), // Compactando el espacio entre los componentes
-                                titulo = "Distribución de activos y valor", datos = datos
+                                titulo = "Distribución de activos", datos = datos
                             )
                         }
                     }
@@ -157,12 +158,6 @@ fun ComposicionesList(composiciones: List<PortafolioBuscarComposicionResponseMod
                         text = composicion.nombreActivo ?: "",
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
-                    )
-                    Text(
-                        text = FormatoMonto.formato(saldoTotalActivo),
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.End
                     )
                 }
 
@@ -231,7 +226,7 @@ fun CuentasDetalleList(cuentas: List<PortafolioBuscarCuentaResponseModel>) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = cuenta.nombre ?: "Sin nombre",
+                    text = cuenta.nombre ?: "",
                     style = MaterialTheme.typography.bodySmall,
                     modifier = Modifier.weight(1f)
                 )

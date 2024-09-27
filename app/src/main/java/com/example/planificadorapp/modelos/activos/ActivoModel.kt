@@ -8,4 +8,7 @@ data class ActivoModel(
     val nombre: String,
     val descripcion: String? = "",
     val padre: ActivoPadreResponseModel? = null
-)
+) {
+    val isHijo: Boolean
+        get() = padre != null
+}
