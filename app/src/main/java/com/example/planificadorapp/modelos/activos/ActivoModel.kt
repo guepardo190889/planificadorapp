@@ -11,4 +11,7 @@ data class ActivoModel(
 ) {
     val isHijo: Boolean
         get() = padre != null
+
+    val isPadre: Boolean
+        get() = padre == null
 }

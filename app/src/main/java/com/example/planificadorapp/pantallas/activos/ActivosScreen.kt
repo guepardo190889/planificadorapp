@@ -109,7 +109,7 @@ fun ActivoItem(
         )
     }, supportingContent = {
         Text(
-            text = if (activo.padre == null) "Activo" else "Subactivo",
+            text = if (activo.padre == null) "Activo principal" else "",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

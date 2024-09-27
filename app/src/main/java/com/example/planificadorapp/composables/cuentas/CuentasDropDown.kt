@@ -29,9 +29,9 @@ import com.example.planificadorapp.modelos.cuentas.CuentaModel
 fun CuentasDropDown(
     modifier: Modifier,
     etiqueta: String,
-    isHabilitado: Boolean,
     isCuentaAgrupadoraSeleccionable: Boolean,
     cuentas: List<CuentaModel>,
+    isHabilitado: Boolean = true,
     isError:Boolean=false,
     mensajeError:String="",
     cuentaSeleccionada: CuentaModel?,
@@ -44,11 +44,14 @@ fun CuentasDropDown(
         cuentaSeleccionadaDropdown = cuentas.find { it.id == cuentaSeleccionada?.id }
     }
 
-    ExposedDropdownMenuBox(expanded = isDesplegadoDropdown, onExpandedChange = {
-        if (isHabilitado) {
-            isDesplegadoDropdown = !isDesplegadoDropdown
+    ExposedDropdownMenuBox(
+        expanded = isDesplegadoDropdown,
+        onExpandedChange = {
+            if (isHabilitado) {
+                isDesplegadoDropdown = !isDesplegadoDropdown
+            }
         }
-    }) {
+    ) {
         OutlinedTextField(
             value = cuentaSeleccionadaDropdown?.nombre ?: "",
             onValueChange = { },

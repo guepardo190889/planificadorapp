@@ -1,27 +1,17 @@
 package com.example.planificadorapp.pantallas.activos
 
 import android.util.Log
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,25 +24,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.planificadorapp.composables.SnackBarConColor
+import com.example.planificadorapp.composables.activos.ActivosDropDonw
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.snackbar.SnackBarBase
 import com.example.planificadorapp.composables.snackbar.SnackBarManager
 import com.example.planificadorapp.composables.snackbar.SnackBarTipo
+import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.modelos.activos.ActivoModel
 import com.example.planificadorapp.modelos.activos.TransaccionActivoRequestModel
 import com.example.planificadorapp.navegacion.Ruta
 import com.example.planificadorapp.repositorios.ActivosRepository
-import kotlinx.coroutines.launch
 
 /**
  * Composable que representa la pantalla de guardado/actualización de un activo
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, activoId: Long) {
     val activosRepository = ActivosRepository()
@@ -66,8 +53,6 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
     var nombre by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
     var activoSeleccionado by remember { mutableStateOf<ActivoModel?>(null) }
-    var activoPrincipalListaDesplegada by remember { mutableStateOf(false) }
-    var activoPrincipalListaHabilitada by remember { mutableStateOf(true) }
 
     var isNombreValido by remember { mutableStateOf(true) }
     var isActivoSeleccionadoValido by remember { mutableStateOf(true) }
@@ -76,10 +61,9 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
     val snackbarHostState = remember { SnackbarHostState() }
     val snackBarManager = remember { SnackBarManager(coroutineScope, snackbarHostState) }
 
-    val nombreFocusRequester = remember {FocusRequester()}
-    val descripcionFocusRequester = remember {FocusRequester()}
+    val nombreFocusRequester = remember { FocusRequester() }
+    val descripcionFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     var isTransaccionando by remember { mutableStateOf(false) }
 
@@ -106,14 +90,11 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
     fun transaccionarMovimiento() {
         isTransaccionando = true
 
-        val transaccionModel =
-            TransaccionActivoRequestModel(
-                nombre,
-                descripcion,
-                activoSeleccionado!!.id
-            )
+        val transaccionModel = TransaccionActivoRequestModel(
+            nombre, descripcion, activoSeleccionado!!.id
+        )
 
-        if(isTransaccionGuardar){
+        if (isTransaccionGuardar) {
             activosRepository.guardarActivo(
                 transaccionModel
             ) { activoGuardado ->
@@ -130,11 +111,9 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
                     }
                 }
             }
-        }
-        else {
+        } else {
             activosRepository.actualizarActivo(
-                activoId,
-                transaccionModel
+                activoId, transaccionModel
             ) { activoActualizado ->
                 if (activoActualizado != null) {
                     snackBarManager.mostrar(
@@ -155,7 +134,7 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
     LaunchedEffect(Unit) {
         activosRepository.buscarActivos(true) { resultadoActivosPadres ->
             activosPadre = resultadoActivosPadres ?: emptyList()
-            Log.i("ActivosScreen", "Activos padre cargados: $resultadoActivosPadres")
+            Log.i("ActivosScreen", "Activos padre cargados: ${activosPadre.size}")
 
             if (activoId != 0L) {
                 activosRepository.buscarActivoPorId(activoId) { resultadoActivoExistente ->
@@ -174,147 +153,83 @@ fun TransaccionActivosScreen(modifier: Modifier, navController: NavController, a
 
                 isTransaccionGuardar = false
                 descripcionBoton = "Actualizar"
-
-                focusManager.moveFocus(FocusDirection.Down)
-                keyboardController?.show()
-
-                activoPrincipalListaHabilitada = false
             }
         }
     }
 
-    Scaffold(
-        modifier = modifier
-            .fillMaxWidth(),
-        snackbarHost = {
-            SnackBarBase(
-                snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
-            )
-        },
-        bottomBar = {
-            BarraNavegacionInferior(isTransaccionGuardar = isTransaccionGuardar, onTransaccionClick = {
+    Scaffold(modifier = modifier.fillMaxWidth(), snackbarHost = {
+        SnackBarBase(
+            snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+        )
+    }, bottomBar = {
+        BarraNavegacionInferior(isTransaccionGuardar = isTransaccionGuardar, onTransaccionClick = {
+            if (validarPantalla()) {
                 if (validarPantalla()) {
-                    if (validarPantalla()) {
-                        transaccionarMovimiento()
-                    }
+                    transaccionarMovimiento()
                 }
-            })
-        },
-        content = { paddingValues ->
+            }
+        })
+    }, content = { paddingValues ->
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Column(
                 modifier
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                ExposedDropdownMenuBox(
-                    expanded = activoPrincipalListaDesplegada,
-                    onExpandedChange = {
-                        if (activoPrincipalListaHabilitada) { //No se permite modificar el activo principal de un activo existente
-                            activoPrincipalListaDesplegada = !activoPrincipalListaDesplegada
-                        }
-                    }) {
-                    OutlinedTextField(
-                        value = activoSeleccionado?.nombre ?: "",
-                        onValueChange = { },
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth(),
-                        enabled = activoPrincipalListaHabilitada,
-                        readOnly = true,
-                        label = {
-                            Text(
-                                "Selecciona un Activo Principal",
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                imageVector = if (activoPrincipalListaDesplegada) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropDown,
-                                contentDescription = null
-                            )
-                        },
-                        isError = !isActivoSeleccionadoValido,
-                        supportingText = {
-                            if (!isActivoSeleccionadoValido) {
-                                Text(
-                                    text = "El activo principal es requerido",
-                                    color = MaterialTheme.colorScheme.error
-                                )
-                            }
-                        },
-                        colors = OutlinedTextFieldDefaults.colors()
-                    )
+                ActivosDropDonw(modifier = Modifier.fillMaxWidth(),
+                    etiqueta = "Selecciona un Activo Principal",
+                    activos = activosPadre,
+                    isHabilitado = isTransaccionGuardar,
+                    isError = !isActivoSeleccionadoValido,
+                    mensajeError = "El activo principal es requerido",
+                    activoSeleccionado = activoSeleccionado,
+                    onActivoSeleccionado = {
+                        isActivoSeleccionadoValido = true
+                        activoSeleccionado = it
+                    })
 
-                    ExposedDropdownMenu(
-                        expanded = activoPrincipalListaDesplegada,
-                        onDismissRequest = { activoPrincipalListaDesplegada = false },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        activosPadre.forEach { activo ->
-                            DropdownMenuItem(
-                                text = { Text(activo.nombre) },
-                                onClick = {
-                                    activoSeleccionado = activo
-                                    activoPrincipalListaDesplegada = false
-                                    isActivoSeleccionadoValido = true
-                                }
-                            )
-                        }
-                    }
-                }
-
-                OutlinedTextField(
-                    value = nombre,
+                OutlinedTextFieldBase(value = nombre,
+                    label = "Nombre",
+                    isError = !isNombreValido,
+                    errorMessage = "El nombre es requerido",
+                    focusRequester = nombreFocusRequester,
+                    supportingText = "Ingrese el nombre del activo (máximo 52 caracteres)",
+                    maxLength = 52,
+                    singleLine = false,
+                    maxLines = 2,
                     onValueChange = {
                         isNombreValido = validarNombre(it)
-
-                        if (it.length <= 52) {
-                            nombre = it
-                        }
+                        nombre = it
                     },
-                    label = { Text("Nombre", color = MaterialTheme.colorScheme.onSurface) },
-                    isError = !isNombreValido,
-                    singleLine = true,
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                    modifier = Modifier.fillMaxWidth(),
-                    supportingText = {
-                        if (!isNombreValido) {
-                            Text(
-                                text = "El nombre es requerido",
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-                        Text(
-                            text = "${nombre.length}/52",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
+                    onNextAction = {
+                        focusManager.moveFocus(FocusDirection.Down)
+                    })
 
-                OutlinedTextField(
-                    value = descripcion,
+                OutlinedTextFieldBase(value = descripcion,
+                    label = "Descripción",
+                    focusRequester = descripcionFocusRequester,
+                    supportingText = "Descripción opcional (máximo 256 caracteres)",
+                    maxLength = 256,
+                    singleLine = false,
+                    maxLines = 3,
                     onValueChange = {
-                        if (it.length <= 256) {
-                            descripcion = it
-                        }
-                    },
-                    label = { Text("Descripción", color = MaterialTheme.colorScheme.onSurface) },
-                    textStyle = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface),
-                    modifier = Modifier.fillMaxWidth(),
-                    supportingText = {
-                        Text(
-                            text = "${descripcion.length}/256",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onSurfaceVariant),
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.End
-                        )
-                    },
-                    colors = OutlinedTextFieldDefaults.colors()
-                )
+                        descripcion = it
+                    })
+            }
+
+            // Si está guardando, mostramos un indicador de carga que bloquea toda la pantalla
+            if (isTransaccionando) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                        .clickable(enabled = false) {}, contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
-    )
+    })
 }

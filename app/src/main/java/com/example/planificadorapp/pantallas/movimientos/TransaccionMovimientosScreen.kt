@@ -103,7 +103,7 @@ fun TransaccionMovimientosScreen(
     /**
      * Valida si la cuenta seleccionada es válida
      */
-    fun validarCuentaSeleccionada():Boolean {
+    fun validarCuentaSeleccionada(): Boolean {
         return cuentaSeleccionada != null
     }
 
@@ -225,14 +225,15 @@ fun TransaccionMovimientosScreen(
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                TipoMovimientoRadioButtonGroup(tipoMovimientoSeleccionado,
+                TipoMovimientoRadioButtonGroup(
+                    tipoMovimientoSeleccionado,
                     onSelect = { tipoMovimientoSeleccionado = it })
 
                 CuentasDropDown(modifier = modifier,
                     etiqueta = "Selecciona una Cuenta",
                     isHabilitado = isTransaccionGuardar,
                     isCuentaAgrupadoraSeleccionable = false,
-                    cuentas =cuentas,
+                    cuentas = cuentas,
                     isError = !isCuentaSeleccionadaValida,
                     mensajeError = "La cuenta es requerida",
                     cuentaSeleccionada = cuentaSeleccionada,
