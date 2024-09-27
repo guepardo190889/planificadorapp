@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -43,12 +43,14 @@ fun ResumenPortafolio(
     }) { paddingValues ->
         Column(
             modifier = modifier
+                .fillMaxWidth()
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
-                .fillMaxWidth(),
+                .verticalScroll(rememberScrollState())
         ) {
             EncabezadoPortafolio(
-                titulo = "Resumen"
+                titulo = "Resumen",
+                descripcion = "Resumen de la información del portafolio"
             )
 
             // Sección de información general
@@ -84,11 +86,11 @@ fun ResumenPortafolio(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            LazyColumn(
+            Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(composiciones) { composicion ->
+                composiciones.forEach { composicion ->
                     ResumenComposicion(composicion)
                 }
             }

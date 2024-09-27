@@ -60,8 +60,18 @@ fun PortafolioDistribucionActivos(
     var mensajeErrorComposiciones by remember { mutableStateOf("") }
     var mostrarDialogoActivos by remember { mutableStateOf(false) }
 
+    val scrollState = rememberScrollState()
+    var isNuevoActivoAgregado by remember { mutableStateOf(false) }
+
     LaunchedEffect(composiciones) {
         totalPorcentaje = composiciones.sumOf { it.porcentaje.toInt() }
+    }
+
+    LaunchedEffect(isNuevoActivoAgregado) {
+        if (isNuevoActivoAgregado) {
+            scrollState.animateScrollTo(scrollState.maxValue)
+            isNuevoActivoAgregado = false
+        }
     }
 
     /**
@@ -98,7 +108,7 @@ fun PortafolioDistribucionActivos(
             modifier = modifier
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
         ) {
             EncabezadoPortafolio(
                 titulo = "Distribución de activos",
@@ -157,6 +167,8 @@ fun PortafolioDistribucionActivos(
                     onActivoSeleccionado = { activoSeleccionado ->
                         onAgregarComposicion(GuardarComposicionModel(activoSeleccionado))
                         mostrarDialogoActivos = false
+
+                        isNuevoActivoAgregado = true
                     },
                     onDismissRequest = { mostrarDialogoActivos = false })
             }

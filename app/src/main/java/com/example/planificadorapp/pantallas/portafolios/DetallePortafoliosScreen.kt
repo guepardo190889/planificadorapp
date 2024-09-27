@@ -1,26 +1,17 @@
 package com.example.planificadorapp.pantallas.portafolios
 
 import android.util.Log
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
@@ -40,6 +31,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.planificadorapp.composables.TextoConEtiqueta
+import com.example.planificadorapp.composables.fab.FloatingActionButtonActualizar
 import com.example.planificadorapp.composables.graficos.GraficaPastelCanvas
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarComposicionResponseModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarCuentaResponseModel
@@ -59,8 +51,8 @@ fun DetallePortafoliosScreen(
     var portafolio by remember { mutableStateOf<PortafolioBuscarResponseModel?>(null) }
     var datosGrafico by remember { mutableStateOf<DistribucionPortafolioGraficoModel?>(null) }
 
-    val scrollState = rememberLazyListState()
-    val isFabVisible by remember { derivedStateOf { scrollState.firstVisibleItemIndex == 0 } }
+    val scrollState = rememberScrollState()
+    val isFabVisible by remember { derivedStateOf { scrollState.value == 0 } }
 
     LaunchedEffect(idPortafolio) {
         portafoliosRepository.buscarPortafolioPorId(idPortafolio) { portafolioEncontrado ->
@@ -71,67 +63,73 @@ fun DetallePortafoliosScreen(
         }
     }
 
-    Scaffold(floatingActionButton = {
-        AnimatedVisibility(
-            visible = isFabVisible,
-            enter = slideInVertically(initialOffsetY = { it }) + fadeIn(),
-            exit = slideOutVertically(targetOffsetY = { it }) + fadeOut()
-        ) {
-            FloatingActionButton(
-                onClick = { navController.navigate("portafolios/editar/${idPortafolio}") },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary
-            ) {
-                Icon(Icons.Default.Edit, contentDescription = "Actualizar Portafolio")
-            }
-        }
-    }) { paddingValues ->
-        LazyColumn(
+    Scaffold(
+        modifier = modifier.fillMaxWidth(),
+        floatingActionButton = {
+            FloatingActionButtonActualizar(isVisible = isFabVisible,
+                tooltip = "Actualizar el portafolio",
+                onClick = {
+                    navController.navigate("portafolios/editar/${idPortafolio}")
+                })
+        }) { paddingValues ->
+        Column(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(paddingValues)
-                .padding(16.dp), state = scrollState
+                .verticalScroll(scrollState)
         ) {
-            item {
-                portafolio?.let { portafolio ->
-                    // Card for general info
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 8.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+            portafolio?.let { portafolio ->
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    elevation = CardDefaults.cardElevation(4.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    )
+                ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            TextoConEtiqueta("Nombre: ", portafolio.nombre ?: "", "large", "medium")
-                            TextoConEtiqueta(
-                                "Saldo: ", FormatoMonto.formato(portafolio.saldo), "large", "medium"
-                            )
-                            TextoConEtiqueta(
-                                "Descripción: ", portafolio.descripcion ?: "", "large", "medium"
-                            )
-                        }
+                        TextoConEtiqueta("Nombre: ", portafolio.nombre ?: "", "large", "medium")
+                        TextoConEtiqueta(
+                            "Saldo: ", FormatoMonto.formato(portafolio.saldo), "large", "medium"
+                        )
+                        TextoConEtiqueta(
+                            "Descripción: ", portafolio.descripcion ?: "", "large", "medium"
+                        )
                     }
                 }
-            }
 
-            item {
-                portafolio?.let { portafolio ->
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                        text = "Distribución",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        color = MaterialTheme.colorScheme.outline
+                    )
+
                     ComposicionesList(composiciones = portafolio.composiciones)
-                }
-            }
 
-            item {
-                datosGrafico?.let { grafico ->
-                    if (grafico.composicionesPortafolio.isNotEmpty()) {
-                        val datos = grafico.composicionesPortafolio.map {
-                            it.nombreActivo to it.saldoTotalCuentas.toFloat()
+                    datosGrafico?.let { grafico ->
+                        if (grafico.composicionesPortafolio.isNotEmpty()) {
+                            val datos = grafico.composicionesPortafolio.map {
+                                it.nombreActivo to it.saldoTotalCuentas.toFloat()
+                            }
+
+                            GraficaPastelCanvas(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp), // Compactando el espacio entre los componentes
+                                titulo = "Distribución de activos y valor", datos = datos
+                            )
                         }
-
-                        GraficaPastelCanvas(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp), // Compactando el espacio entre los componentes
-                            titulo = "Distribución", datos = datos
-                        )
                     }
                 }
             }
