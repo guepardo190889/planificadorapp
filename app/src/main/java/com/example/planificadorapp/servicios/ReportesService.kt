@@ -23,4 +23,10 @@ interface ReportesService{
      */
     @GET("/api/v1/portafolios/{id}/reportes/distribucion-activos")
     fun generarReporteDistribucionActivos( @Path("id") id: Long):Call<GraficoPastelModel>
+
+    /**
+     * Busca el reporte de distribución de saldos de un portafolio en el servidor y devuelve un GraficoPastelModel
+     */
+    @GET("/api/v1/portafolios/{id}/reportes/distribucion-saldos")
+    fun buscarReporteDistribucionSaldos( @Path("id") id: Long):Call<GraficoPastelModel>
 }

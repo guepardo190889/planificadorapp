@@ -39,8 +39,7 @@ class ReportesRepository {
      * Genera un reporte de distribución de activos de un portafolio en el servidor y devuelve el reporte generado
      */
     fun generarReporteDistribucionActivos(
-        idPortafolio: Long,
-        onResult: (GraficoPastelModel?) -> Unit
+        idPortafolio: Long, onResult: (GraficoPastelModel?) -> Unit
     ) {
         apiService.generarReporteDistribucionActivos(idPortafolio)
             .enqueue(object : Callback<GraficoPastelModel> {
@@ -49,10 +48,32 @@ class ReportesRepository {
                 ) {
                     if (response.isSuccessful) {
                         onResult(response.body())
-                        println("Reporte generado exitosamente")
                     } else {
                         onResult(null)
-                        println("Error al generar el reporte")
+                    }
+                }
+
+                override fun onFailure(call: Call<GraficoPastelModel>, t: Throwable) {
+                    onResult(null)
+                }
+            })
+    }
+
+    /**
+     * Busca un reporte de distribución de saldos de un portafolio en el servidor y devuelve el reporte encontrado
+     */
+    fun buscarReporteDistribucionSaldos(
+        idPortafolio: Long, onResult: (GraficoPastelModel?) -> Unit
+    ) {
+        apiService.buscarReporteDistribucionSaldos(idPortafolio)
+            .enqueue(object : Callback<GraficoPastelModel> {
+                override fun onResponse(
+                    call: Call<GraficoPastelModel>, response: Response<GraficoPastelModel>
+                ) {
+                    if (response.isSuccessful) {
+                        onResult(response.body())
+                    } else {
+                        onResult(null)
                     }
                 }
 

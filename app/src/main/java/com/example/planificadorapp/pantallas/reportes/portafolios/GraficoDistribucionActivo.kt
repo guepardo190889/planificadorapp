@@ -22,6 +22,7 @@ import com.example.planificadorapp.modelos.portafolios.PortafolioModel
 import com.example.planificadorapp.modelos.reportes.GraficoPastelModel
 import com.example.planificadorapp.repositorios.PortafoliosRepository
 import com.example.planificadorapp.repositorios.ReportesRepository
+import com.example.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 
 /**
  * Composable que representa el gráfico de distribución de activos de un portafolio
@@ -72,7 +73,9 @@ fun GraficoDistribucionActivo(modifier: Modifier) {
                 )
 
                 GraficaPastelCanvas(
-                    modifier = Modifier.fillMaxWidth(), titulo = "", datos = grafico.datos
+                    modifier = Modifier.fillMaxWidth(),
+                    datos = grafico.datos,
+                    tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE
                 )
             }
         }

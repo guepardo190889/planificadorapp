@@ -24,7 +24,9 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 import com.example.planificadorapp.utilerias.generarColoresDesdeColoresBase
+import java.text.NumberFormat
 import java.util.Locale
 import kotlin.math.cos
 import kotlin.math.sin
@@ -35,8 +37,9 @@ import kotlin.math.sin
 @Composable
 fun GraficaPastelCanvas(
     modifier: Modifier,
-    titulo: String,
-    datos: List<Pair<String, Double>>
+    titulo: String = "",
+    datos: List<Pair<String, Double>>,
+    tipoDatoGrafica: TipoDatoGraficaPastel
 ) {
     val total = datos.sumOf { it.second }
 
@@ -89,20 +92,26 @@ fun GraficaPastelCanvas(
                 )
 
                 // Dibujar etiquetas con porcentajes
-                val porcentaje = (value / total) * 100
                 val middleAngle = startAngle + sweepAngle / 2
                 val labelX =
                     center.x + (size.minDimension / 3) * cos(Math.toRadians(middleAngle)).toFloat()
                 val labelY =
                     center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
 
+                // Etiqueta personalizada según el tipo de dato
+                val textoEtiqueta = when (tipoDatoGrafica) {
+                    TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", value)
+                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", (value / total) * 100)
+                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(value)
+                }
+
                 drawContext.canvas.nativeCanvas.apply {
                     drawText(
-                        String.format(Locale("es", "MX"), "%.1f%%", porcentaje),
+                        textoEtiqueta,
                         labelX,
                         labelY,
                         android.graphics.Paint().apply {
-                            textSize = 26f // Reducí el tamaño de texto de los porcentajes
+                            textSize = 26f
                             color = Color.Black
                             textAlign = android.graphics.Paint.Align.CENTER
                         }
@@ -124,17 +133,29 @@ fun GraficaPastelCanvas(
         ) {
             Log.i("GraficaPastelCanvas", "Dibujando etiquetas")
 
-            datos.forEachIndexed { index, _ ->
-                val (label, value) = datos[index]
+            datos.forEachIndexed { index, (label, value) ->
+                // Calcular el porcentaje del valor
                 val porcentaje = (value / total) * 100
 
-                Log.i("GraficaPastelCanvas", "Label: $label, Value: $value, Total: $total, Porcentaje: $porcentaje")
+                // Formatear el valor según el tipo de dato
+                val textoValor = when (tipoDatoGrafica) {
+                    TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", value)
+                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", porcentaje)
+                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(value)
+                }
+
+                // Formatear el porcentaje si es tipo número o dinero
+                val textoPorcentaje = if (tipoDatoGrafica == TipoDatoGraficaPastel.NUMERO || tipoDatoGrafica == TipoDatoGraficaPastel.DINERO) {
+                    String.format(Locale("es", "MX"), "%.2f%%", porcentaje)
+                } else {
+                    ""
+                }
 
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
                     Box(
                         modifier = Modifier
@@ -142,31 +163,40 @@ fun GraficaPastelCanvas(
                             .background(colores[index % colores.size], shape = CircleShape)
                     )
 
-                    // Textos del nombre del activo y el porcentaje/monto
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // Textos ajustables dentro de dos terceras partes del ancho
+                    // Columna para el nombre de la leyenda (ocupa 2/3 de la fila)
                     Column(
-                        modifier = Modifier.weight(2f / 3f)
+                        modifier = Modifier.weight(2f / 3f),
+                        verticalArrangement = Arrangement.Top
                     ) {
                         Text(
                             text = label,
-                            maxLines = 2,  // Permitimos que el nombre ocupe hasta 2 líneas si es necesario
+                            maxLines = 3,
                             style = TextStyle(fontSize = 13.sp)
                         )
                     }
 
-                    // Texto del porcentaje y el monto, alineado a la derecha
-                    Row(
+                    // Columna para los valores (ocupa 1/3 de la fila)
+                    Column(
                         modifier = Modifier.weight(1f / 3f),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically
+                        horizontalAlignment = Alignment.End, // Alineación a la derecha
+                        verticalArrangement = Arrangement.Top
                     ) {
+                        // Fila para el valor
                         Text(
-                            text = String.format(Locale("es", "MX"), "%.1f%%", porcentaje),
-                            style = MaterialTheme.typography.bodySmall,
+                            text = textoValor,
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
                             maxLines = 1
                         )
+                        // Fila para el porcentaje (solo si es número o dinero)
+                        if (textoPorcentaje.isNotEmpty()) {
+                            Text(
+                                text = textoPorcentaje,
+                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp, color = Color.Gray),
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }

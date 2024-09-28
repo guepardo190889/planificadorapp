@@ -39,6 +39,7 @@ import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscar
 import com.example.planificadorapp.modelos.portafolios.graficos.DistribucionPortafolioGraficoModel
 import com.example.planificadorapp.repositorios.PortafoliosRepository
 import com.example.planificadorapp.utilerias.FormatoMonto
+import com.example.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 
 /**
  * Composable que representa la pantalla de detalles de un portafolio
@@ -63,15 +64,14 @@ fun DetallePortafoliosScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxWidth(),
-        floatingActionButton = {
-            FloatingActionButtonActualizar(isVisible = isFabVisible,
-                tooltip = "Actualizar el portafolio",
-                onClick = {
-                    navController.navigate("portafolios/editar/${idPortafolio}")
-                })
-        }) { paddingValues ->
+    Scaffold(modifier = modifier.fillMaxWidth(), floatingActionButton = {
+        FloatingActionButtonActualizar(
+            isVisible = isFabVisible,
+            tooltip = "Actualizar el portafolio",
+            onClick = {
+                navController.navigate("portafolios/editar/${idPortafolio}")
+            })
+    }) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -128,7 +128,9 @@ fun DetallePortafoliosScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(top = 8.dp), // Compactando el espacio entre los componentes
-                                titulo = "Distribución de activos", datos = datos
+                                titulo = "Distribución de activos",
+                                datos = datos,
+                                tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE
                             )
                         }
                     }
