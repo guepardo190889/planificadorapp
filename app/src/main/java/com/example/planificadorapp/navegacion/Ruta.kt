@@ -26,6 +26,8 @@ enum class Ruta(
     ACTIVOS_EDITAR("activos/editar/{idActivo}", "Actualizar Activo", false),
 
     REPORTES("reportes", "Reportes", true),
+    REPORTES_PORTAFOLIO_DISTRIBUCION_ACTIVOS("reportes/portafolio/distribucion-activos", "Distribución de Activos"),
+    REPORTES_PORTAFOLIO_DISTRIBUCION_SALDOS("reportes/portafolio/distribucion-saldos", "Distribución de Saldos"),
 
     CONFIGURACIONES("configuraciones", "Configuraciones", true);
 

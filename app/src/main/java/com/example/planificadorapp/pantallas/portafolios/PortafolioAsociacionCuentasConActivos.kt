@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.ConfirmacionSimpleDialog
+import com.example.planificadorapp.composables.EncabezadoScreen
 import com.example.planificadorapp.composables.cuentas.SeleccionarCuentaDialogo
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
@@ -66,7 +67,7 @@ fun PortafolioAsociacionCuentasConActivos(
                 .padding(horizontal = 16.dp)
                 .fillMaxWidth()
         ) {
-            EncabezadoPortafolio(
+            EncabezadoScreen(
                 titulo = "Asociación de Cuentas",
                 descripcion = "Cuentas asociadas a los activos"
             )

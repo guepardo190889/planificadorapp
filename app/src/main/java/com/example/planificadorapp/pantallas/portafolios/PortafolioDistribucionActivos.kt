@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.composables.EncabezadoScreen
 import com.example.planificadorapp.composables.activos.SeleccionarActivoDialogo
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.modelos.activos.ActivoModel
@@ -110,7 +111,7 @@ fun PortafolioDistribucionActivos(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(scrollState)
         ) {
-            EncabezadoPortafolio(
+            EncabezadoScreen(
                 titulo = "Distribución de activos",
                 descripcion = "Porcentaje de los activos dentro del portafolio"
             )

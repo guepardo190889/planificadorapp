@@ -1,5 +1,6 @@
 package com.example.planificadorapp.composables.graficos
 
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +10,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,9 +34,11 @@ import kotlin.math.sin
  */
 @Composable
 fun GraficaPastelCanvas(
-    modifier: Modifier, titulo: String, datos: List<Pair<String, Float>>
+    modifier: Modifier,
+    titulo: String,
+    datos: List<Pair<String, Double>>
 ) {
-    val total = datos.sumOf { it.second.toDouble() }
+    val total = datos.sumOf { it.second }
 
     // Lista de colores base obtenidos de tu clase `Color.kt`
     val baseColors = listOf(
@@ -53,7 +56,7 @@ fun GraficaPastelCanvas(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp), // Reducimos el padding para compactar la gráfica
+            .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
@@ -67,10 +70,14 @@ fun GraficaPastelCanvas(
                 .size(220.dp)
                 .padding(8.dp)
         ) {
+            Log.i("GraficaPastelCanvas", "Dibujando gráfica de pastel")
+
             var startAngle = 0f
             datos.forEachIndexed { index, (_, value) ->
                 val sweepAngle = (value / total) * 360f
                 var color = colores[index % colores.size]
+
+                Log.i("GraficaPastelCanvas", "Color: $color")
 
                 // Dibujar el arco
                 drawArc(
@@ -90,14 +97,16 @@ fun GraficaPastelCanvas(
                     center.y + (size.minDimension / 3) * sin(Math.toRadians(middleAngle)).toFloat()
 
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(String.format("%.1f%%", porcentaje),
+                    drawText(
+                        String.format(Locale("es", "MX"), "%.1f%%", porcentaje),
                         labelX,
                         labelY,
                         android.graphics.Paint().apply {
                             textSize = 26f // Reducí el tamaño de texto de los porcentajes
                             color = Color.Black
                             textAlign = android.graphics.Paint.Align.CENTER
-                        })
+                        }
+                    )
                 }
 
                 // Actualizar el ángulo de inicio para la siguiente sección
@@ -110,13 +119,16 @@ fun GraficaPastelCanvas(
         Column(
             modifier = Modifier
                 .padding(8.dp)
-                .padding(horizontal = 8.dp)
-                .heightIn(max = 150.dp),
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            datos.forEachIndexed { index, dato ->
+            Log.i("GraficaPastelCanvas", "Dibujando etiquetas")
+
+            datos.forEachIndexed { index, _ ->
                 val (label, value) = datos[index]
                 val porcentaje = (value / total) * 100
+
+                Log.i("GraficaPastelCanvas", "Label: $label, Value: $value, Total: $total, Porcentaje: $porcentaje")
 
                 Row(
                     modifier = Modifier
@@ -152,7 +164,7 @@ fun GraficaPastelCanvas(
                     ) {
                         Text(
                             text = String.format(Locale("es", "MX"), "%.1f%%", porcentaje),
-                            style = TextStyle(fontSize = 12.sp, color = Color.Gray),
+                            style = MaterialTheme.typography.bodySmall,
                             maxLines = 1
                         )
                     }

@@ -105,7 +105,7 @@ fun ActivoItem(
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = if (activo.isHijo) FontWeight.Normal else FontWeight.Bold
             ),
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }, supportingContent = {
         Text(

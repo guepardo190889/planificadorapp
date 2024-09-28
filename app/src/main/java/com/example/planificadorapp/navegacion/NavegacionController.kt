@@ -25,7 +25,7 @@ import com.example.planificadorapp.composables.BarraSuperior
 import com.example.planificadorapp.navegacion.drawer.AppDrawer
 import com.example.planificadorapp.navegacion.drawer.DrawerItem
 import com.example.planificadorapp.pantallas.ConfiguracionScreen
-import com.example.planificadorapp.pantallas.ReportesScreen
+import com.example.planificadorapp.pantallas.reportes.ReportesScreen
 import com.example.planificadorapp.pantallas.activos.ActivosScreen
 import com.example.planificadorapp.pantallas.activos.DetalleActivosScreen
 import com.example.planificadorapp.pantallas.activos.TransaccionActivosScreen
@@ -40,6 +40,8 @@ import com.example.planificadorapp.pantallas.portafolios.DetallePortafoliosScree
 import com.example.planificadorapp.pantallas.portafolios.Portafolios
 import com.example.planificadorapp.pantallas.portafolios.actualizado.ActualizarPortafolio
 import com.example.planificadorapp.pantallas.portafolios.guardado.GuardarPortafolio
+import com.example.planificadorapp.pantallas.reportes.portafolios.GraficoDistribucionActivo
+import com.example.planificadorapp.pantallas.reportes.portafolios.GraficoDistribucionSaldo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -188,7 +190,13 @@ fun NavegacionController(
                 }
 
                 composable(Ruta.REPORTES.ruta) {
-                    ReportesScreen(navController)
+                    ReportesScreen(modifier, navController)
+                }
+                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_ACTIVOS.ruta){
+                    GraficoDistribucionActivo(modifier)
+                }
+                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_SALDOS.ruta){
+                    GraficoDistribucionSaldo(modifier)
                 }
 
                 composable(Ruta.CONFIGURACIONES.ruta) {

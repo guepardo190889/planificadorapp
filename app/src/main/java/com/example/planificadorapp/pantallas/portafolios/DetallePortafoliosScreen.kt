@@ -121,7 +121,7 @@ fun DetallePortafoliosScreen(
                     datosGrafico?.let { grafico ->
                         if (grafico.composicionesPortafolio.isNotEmpty()) {
                             val datos = grafico.composicionesPortafolio.map {
-                                it.nombreActivo to it.saldoTotalCuentas.toFloat()
+                                it.nombreActivo to it.saldoTotalCuentas.toDouble()
                             }
 
                             GraficaPastelCanvas(
@@ -145,7 +145,6 @@ fun ComposicionesList(composiciones: List<PortafolioBuscarComposicionResponseMod
     ) {
         composiciones.forEach { composicion ->
             var mostrarCuentas by remember { mutableStateOf(false) }
-            val saldoTotalActivo = composicion.cuentas.sumOf { it.saldo }
 
             Column(
                 modifier = Modifier.padding(vertical = 4.dp)

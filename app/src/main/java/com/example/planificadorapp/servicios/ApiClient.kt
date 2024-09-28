@@ -29,4 +29,5 @@ object ApiClient {
     val portafoliosService: PortafoliosService = retrofit.create(PortafoliosService::class.java)
     val activosService: ActivosService = retrofit.create(ActivosService::class.java)
     val movimientosService: MovimientosService = retrofit.create(MovimientosService::class.java)
+    val reportesService: ReportesService = retrofit.create(ReportesService::class.java)
 }

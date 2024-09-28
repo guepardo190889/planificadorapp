@@ -1,4 +1,4 @@
-package com.example.planificadorapp.pantallas.portafolios
+package com.example.planificadorapp.composables
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 /**
- * Composable que muestra el encabezado de las diferentes pantallas de guardado o actualización de un portafolio
+ * Composable que muestra el encabezado de una pantalla
  */
 @Composable
-fun EncabezadoPortafolio(
+fun EncabezadoScreen(
     modifier: Modifier = Modifier,
     titulo: String,
     descripcion: String? = null

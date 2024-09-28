@@ -17,6 +17,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.composables.EncabezadoScreen
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.composables.textfield.OutlinedTextFieldBase
 import com.example.planificadorapp.utilerias.validadores.PortafolioValidador
@@ -60,7 +61,7 @@ fun PortafolioDatosGenerales(
                 .padding(paddingValues)
                 .padding(horizontal = 16.dp)
         ) {
-            EncabezadoPortafolio(
+            EncabezadoScreen(
                 titulo = "Generales",
                 descripcion = "Datos generales del portafolio"
             )

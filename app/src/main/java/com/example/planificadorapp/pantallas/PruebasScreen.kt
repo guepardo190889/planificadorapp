@@ -9,13 +9,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 
 @Composable
-fun ReportesScreen(navController: NavController, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(16.dp)) {
-        Text("Pantalla de Reportes")
-    }
-}
-
-@Composable
 fun ConfiguracionScreen(navController: NavController, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(16.dp)) {
         Text("Pantalla de Configuración")

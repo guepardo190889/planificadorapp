@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.planificadorapp.composables.EncabezadoScreen
 import com.example.planificadorapp.composables.TextoEtiquetado
 import com.example.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.example.planificadorapp.modelos.composiciones.GuardarComposicionModel
@@ -48,7 +49,7 @@ fun ResumenPortafolio(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            EncabezadoPortafolio(
+            EncabezadoScreen(
                 titulo = "Resumen",
                 descripcion = "Resumen de la información del portafolio"
             )
