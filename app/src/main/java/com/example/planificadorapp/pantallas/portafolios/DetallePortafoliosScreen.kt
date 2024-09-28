@@ -36,8 +36,9 @@ import com.example.planificadorapp.composables.graficos.GraficaPastelCanvas
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarComposicionResponseModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarCuentaResponseModel
 import com.example.planificadorapp.modelos.portafolios.busqueda.PortafolioBuscarResponseModel
-import com.example.planificadorapp.modelos.portafolios.graficos.DistribucionPortafolioGraficoModel
+import com.example.planificadorapp.modelos.reportes.GraficoPastelModel
 import com.example.planificadorapp.repositorios.PortafoliosRepository
+import com.example.planificadorapp.repositorios.ReportesRepository
 import com.example.planificadorapp.utilerias.FormatoMonto
 import com.example.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 
@@ -49,8 +50,10 @@ fun DetallePortafoliosScreen(
     modifier: Modifier = Modifier, navController: NavController, idPortafolio: Long
 ) {
     val portafoliosRepository = PortafoliosRepository()
+    val reportesRepository = ReportesRepository()
+
     var portafolio by remember { mutableStateOf<PortafolioBuscarResponseModel?>(null) }
-    var datosGrafico by remember { mutableStateOf<DistribucionPortafolioGraficoModel?>(null) }
+    var graficoDistribucionActivo by remember { mutableStateOf<GraficoPastelModel?>(null) }
 
     val scrollState = rememberScrollState()
     val isFabVisible by remember { derivedStateOf { scrollState.value == 0 } }
@@ -58,15 +61,19 @@ fun DetallePortafoliosScreen(
     LaunchedEffect(idPortafolio) {
         portafoliosRepository.buscarPortafolioPorId(idPortafolio) { portafolioEncontrado ->
             portafolio = portafolioEncontrado
-            portafoliosRepository.buscarDatosGraficoDistribucion(idPortafolio) {
-                datosGrafico = it
+
+            portafolio?.let {
+                reportesRepository.generarReporteDistribucionActivos(it.id) { graficoDistribucionActivoEncontrado ->
+                    if (graficoDistribucionActivoEncontrado != null) {
+                        graficoDistribucionActivo = graficoDistribucionActivoEncontrado
+                    }
+                }
             }
         }
     }
 
     Scaffold(modifier = modifier.fillMaxWidth(), floatingActionButton = {
-        FloatingActionButtonActualizar(
-            isVisible = isFabVisible,
+        FloatingActionButtonActualizar(isVisible = isFabVisible,
             tooltip = "Actualizar el portafolio",
             onClick = {
                 navController.navigate("portafolios/editar/${idPortafolio}")
@@ -118,21 +125,13 @@ fun DetallePortafoliosScreen(
 
                     ComposicionesList(composiciones = portafolio.composiciones)
 
-                    datosGrafico?.let { grafico ->
-                        if (grafico.composicionesPortafolio.isNotEmpty()) {
-                            val datos = grafico.composicionesPortafolio.map {
-                                it.nombreActivo to it.saldoTotalCuentas.toDouble()
-                            }
-
-                            GraficaPastelCanvas(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = 8.dp), // Compactando el espacio entre los componentes
-                                titulo = "Distribución de activos",
-                                datos = datos,
-                                tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE
-                            )
-                        }
+                    graficoDistribucionActivo?.let { grafico ->
+                        GraficaPastelCanvas(
+                            modifier = Modifier.fillMaxWidth(),
+                            datos = grafico.datos,
+                            tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE,
+                            isMostrarTotalDatos = true
+                        )
                     }
                 }
             }

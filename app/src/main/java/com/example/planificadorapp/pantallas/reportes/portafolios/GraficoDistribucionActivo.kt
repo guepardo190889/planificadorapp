@@ -68,7 +68,7 @@ fun GraficoDistribucionActivo(modifier: Modifier) {
                 })
 
             graficoDistribucionActivo?.let { grafico ->
-                DividerConSubtitulo(
+            DividerConSubtitulo(
                     subtitulo = "Distribución porcentual de los activos en el portafolio"
                 )
 
