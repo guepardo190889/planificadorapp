@@ -37,9 +37,10 @@ import kotlin.math.sin
 @Composable
 fun GraficaPastelCanvas(
     modifier: Modifier,
-    titulo: String = "",
     datos: List<Pair<String, Double>>,
-    tipoDatoGrafica: TipoDatoGraficaPastel
+    tipoDatoGrafica: TipoDatoGraficaPastel,
+    titulo: String = "",
+    isMostrarTotalDatos:Boolean = false
 ) {
     val total = datos.sumOf { it.second }
 
@@ -201,5 +202,29 @@ fun GraficaPastelCanvas(
                 }
             }
         }
+
+        if(isMostrarTotalDatos) {
+            // Formatear el total según el tipo de dato
+            val totalTexto = when (tipoDatoGrafica) {
+                TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", total)
+                TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", total)
+                TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(total)
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .padding(horizontal = 8.dp)
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.End // Alinear el total a la derecha
+            ) {
+                Text(
+                    text = "Total: $totalTexto",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 13.sp)
+                )
+            }
+        }
+
     }
 }

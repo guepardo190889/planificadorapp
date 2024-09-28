@@ -75,7 +75,8 @@ fun GraficoDistribucionActivo(modifier: Modifier) {
                 GraficaPastelCanvas(
                     modifier = Modifier.fillMaxWidth(),
                     datos = grafico.datos,
-                    tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE
+                    tipoDatoGrafica = TipoDatoGraficaPastel.PORCENTAJE,
+                    isMostrarTotalDatos = true
                 )
             }
         }

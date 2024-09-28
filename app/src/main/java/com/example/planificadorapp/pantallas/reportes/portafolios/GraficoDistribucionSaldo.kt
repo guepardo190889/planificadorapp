@@ -77,7 +77,8 @@ fun GraficoDistribucionSaldo(modifier: Modifier){
                 GraficaPastelCanvas(
                     modifier = Modifier.fillMaxWidth(),
                     datos = grafico.datos,
-                    tipoDatoGrafica = TipoDatoGraficaPastel.DINERO
+                    tipoDatoGrafica = TipoDatoGraficaPastel.DINERO,
+                    isMostrarTotalDatos = true
                 )
             }
         }
