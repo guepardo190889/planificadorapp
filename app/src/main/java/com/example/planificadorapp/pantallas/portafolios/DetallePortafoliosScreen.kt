@@ -63,7 +63,7 @@ fun DetallePortafoliosScreen(
             portafolio = portafolioEncontrado
 
             portafolio?.let {
-                reportesRepository.generarReporteDistribucionActivos(it.id) { graficoDistribucionActivoEncontrado ->
+                reportesRepository.generarReporteDistribucionActivosPortafolio(it.id) { graficoDistribucionActivoEncontrado ->
                     if (graficoDistribucionActivoEncontrado != null) {
                         graficoDistribucionActivo = graficoDistribucionActivoEncontrado
                     }

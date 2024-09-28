@@ -217,3 +217,12 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF191D17)
 val surfaceContainerDarkHighContrast = Color(0xFF1D211B)
 val surfaceContainerHighDarkHighContrast = Color(0xFF272B25)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF32362F)
+
+val baseColors = listOf(
+    Color(0xFF406836),  // primaryLight
+    Color(0xFF54634D),  // secondaryLight
+    Color(0xFF386568),  // tertiaryLight
+    Color(0xFFBA1A1A),  // errorLight
+    Color(0xFFC0EFAF),  // primaryContainerLight
+    Color(0xFFD7E8CD)   // secondaryContainerLight
+)

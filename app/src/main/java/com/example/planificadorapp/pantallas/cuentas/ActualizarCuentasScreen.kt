@@ -87,7 +87,11 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
     fun validarSaldo(): Boolean {
         return if (!isCuentaAgrupadora) {
             try {
-                BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
+                if (saldo.isNotEmpty()) {
+                    BigDecimal(saldo.replace(",", "")) >= BigDecimal.ZERO
+                } else {
+                    true
+                }
             } catch (e: NumberFormatException) {
                 false
             }
@@ -239,7 +243,7 @@ fun ActualizarCuentasScreen(modifier: Modifier, navController: NavController, id
                     DineroTextField(modifier = modifier,
                         monto = saldo,
                         etiqueta = "Saldo",
-                        isError = isSaldoValido,
+                        isError = !isSaldoValido,
                         focusRequester = dineroFocusRequester,
                         onSaldoChange = {
                             saldo = it

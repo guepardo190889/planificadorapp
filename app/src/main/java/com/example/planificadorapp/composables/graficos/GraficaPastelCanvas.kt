@@ -40,22 +40,13 @@ fun GraficaPastelCanvas(
     datos: List<Pair<String, Double>>,
     tipoDatoGrafica: TipoDatoGraficaPastel,
     titulo: String = "",
-    isMostrarTotalDatos:Boolean = false
+    isMostrarTotalDatos: Boolean = false
 ) {
     val total = datos.sumOf { it.second }
 
-    // Lista de colores base obtenidos de tu clase `Color.kt`
-    val baseColors = listOf(
-        Color(0xFF406836),  // primaryLight
-        Color(0xFF54634D),  // secondaryLight
-        Color(0xFF386568),  // tertiaryLight
-        Color(0xFFBA1A1A),  // errorLight
-        Color(0xFFC0EFAF),  // primaryContainerLight
-        Color(0xFFD7E8CD)   // secondaryContainerLight
-    )
-
     // Generar colores suaves utilizando el generador y la lista de colores base
-    val colores = generarColoresDesdeColoresBase(datos.size, baseColors)
+    val colores =
+        generarColoresDesdeColoresBase(datos.size, com.example.planificadorapp.ui.theme.baseColors)
 
     Column(
         modifier = modifier
@@ -65,8 +56,7 @@ fun GraficaPastelCanvas(
     ) {
         if (titulo.isNotEmpty()) {
             Text(
-                text = titulo,
-                style = MaterialTheme.typography.titleMedium
+                text = titulo, style = MaterialTheme.typography.titleMedium
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -82,8 +72,6 @@ fun GraficaPastelCanvas(
             datos.forEachIndexed { index, (_, value) ->
                 val sweepAngle = (value / total) * 360f
                 var color = colores[index % colores.size]
-
-                Log.i("GraficaPastelCanvas", "Color: $color")
 
                 // Dibujar el arco
                 drawArc(
@@ -104,21 +92,23 @@ fun GraficaPastelCanvas(
                 // Etiqueta personalizada según el tipo de dato
                 val textoEtiqueta = when (tipoDatoGrafica) {
                     TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", value)
-                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", (value / total) * 100)
-                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(value)
+                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(
+                        Locale("es", "MX"), "%.2f%%", (value / total) * 100
+                    )
+
+                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(
+                        Locale(
+                            "es", "MX"
+                        )
+                    ).format(value)
                 }
 
                 drawContext.canvas.nativeCanvas.apply {
-                    drawText(
-                        textoEtiqueta,
-                        labelX,
-                        labelY,
-                        android.graphics.Paint().apply {
-                            textSize = 26f
-                            color = Color.Black
-                            textAlign = android.graphics.Paint.Align.CENTER
-                        }
-                    )
+                    drawText(textoEtiqueta, labelX, labelY, android.graphics.Paint().apply {
+                        textSize = 26f
+                        color = Color.Black
+                        textAlign = android.graphics.Paint.Align.CENTER
+                    })
                 }
 
                 // Actualizar el ángulo de inicio para la siguiente sección
@@ -143,16 +133,24 @@ fun GraficaPastelCanvas(
                 // Formatear el valor según el tipo de dato
                 val textoValor = when (tipoDatoGrafica) {
                     TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", value)
-                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", porcentaje)
-                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(value)
+                    TipoDatoGraficaPastel.PORCENTAJE -> String.format(
+                        Locale("es", "MX"), "%.2f%%", porcentaje
+                    )
+
+                    TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(
+                        Locale(
+                            "es", "MX"
+                        )
+                    ).format(value)
                 }
 
                 // Formatear el porcentaje si es tipo número o dinero
-                val textoPorcentaje = if (tipoDatoGrafica == TipoDatoGraficaPastel.NUMERO || tipoDatoGrafica == TipoDatoGraficaPastel.DINERO) {
-                    String.format(Locale("es", "MX"), "%.2f%%", porcentaje)
-                } else {
-                    ""
-                }
+                val textoPorcentaje =
+                    if (tipoDatoGrafica == TipoDatoGraficaPastel.NUMERO || tipoDatoGrafica == TipoDatoGraficaPastel.DINERO) {
+                        String.format(Locale("es", "MX"), "%.2f%%", porcentaje)
+                    } else {
+                        ""
+                    }
 
                 Row(
                     modifier = Modifier
@@ -170,13 +168,10 @@ fun GraficaPastelCanvas(
 
                     // Columna para el nombre de la leyenda (ocupa 2/3 de la fila)
                     Column(
-                        modifier = Modifier.weight(2f / 3f),
-                        verticalArrangement = Arrangement.Top
+                        modifier = Modifier.weight(2f / 3f), verticalArrangement = Arrangement.Top
                     ) {
                         Text(
-                            text = label,
-                            maxLines = 3,
-                            style = TextStyle(fontSize = 13.sp)
+                            text = label, maxLines = 3, style = TextStyle(fontSize = 13.sp)
                         )
                     }
 
@@ -196,7 +191,9 @@ fun GraficaPastelCanvas(
                         if (textoPorcentaje.isNotEmpty()) {
                             Text(
                                 text = textoPorcentaje,
-                                style = MaterialTheme.typography.bodySmall.copy(fontSize = 11.sp, color = Color.Gray),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    fontSize = 11.sp, color = Color.Gray
+                                ),
                                 maxLines = 1
                             )
                         }
@@ -205,12 +202,16 @@ fun GraficaPastelCanvas(
             }
         }
 
-        if(isMostrarTotalDatos) {
+        if (isMostrarTotalDatos) {
             // Formatear el total según el tipo de dato
             val totalTexto = when (tipoDatoGrafica) {
                 TipoDatoGraficaPastel.NUMERO -> String.format(Locale("es", "MX"), "%.0f", total)
-                TipoDatoGraficaPastel.PORCENTAJE -> String.format(Locale("es", "MX"), "%.2f%%", total)
-                TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(total)
+                TipoDatoGraficaPastel.PORCENTAJE -> String.format(
+                    Locale("es", "MX"), "%.2f%%", total
+                )
+
+                TipoDatoGraficaPastel.DINERO -> NumberFormat.getCurrencyInstance(Locale("es", "MX"))
+                    .format(total)
             }
 
             Row(
@@ -225,6 +226,5 @@ fun GraficaPastelCanvas(
                 )
             }
         }
-
     }
 }

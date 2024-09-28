@@ -40,6 +40,7 @@ import com.example.planificadorapp.pantallas.portafolios.DetallePortafoliosScree
 import com.example.planificadorapp.pantallas.portafolios.Portafolios
 import com.example.planificadorapp.pantallas.portafolios.actualizado.ActualizarPortafolio
 import com.example.planificadorapp.pantallas.portafolios.guardado.GuardarPortafolio
+import com.example.planificadorapp.pantallas.reportes.cuentas.GraficoHistoricoSaldoCuenta
 import com.example.planificadorapp.pantallas.reportes.portafolios.GraficoDistribucionActivo
 import com.example.planificadorapp.pantallas.reportes.portafolios.GraficoDistribucionSaldo
 import kotlinx.coroutines.CoroutineScope
@@ -187,6 +188,10 @@ fun NavegacionController(
                     if (idActivo != null && idActivo.toLong() > 0) {
                         TransaccionActivosScreen(modifier, navController, idActivo.toLong())
                     }
+                }
+
+                composable(Ruta.REPORTES_CUENTAS_HISTORICO_SALDO.ruta){
+                    GraficoHistoricoSaldoCuenta(modifier)
                 }
 
                 composable(Ruta.REPORTES.ruta) {

@@ -234,7 +234,7 @@ fun GuardarCuentasScreen(
                         modifier = modifier.fillMaxWidth(),
                         etiqueta = "Saldo",
                         monto = saldo,
-                        isError = isSaldoValido,
+                        isError = !isSaldoValido,
                         onSaldoChange = {
                             saldo = it
                         },
