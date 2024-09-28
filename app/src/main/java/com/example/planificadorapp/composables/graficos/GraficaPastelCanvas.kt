@@ -63,11 +63,13 @@ fun GraficaPastelCanvas(
             .padding(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = titulo, style = TextStyle(fontSize = 18.sp)
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
+        if (titulo.isNotEmpty()) {
+            Text(
+                text = titulo,
+                style = MaterialTheme.typography.titleMedium
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+        }
 
         Canvas(
             modifier = Modifier
@@ -181,7 +183,7 @@ fun GraficaPastelCanvas(
                     // Columna para los valores (ocupa 1/3 de la fila)
                     Column(
                         modifier = Modifier.weight(1f / 3f),
-                        horizontalAlignment = Alignment.End, // Alineación a la derecha
+                        horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.Top
                     ) {
                         // Fila para el valor
@@ -214,10 +216,8 @@ fun GraficaPastelCanvas(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
-                    .padding(horizontal = 8.dp)
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.End // Alinear el total a la derecha
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.End
             ) {
                 Text(
                     text = "Total: $totalTexto",
