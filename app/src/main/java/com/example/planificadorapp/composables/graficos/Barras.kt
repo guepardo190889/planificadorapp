@@ -18,6 +18,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,10 +37,11 @@ fun GraficaBarrasBasica(
 
     val anchoMinimoBarra = 60.dp // Ancho mínimo de la barra
     val separacionEntreBarras = 20.dp // Separación entre barras
+    val offsetInicial = 80.dp // Espacio de 120 dp antes de las barras y la línea del eje X
 
     // Calcular el ancho total del canvas en función del número de barras y la separación entre ellas
     val anchoTotalCanvas =
-        (anchoMinimoBarra * datos.size) + (separacionEntreBarras * (datos.size - 1))
+        (anchoMinimoBarra * datos.size) + (separacionEntreBarras * (datos.size - 1)) + offsetInicial
 
     // Column para título y el contenido de la gráfica
     Column(
@@ -72,12 +74,13 @@ fun GraficaBarrasBasica(
                 val barWidth = anchoMinimoBarra.toPx() // Convertir el ancho mínimo a píxeles
                 val spaceBetweenBars =
                     separacionEntreBarras.toPx() // Convertir la separación a píxeles
+                val offsetInicialPx = offsetInicial.toPx() // Convertir los 120 dp a píxeles
 
                 // Añadir la línea del eje X en la parte inferior del canvas
                 val posicionYLíneaEjeX = canvasHeight - 20f // Colocar el eje X 20 píxeles antes del borde inferior
                 drawLine(
                     color = Color.Black,
-                    start = Offset(0f, posicionYLíneaEjeX),
+                    start = Offset(offsetInicialPx, posicionYLíneaEjeX),
                     end = Offset(size.width, posicionYLíneaEjeX),
                     strokeWidth = 6f // Eje X más grueso
                 )
@@ -87,7 +90,7 @@ fun GraficaBarrasBasica(
                     val barHeight = (valor / valorMaximo) * (canvasHeight - 40f) // Ajustar la altura para que no sobrepase el canvas
 
                     // Calcular la posición X de la barra
-                    val barX = (index * (barWidth + spaceBetweenBars))
+                    val barX = offsetInicialPx + (index * (barWidth + spaceBetweenBars))
 
                     // Calcular la posición Y de la barra
                     val barY = canvasHeight - barHeight - 20f // Alinear las barras con la línea del eje X
