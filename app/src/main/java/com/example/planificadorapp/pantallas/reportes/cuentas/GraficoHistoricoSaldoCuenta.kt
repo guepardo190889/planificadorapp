@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.planificadorapp.composables.AniosDropDown
 import com.example.planificadorapp.composables.DividerConSubtitulo
 import com.example.planificadorapp.composables.cuentas.CuentasDropDown
+import com.example.planificadorapp.composables.graficos.GraficaBarrasBasica
 import com.example.planificadorapp.composables.graficos.GraficaBarrasCanvas
 import com.example.planificadorapp.modelos.cuentas.CuentaModel
 import com.example.planificadorapp.modelos.reportes.GraficoPastelModel
@@ -95,10 +96,27 @@ fun GraficoHistoricoSaldoCuenta(modifier: Modifier) {
                     subtitulo = "Saldo histórico mensual de la cuenta"
                 )
 
-                GraficaBarrasCanvas(
-                    modifier = Modifier.fillMaxWidth(),
-                    datos = grafico.datos
+//                GraficaBarrasCanvas(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    datos = grafico.datos
+//                )
+
+                val datos = listOf(
+                    "Enero" to 1000.0,
+                    "Febrero" to 1500.0,
+                    "Marzo" to 1200.0,
+                    "Abril" to 1800.0,
+                    "Mayo" to 1300.0,
+                    "Junio" to 1300.0,
+                    "Julio" to 1300.0,
+                    "Agosto" to 1300.0,
+                    "Septiembre" to 1300.0,
+                    "Octubre" to 1300.0,
+                    "Noviembre" to 1300.0,
+                    "Diciembre" to 1300.0
                 )
+
+                GraficaBarrasBasica(datos = datos)
             }
         }
     })

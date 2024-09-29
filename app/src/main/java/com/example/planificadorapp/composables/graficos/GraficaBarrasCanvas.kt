@@ -68,13 +68,14 @@ fun GraficaBarrasCanvas(
                     .width(anchoTotalCanvas)
             ) {
                 // Ajustar la altura para las barras, considerando el espacio para las leyendas
-                val posicionMaximaInferiorLineasReferencia = size.height - alturaLeyendas.toPx() - 10 // -10 para margen inferior con leyendas
-                Log.i("GraficaBarrasCanvas", "posicionMinimaInferiorLineasReferencia: $posicionMaximaInferiorLineasReferencia")
+                val posicionYMaximaInferiorLineasReferencia = size.height - alturaLeyendas.toPx() - 10 // -10 para margen inferior con leyendas
+                var posicionYMaximaSuperiorLineasReferencia = 0f
+                Log.i("GraficaBarrasCanvas", "posicionMinimaInferiorLineasReferencia: $posicionYMaximaInferiorLineasReferencia")
 
                 // Dibujar las líneas de referencia
                 for (i in 0..cantidadLineasReferencia) {
                     val posicionXLeyendaReferencia = 0f
-                    val posicionYLeyendaReferencia = (posicionMaximaInferiorLineasReferencia - (i * intervalo)) - 10f //-10 para estar sobre la línea
+                    val posicionYLeyendaReferencia = (posicionYMaximaInferiorLineasReferencia - (i * intervalo)) - 10f //-10 para estar sobre la línea
                     val leyendaReferencia = NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(i * intervalo)
 
                     Log.i("GraficaBarrasCanvas", "posicionY: $posicionYLeyendaReferencia - posicionX: $posicionXLeyendaReferencia - leyenda: $leyendaReferencia")
@@ -93,7 +94,7 @@ fun GraficaBarrasCanvas(
 
                     val posicionXInicioLineaReferencia = 0f
                     val posicionXFinLineaReferencia = 120f
-                    val posicionYLineaReferencia = posicionMaximaInferiorLineasReferencia - (i * intervalo)
+                    val posicionYLineaReferencia = posicionYMaximaInferiorLineasReferencia - (i * intervalo)
 
                     //Dibujar líneas de referencia
                     drawLine(
@@ -102,6 +103,10 @@ fun GraficaBarrasCanvas(
                         end = androidx.compose.ui.geometry.Offset(posicionXFinLineaReferencia, posicionYLineaReferencia),
                         strokeWidth = 2f
                     )
+
+                    if(i == 5) {
+                        posicionYMaximaSuperiorLineasReferencia = posicionYLineaReferencia
+                    }
                 }
 
                 // Añadir la línea del eje X en la parte inferior
@@ -117,34 +122,33 @@ fun GraficaBarrasCanvas(
                 )
 
                 // Dibujar las barras
-                /*datos.forEachIndexed { index, (mes, saldo) ->
-                    val barX = (index * (anchoBarra.toPx() + espacioEntreBarras.toPx())) + 120f
+                val valorPixel = valorMaximo / (posicionYMaximaInferiorLineasReferencia - (posicionYMaximaSuperiorLineasReferencia-intervalo))
+
+                datos.forEachIndexed { index, (mes, saldo) ->
+                    val posicionXBarra = anchoLeyendasReferencia.toPx() + (index * (anchoBarra.toPx() + espacioMinimoEntreBarras.toPx()))
 
                     if (saldo >= 0) {
                         // Solo graficar barras con saldo positivo o cero
-                        val barHeight = (saldo / valorMaximo) * (alturaLineasReferencia - extraLineHeight) // Ajuste para dejar espacio extra
-
-                        // Calcular las posiciones de la barra. Comienzan después de las líneas de referencia (120f)
-
-                        val barY = alturaLineasReferencia - barHeight
+                        val alturaBarra = saldo / valorPixel
+                        val posicionYBarra = posicionYLineaEjeX - alturaBarra
 
                         var color = colores[index % colores.size]
 
                         // Dibujar la barra
                         drawRect(
                             color = color,
-                            topLeft = androidx.compose.ui.geometry.Offset(barX, barY.toFloat()),
-                            size = androidx.compose.ui.geometry.Size(anchoBarra.toPx(), barHeight.toFloat())
+                            topLeft = androidx.compose.ui.geometry.Offset(posicionXBarra, posicionYBarra.toFloat()),
+                            size = androidx.compose.ui.geometry.Size(anchoBarra.toPx(), alturaBarra.toFloat())
                         )
 
                         // Mostrar el saldo encima de la barra
-                        drawContext.canvas.nativeCanvas.apply {
+                        /*drawContext.canvas.nativeCanvas.apply {
                             val saldoFormatted = NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(saldo)
 
                             // Mostrar el saldo encima de la barra
                             drawText(
                                 saldoFormatted,
-                                barX + anchoBarra.toPx() / 2,
+                                posicionXBarra + anchoBarra.toPx() / 2,
                                 barY.toFloat() - 10f,  // Un poco más arriba de la barra
                                 android.graphics.Paint().apply {
                                     textSize = 24f
@@ -152,11 +156,11 @@ fun GraficaBarrasCanvas(
                                     textAlign = android.graphics.Paint.Align.CENTER
                                 }
                             )
-                        }
+                        }*/
                     }
 
                     // Mostrar el mes debajo de la barra, sin importar si el saldo es negativo o positivo
-                    drawContext.canvas.nativeCanvas.apply {
+                    /*drawContext.canvas.nativeCanvas.apply {
                         save()
                         rotate(270f, barX + anchoBarra.toPx() / 2, alturaLineasReferencia + 40f)
                         drawText(
@@ -187,8 +191,8 @@ fun GraficaBarrasCanvas(
                                 }
                             )
                         }
-                    }
-                }*/
+                    }*/
+                }
             }
         }
     }
