@@ -101,8 +101,9 @@ fun GraficoHistoricoSaldoCuenta(modifier: Modifier) {
 //                    datos = grafico.datos
 //                )
 
+                //999_999_999.00
                 val datos = listOf(
-                    "Enero" to 1000.0,
+                    "Enero" to 999_999_999.00,
                     "Febrero" to 1500.0,
                     "Marzo" to 1200.0,
                     "Abril" to 1800.0,
