@@ -32,7 +32,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Composable que representa una gráfica de pastel en un canvas mejorada
+ * Composable que representa una gráfica de pastel en un Canvas
  */
 @Composable
 fun GraficaPastelCanvas(

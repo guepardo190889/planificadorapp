@@ -24,8 +24,7 @@ import java.text.NumberFormat
 import java.util.Locale
 
 /**
- * Composable que dibuja una gráfica de barras
- * V4
+ * Composable que representa una gráfica de barras en un Canvas
  */
 @Composable
 fun GraficaBarrasCanvas(
