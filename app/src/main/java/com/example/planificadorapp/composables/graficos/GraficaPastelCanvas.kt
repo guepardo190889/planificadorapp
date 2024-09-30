@@ -46,7 +46,7 @@ fun GraficaPastelCanvas(
 
     // Generar colores suaves utilizando el generador y la lista de colores base
     val colores =
-        generarColoresDesdeColoresBase(datos.size, com.example.planificadorapp.ui.theme.baseColors)
+        generarColoresDesdeColoresBase(datos.size, com.example.planificadorapp.ui.theme.coloresBaseGraficas)
 
     Column(
         modifier = modifier

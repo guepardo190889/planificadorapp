@@ -81,36 +81,22 @@ fun GraficoHistoricoSaldoCuenta(modifier: Modifier) {
                     buscarReporte()
                 })
 
-            AniosDropDown(modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
+            AniosDropDown(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
                 onAnioSeleccionado = {
-                anioSeleccionado = it
+                    anioSeleccionado = it
 
-                buscarReporte()
-            })
+                    buscarReporte()
+                })
 
             graficoHistoricoSaldoCuenta?.let { grafico ->
                 DividerConSubtitulo(
                     subtitulo = "Saldo histórico mensual de la cuenta"
                 )
 
-                //999_999_999.00
-                val datos = listOf(
-                    //"Enero" to 999_999_999.00,
-                    "Enero" to 1000.0,
-                    "Febrero" to 1500.0,
-                    "Marzo" to 1200.0,
-                    "Abril" to 1800.0,
-                    "Mayo" to 1300.0,
-                    "Junio" to 1300.0,
-                    "Julio" to 1300.0,
-                    "Agosto" to 1300.0,
-                    "Septiembre" to 1300.0,
-                    "Octubre" to 1300.0,
-                    "Noviembre" to 1300.0,
-                    "Diciembre" to 1300.0
-                )
+                Log.i("GraficoHistoricoSaldoCuenta", "Grafico encontrado: ${grafico.datos}")
 
                 GraficaBarrasCanvas(datos = grafico.datos)
             }
