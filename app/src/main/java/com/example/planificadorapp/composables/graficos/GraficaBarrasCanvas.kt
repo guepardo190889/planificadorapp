@@ -29,15 +29,14 @@ import java.util.Locale
  */
 @Composable
 fun GraficaBarrasCanvas(
-    modifier: Modifier = Modifier,
-    datos: List<Pair<String, Double>>,
-    titulo: String = ""
+    modifier: Modifier = Modifier, datos: List<Pair<String, Double>>, titulo: String = ""
 ) {
     // Generar colores suaves utilizando el generador y la lista de colores base
     val colores =
         generarColoresDesdeColoresBase(datos.size, com.example.planificadorapp.ui.theme.baseColors)
 
-    val valorMaximo = datos.maxOf { it.second } // Obtener el valor máximo para normalizar las barras
+    val valorMaximo =
+        datos.maxOf { it.second } // Obtener el valor máximo para normalizar las barras
     val anchoMinimoBarra = 40.dp // Ancho mínimo de la barra
     val separacionEntreBarras = 40.dp // Separación entre barras
     val offsetInicial = 100.dp // Espacio de 100 dp antes de las barras y la línea del eje X
@@ -50,11 +49,10 @@ fun GraficaBarrasCanvas(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.Start
+            .padding(16.dp), horizontalAlignment = Alignment.Start
     ) {
         // Título de la gráfica
-        if(titulo.isNotEmpty()){
+        if (titulo.isNotEmpty()) {
             Text(
                 text = titulo,
                 fontSize = 20.sp,
@@ -78,7 +76,8 @@ fun GraficaBarrasCanvas(
             ) {
                 val canvasHeight = size.height
                 val barWidth = anchoMinimoBarra.toPx()  // Convertir el ancho mínimo a píxeles
-                val spaceBetweenBars = separacionEntreBarras.toPx() // Convertir la separación a píxeles
+                val spaceBetweenBars =
+                    separacionEntreBarras.toPx() // Convertir la separación a píxeles
                 val offsetInicialPx = offsetInicial.toPx()  // Convertir los 120 dp a píxeles
 
                 // Número de líneas de referencia (6 líneas, con la quinta a la altura máxima)
@@ -86,7 +85,8 @@ fun GraficaBarrasCanvas(
                 val distanciaEntreLineas = (canvasHeight / numLineas)
 
                 // Ajustar los valores de las líneas de referencia para que estén en la misma proporción que los valores de las barras
-                val valorIncremento = valorMaximo / (numLineas - 1)  // Dividir el valor máximo en 5 partes iguales
+                val valorIncremento =
+                    valorMaximo / (numLineas - 1)  // Dividir el valor máximo en 5 partes iguales
 
                 // Dibujar las líneas de referencia que atraviesan todo el canvas
                 for (i in 0..numLineas) {
@@ -96,7 +96,9 @@ fun GraficaBarrasCanvas(
                     drawLine(
                         color = Color.Gray,
                         start = androidx.compose.ui.geometry.Offset(0f, yPos),
-                        end = androidx.compose.ui.geometry.Offset(size.width, yPos), // La línea se extiende hasta el final del canvas
+                        end = androidx.compose.ui.geometry.Offset(
+                            size.width, yPos
+                        ), // La línea se extiende hasta el final del canvas
                         strokeWidth = 2f
                     )
 
@@ -104,33 +106,41 @@ fun GraficaBarrasCanvas(
                     drawContext.canvas.nativeCanvas.apply {
                         val valorReferencia = valorIncremento * i
                         val valorReferenciaFormatted =
-                            NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(valorReferencia)
+                            NumberFormat.getCurrencyInstance(Locale("es", "MX"))
+                                .format(valorReferencia)
 
-                        drawText(
-                            valorReferenciaFormatted,
-                            10f, yPos - 10f, // Un poco por encima de la línea
+                        drawText(valorReferenciaFormatted,
+                            10f,
+                            yPos - 10f, // Un poco por encima de la línea
                             android.graphics.Paint().apply {
                                 textSize = 24f
                                 color = android.graphics.Color.BLACK
                                 textAlign = android.graphics.Paint.Align.LEFT
-                            }
-                        )
+                            })
                     }
                 }
 
                 // Dibujar la línea del eje Y
                 drawLine(
                     color = Color.Black, // Color más oscuro para diferenciar el Eje Y
-                    start = androidx.compose.ui.geometry.Offset(offsetInicialPx - 40, 0f), // Empieza desde la parte superior
-                    end = androidx.compose.ui.geometry.Offset(offsetInicialPx - 40, canvasHeight + 30), // Termina en la parte inferior
+                    start = androidx.compose.ui.geometry.Offset(
+                        offsetInicialPx - 40, 0f
+                    ), // Empieza desde la parte superior
+                    end = androidx.compose.ui.geometry.Offset(
+                        offsetInicialPx - 40, canvasHeight + 30
+                    ), // Termina en la parte inferior
                     strokeWidth = 4f // Hacer la línea un poco más gruesa
                 )
 
                 // Dibujar la línea del eje X
                 drawLine(
                     color = Color.Black, // Color más oscuro para diferenciar el Eje X
-                    start = androidx.compose.ui.geometry.Offset(0f, canvasHeight), // Comienza en el lado izquierdo
-                    end = androidx.compose.ui.geometry.Offset(size.width, canvasHeight), // Abarca todo el ancho del canvas
+                    start = androidx.compose.ui.geometry.Offset(
+                        0f, canvasHeight
+                    ), // Comienza en el lado izquierdo
+                    end = androidx.compose.ui.geometry.Offset(
+                        size.width, canvasHeight
+                    ), // Abarca todo el ancho del canvas
                     strokeWidth = 4f // Hacer la línea un poco más gruesa
                 )
 
@@ -147,7 +157,7 @@ fun GraficaBarrasCanvas(
                     val barY = canvasHeight - barHeight
 
                     // Dibujar la barra
-                    if(valor > 0) {
+                    if (valor > 0) {
                         drawRect(
                             color = color, // Color de la barra
                             topLeft = androidx.compose.ui.geometry.Offset(barX, barY.toFloat()),
@@ -160,28 +170,24 @@ fun GraficaBarrasCanvas(
                         val valorFormatted =
                             NumberFormat.getCurrencyInstance(Locale("es", "MX")).format(valor)
 
-                        drawText(
-                            valorFormatted,
+                        drawText(valorFormatted,
                             barX + barWidth / 2,
                             (barY - 10f).toFloat(), // Un poco más arriba de la barra
                             android.graphics.Paint().apply {
                                 textSize = 24f
                                 color = Color.Black
                                 textAlign = android.graphics.Paint.Align.CENTER
-                            }
-                        )
+                            })
 
                         // Mostrar el mes debajo de la barra
-                        drawText(
-                            mes.capitalize(),
+                        drawText(mes.capitalize(),
                             barX + barWidth / 2,
                             canvasHeight + 30f, // Un poco más abajo del canvas para mostrar la leyenda
                             android.graphics.Paint().apply {
                                 textSize = 24f
                                 color = Color.Black
                                 textAlign = android.graphics.Paint.Align.CENTER
-                            }
-                        )
+                            })
                     }
                 }
             }
