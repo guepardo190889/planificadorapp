@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.planificadorapp"
+    namespace = "com.blackdeath.planificadorapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.planificadorapp"
+        applicationId = "com.blackdeath.planificadorapp"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

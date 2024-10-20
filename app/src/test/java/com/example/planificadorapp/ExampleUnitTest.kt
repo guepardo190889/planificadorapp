@@ -1,4 +1,4 @@
-package com.example.planificadorapp
+package com.blackdeath.planificadorapp
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
