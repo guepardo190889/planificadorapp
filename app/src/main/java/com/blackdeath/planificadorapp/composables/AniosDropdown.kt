@@ -35,7 +35,7 @@ fun AniosDropDown(
         isDropdownExpanded = !isDropdownExpanded
     }) {
         OutlinedTextField(
-            value = anioSeleccionado?.toString() ?: "",
+            value = anioSeleccionado.toString(),
             onValueChange = { },
             modifier = modifier
                 .menuAnchor()
