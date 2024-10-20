@@ -25,13 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.FormatoFecha
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 import com.blackdeath.planificadorapp.composables.TextoConEtiqueta
 import com.blackdeath.planificadorapp.composables.cuentas.CuentasListSimple
 import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonActualizar
 import com.blackdeath.planificadorapp.modelos.cuentas.CuentaModel
 import com.blackdeath.planificadorapp.repositorios.CuentasRepository
+import com.blackdeath.planificadorapp.utilerias.FormatoFecha
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 
 /**
  * Composable que representa la pantalla de detalle de una cuenta

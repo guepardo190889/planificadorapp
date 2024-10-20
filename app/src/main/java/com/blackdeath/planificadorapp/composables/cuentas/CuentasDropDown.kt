@@ -32,8 +32,8 @@ fun CuentasDropDown(
     isCuentaAgrupadoraSeleccionable: Boolean,
     cuentas: List<CuentaModel>,
     isHabilitado: Boolean = true,
-    isError:Boolean=false,
-    mensajeError:String="",
+    isError: Boolean = false,
+    mensajeError: String = "",
     cuentaSeleccionada: CuentaModel?,
     onCuentaSeleccionada: (CuentaModel) -> Unit
 ) {

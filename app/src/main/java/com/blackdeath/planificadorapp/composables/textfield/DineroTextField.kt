@@ -36,7 +36,7 @@ fun DineroTextField(
     mensajeError: String? = null,
     monto: String = "",
     isError: Boolean = false,
-    isNegativo:Boolean = false,
+    isNegativo: Boolean = false,
     focusRequester: FocusRequester? = null,
     onSaldoChange: (String) -> Unit,
     onNextAction: (() -> Unit)? = null

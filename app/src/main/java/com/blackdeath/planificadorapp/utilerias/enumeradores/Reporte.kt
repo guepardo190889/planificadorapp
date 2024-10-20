@@ -6,7 +6,7 @@ import com.blackdeath.planificadorapp.navegacion.Ruta
  * Enumerador de reportes
  */
 enum class Reporte(
-    val id:Int,
+    val id: Int,
     val ruta: Ruta
 ) {
     PORTAFOLIOS_DISTRIBUCION_ACTIVOS(1, Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_ACTIVOS),

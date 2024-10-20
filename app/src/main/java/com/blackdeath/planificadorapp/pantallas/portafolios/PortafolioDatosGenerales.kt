@@ -17,10 +17,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import com.blackdeath.planificadorapp.utilerias.validadores.PortafolioValidador
 import com.blackdeath.planificadorapp.composables.EncabezadoScreen
 import com.blackdeath.planificadorapp.composables.navegacion.BarraNavegacionInferior
 import com.blackdeath.planificadorapp.composables.textfield.OutlinedTextFieldBase
+import com.blackdeath.planificadorapp.utilerias.validadores.PortafolioValidador
 
 /**
  * Composable que muestra los campos generales de un portafolio

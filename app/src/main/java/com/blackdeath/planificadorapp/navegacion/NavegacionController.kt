@@ -190,17 +190,17 @@ fun NavegacionController(
                     }
                 }
 
-                composable(Ruta.REPORTES_CUENTAS_HISTORICO_SALDO.ruta){
+                composable(Ruta.REPORTES_CUENTAS_HISTORICO_SALDO.ruta) {
                     GraficoHistoricoSaldoCuenta(modifier)
                 }
 
                 composable(Ruta.REPORTES.ruta) {
                     ReportesScreen(modifier, navController)
                 }
-                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_ACTIVOS.ruta){
+                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_ACTIVOS.ruta) {
                     GraficoDistribucionActivo(modifier)
                 }
-                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_SALDOS.ruta){
+                composable(Ruta.REPORTES_PORTAFOLIO_DISTRIBUCION_SALDOS.ruta) {
                     GraficoDistribucionSaldo(modifier)
                 }
 

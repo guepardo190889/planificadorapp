@@ -30,8 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
-import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 import com.blackdeath.planificadorapp.composables.TextoConEtiqueta
 import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonActualizar
 import com.blackdeath.planificadorapp.composables.graficos.GraficaPastelCanvas
@@ -41,6 +39,8 @@ import com.blackdeath.planificadorapp.modelos.portafolios.busqueda.PortafolioBus
 import com.blackdeath.planificadorapp.modelos.reportes.GraficoPastelModel
 import com.blackdeath.planificadorapp.repositorios.PortafoliosRepository
 import com.blackdeath.planificadorapp.repositorios.ReportesRepository
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
+import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 
 /**
  * Composable que representa la pantalla de detalles de un portafolio

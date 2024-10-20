@@ -37,10 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.FormatoFecha
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
-import com.blackdeath.planificadorapp.utilerias.enumeradores.FiltroMovimiento
-import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import com.blackdeath.planificadorapp.R
 import com.blackdeath.planificadorapp.composables.DatePickerInput
 import com.blackdeath.planificadorapp.composables.cuentas.CuentasDropDown
@@ -50,6 +46,10 @@ import com.blackdeath.planificadorapp.modelos.movimientos.MovimientoModel
 import com.blackdeath.planificadorapp.navegacion.Ruta
 import com.blackdeath.planificadorapp.repositorios.CuentasRepository
 import com.blackdeath.planificadorapp.repositorios.MovimientosRepository
+import com.blackdeath.planificadorapp.utilerias.FormatoFecha
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
+import com.blackdeath.planificadorapp.utilerias.enumeradores.FiltroMovimiento
+import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import java.time.LocalDate
 
 /**

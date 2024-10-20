@@ -27,13 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.Cadena
-import com.blackdeath.planificadorapp.utilerias.enumeradores.Reporte
 import com.blackdeath.planificadorapp.composables.snackbar.SnackBarBase
 import com.blackdeath.planificadorapp.composables.snackbar.SnackBarManager
 import com.blackdeath.planificadorapp.composables.snackbar.SnackBarTipo
 import com.blackdeath.planificadorapp.modelos.reportes.ReporteMenuResponseModel
 import com.blackdeath.planificadorapp.repositorios.ReportesRepository
+import com.blackdeath.planificadorapp.utilerias.Cadena
+import com.blackdeath.planificadorapp.utilerias.enumeradores.Reporte
 
 /**
  * Composable que representa la pantalla de reportes
@@ -56,29 +56,29 @@ fun ReportesScreen(modifier: Modifier, navController: NavController) {
     }
 
     Scaffold(modifier = modifier.fillMaxWidth(),
-    snackbarHost = {
-        SnackBarBase(
-            snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
-        )
-    },
+        snackbarHost = {
+            SnackBarBase(
+                snackbarHostState = snackbarHostState, snackBarManager = snackBarManager
+            )
+        },
         content = { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(16.dp)
-                .padding(bottom = 56.dp)
-        ) {
-            items(menuReportes) { menuReporte ->
-                ReporteMenuItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    reporteMenuResponseModel = menuReporte,
-                    snackBarManager = snackBarManager,
-                    navController = navController
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .padding(bottom = 56.dp)
+            ) {
+                items(menuReportes) { menuReporte ->
+                    ReporteMenuItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        reporteMenuResponseModel = menuReporte,
+                        snackBarManager = snackBarManager,
+                        navController = navController
+                    )
+                }
             }
-        }
-    })
+        })
 }
 
 /**
@@ -86,7 +86,10 @@ fun ReportesScreen(modifier: Modifier, navController: NavController) {
  */
 @Composable
 fun ReporteMenuItem(
-    modifier: Modifier, reporteMenuResponseModel: ReporteMenuResponseModel, snackBarManager: SnackBarManager, navController: NavController
+    modifier: Modifier,
+    reporteMenuResponseModel: ReporteMenuResponseModel,
+    snackBarManager: SnackBarManager,
+    navController: NavController
 ) {
     var isMostrarReportes by remember { mutableStateOf(false) }
 
@@ -123,8 +126,14 @@ fun ReporteMenuItem(
                                 navController.navigate(reporteEnum.ruta.ruta)
                                 Log.i("ReportesScreen", "Visualizar reporte: ${reporte.nombre}")
                             } else {
-                                snackBarManager.mostrar("Reporte no disponible", SnackBarTipo.ERROR)
-                                Log.i("ReportesScreen", "Reporte no reconocido: ${reporte.nombre}")
+                                snackBarManager.mostrar(
+                                    "Reporte no disponible",
+                                    SnackBarTipo.ERROR
+                                )
+                                Log.i(
+                                    "ReportesScreen",
+                                    "Reporte no reconocido: ${reporte.nombre}"
+                                )
                             }
                         }, headlineContent = {
                         Text(

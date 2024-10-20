@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 import com.blackdeath.planificadorapp.composables.DividerConSubtitulo
 import com.blackdeath.planificadorapp.composables.graficos.GraficaPastelCanvas
 import com.blackdeath.planificadorapp.composables.portafolios.PortafoliosDropDown
@@ -23,6 +22,7 @@ import com.blackdeath.planificadorapp.modelos.portafolios.PortafolioModel
 import com.blackdeath.planificadorapp.modelos.reportes.GraficoPastelModel
 import com.blackdeath.planificadorapp.repositorios.PortafoliosRepository
 import com.blackdeath.planificadorapp.repositorios.ReportesRepository
+import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoDatoGraficaPastel
 
 /**
  * Composable que representa el gráfico de distribución de activos de un portafolio

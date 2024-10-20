@@ -17,13 +17,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.FormatoFecha
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
-import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import com.blackdeath.planificadorapp.composables.TextoConEtiqueta
 import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonActualizar
 import com.blackdeath.planificadorapp.modelos.movimientos.MovimientoModel
 import com.blackdeath.planificadorapp.repositorios.MovimientosRepository
+import com.blackdeath.planificadorapp.utilerias.FormatoFecha
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
+import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 
 /**
  * Composable que representa la pantalla de detalle de un movimiento

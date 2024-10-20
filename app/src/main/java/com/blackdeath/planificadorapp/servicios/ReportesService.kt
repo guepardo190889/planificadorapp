@@ -10,7 +10,7 @@ import retrofit2.http.Query
 /**
  * Interfaz que define los métodos para interactuar con el servicio de reportes
  */
-interface ReportesService{
+interface ReportesService {
 
     /**
      * Busca el menú de reportes en el servidor y devuelve una lista de ReporteMenuResponseModel
@@ -22,17 +22,20 @@ interface ReportesService{
      * Busca el reporte de distribución de activos de un portafolio en el servidor y devuelve un GraficoPastelModel
      */
     @GET("/api/v1/portafolios/{id}/reportes/distribucion-activos")
-    fun generarReporteDistribucionActivosPortafolio(@Path("id") id: Long):Call<GraficoPastelModel>
+    fun generarReporteDistribucionActivosPortafolio(@Path("id") id: Long): Call<GraficoPastelModel>
 
     /**
      * Busca el reporte de distribución de saldos de un portafolio en el servidor y devuelve un GraficoPastelModel
      */
     @GET("/api/v1/portafolios/{id}/reportes/distribucion-saldos")
-    fun buscarReporteDistribucionSaldosPortafolio(@Path("id") id: Long):Call<GraficoPastelModel>
+    fun buscarReporteDistribucionSaldosPortafolio(@Path("id") id: Long): Call<GraficoPastelModel>
 
     /**
      * Busca el reporte de historico de saldos de una cuenta en el servidor y devuelve un GraficoPastelModel
      */
     @GET("/api/v1/cuentas/{id}/reportes/historico-saldos")
-    fun buscarReporteHistoricoSaldosCuenta( @Path("id") id: Long, @Query("anio") anio: Int):Call<GraficoPastelModel>
+    fun buscarReporteHistoricoSaldosCuenta(
+        @Path("id") id: Long,
+        @Query("anio") anio: Int
+    ): Call<GraficoPastelModel>
 }

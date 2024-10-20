@@ -7,5 +7,5 @@ import com.blackdeath.planificadorapp.utilerias.enumeradores.CategoriaReporte
  */
 data class ReporteMenuResponseModel(
     val categoria: CategoriaReporte,
-    var reportes:List<com.blackdeath.planificadorapp.modelos.reportes.ReporteModel> = emptyList()
+    var reportes: List<com.blackdeath.planificadorapp.modelos.reportes.ReporteModel> = emptyList()
 )

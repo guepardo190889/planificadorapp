@@ -15,9 +15,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 import com.blackdeath.planificadorapp.R
 import com.blackdeath.planificadorapp.modelos.cuentas.CuentaModel
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 
 /**
  * Composable que muestra la lista de cuentas

@@ -25,8 +25,6 @@ import com.blackdeath.planificadorapp.composables.TextoConEtiqueta
 import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonActualizar
 import com.blackdeath.planificadorapp.modelos.activos.ActivoModel
 import com.blackdeath.planificadorapp.repositorios.ActivosRepository
-import com.blackdeath.planificadorapp.composables.TextoConEtiqueta
-import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonActualizar
 
 /**
  * Composable que representa la pantalla de detalle de un activo
@@ -46,7 +44,7 @@ fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idAct
 
     Scaffold(modifier.fillMaxSize(), floatingActionButton = {
         if (activo != null) {
-            FloatingActionButtonActualizar (isVisible = activo!!.isHijo,
+            FloatingActionButtonActualizar(isVisible = activo!!.isHijo,
                 tooltip = "Actualizar el activo",
                 onClick = { navController.navigate("activos/editar/${activo?.id}") })
         }
@@ -70,7 +68,8 @@ fun DetalleActivosScreen(modifier: Modifier, navController: NavController, idAct
                 ) {
                     Column(modifier.padding(16.dp)) {
                         if (activo.isPadre) {
-                            AssistChip(onClick = { },
+                            AssistChip(
+                                onClick = { },
                                 label = { Text("Principal") },
                                 colors = AssistChipDefaults.assistChipColors(),
                                 modifier = Modifier.padding(bottom = 8.dp)

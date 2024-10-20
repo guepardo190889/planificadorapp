@@ -31,7 +31,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import com.blackdeath.planificadorapp.composables.DatePickerInput
 import com.blackdeath.planificadorapp.composables.cuentas.CuentasDropDown
 import com.blackdeath.planificadorapp.composables.navegacion.BarraNavegacionInferior
@@ -46,6 +45,7 @@ import com.blackdeath.planificadorapp.modelos.movimientos.TransaccionMovimientoR
 import com.blackdeath.planificadorapp.navegacion.Ruta
 import com.blackdeath.planificadorapp.repositorios.CuentasRepository
 import com.blackdeath.planificadorapp.repositorios.MovimientosRepository
+import com.blackdeath.planificadorapp.utilerias.enumeradores.TipoMovimiento
 import java.math.BigDecimal
 import java.time.LocalDate
 

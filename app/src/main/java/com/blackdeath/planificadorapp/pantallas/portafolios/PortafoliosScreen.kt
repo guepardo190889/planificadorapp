@@ -29,12 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 import com.blackdeath.planificadorapp.R
 import com.blackdeath.planificadorapp.composables.fab.FloatingActionButtonGuardar
 import com.blackdeath.planificadorapp.modelos.portafolios.PortafolioModel
 import com.blackdeath.planificadorapp.navegacion.Ruta
 import com.blackdeath.planificadorapp.repositorios.PortafoliosRepository
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 import java.math.BigDecimal
 
 /**

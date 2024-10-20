@@ -227,15 +227,16 @@ fun ComposicionItem(
                         porcentajeTexto = nuevoTexto
                     } else if (nuevoTexto.length == 2) {
                         //primer número con cursor a la izquierda (ejemplo: 01)
-                        porcentajeTexto = if (nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
-                            nuevoTexto[0].toString()
-                        }
-                        //primer número con cursor a la derecha (ejemplo: 02)
-                        else if (nuevoTexto[0] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
-                            nuevoTexto[1].toString()
-                        } else {
-                            nuevoTexto
-                        }
+                        porcentajeTexto =
+                            if (nuevoTexto[1] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
+                                nuevoTexto[0].toString()
+                            }
+                            //primer número con cursor a la derecha (ejemplo: 02)
+                            else if (nuevoTexto[0] == '0' && (porcentajeTexto == "0" || porcentajeTexto.isEmpty())) {
+                                nuevoTexto[1].toString()
+                            } else {
+                                nuevoTexto
+                            }
                     } else if (nuevoTexto.length == 3) {
                         porcentajeTexto = nuevoTexto
                     }

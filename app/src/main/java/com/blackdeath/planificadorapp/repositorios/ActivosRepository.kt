@@ -1,9 +1,9 @@
 package com.blackdeath.planificadorapp.repositorios
 
 import android.util.Log
-import com.blackdeath.planificadorapp.servicios.ApiClient
 import com.blackdeath.planificadorapp.modelos.activos.ActivoModel
 import com.blackdeath.planificadorapp.modelos.activos.TransaccionActivoRequestModel
+import com.blackdeath.planificadorapp.servicios.ApiClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

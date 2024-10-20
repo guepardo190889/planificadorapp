@@ -133,13 +133,19 @@ fun GraficaBarrasCanvas(
                         barY - 10f,
                         paint.apply { textAlign = Align.CENTER })
 
-                    Log.i("GraficaBarrasCanvas", "Valor formateado: $valorFormatted , x: ${barX+barWidth/2}, y: ${barY-10f}")
+                    Log.i(
+                        "GraficaBarrasCanvas",
+                        "Valor formateado: $valorFormatted , x: ${barX + barWidth / 2}, y: ${barY - 10f}"
+                    )
 
                     // Texto del mes debajo de la barra
                     drawContext.canvas.nativeCanvas.drawText(
                         mes, barX + barWidth / 2, canvasHeight + 30f, paint
                     )
-                    Log.i("GraficaBarrasCanvas", "mes: $mes ,x: ${barX+barWidth/2}, y: ${canvasHeight + 30f}")
+                    Log.i(
+                        "GraficaBarrasCanvas",
+                        "mes: $mes ,x: ${barX + barWidth / 2}, y: ${canvasHeight + 30f}"
+                    )
 
                 }
             }

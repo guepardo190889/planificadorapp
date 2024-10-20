@@ -8,8 +8,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 import com.blackdeath.planificadorapp.modelos.cuentas.CuentaModel
+import com.blackdeath.planificadorapp.utilerias.FormatoMonto
 
 /**
  * Composable que muestra la lista de cuentas
