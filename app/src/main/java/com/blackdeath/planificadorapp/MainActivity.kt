@@ -1,4 +1,4 @@
-package com.blackdeath
+package com.blackdeath.planificadorapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
